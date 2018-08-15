@@ -1,0 +1,187 @@
+
+
+CREATE TABLE `local_iss_grading_period` (
+  `GradingPeriodID` int(11) NOT NULL,
+  `RegistrationYear` varchar(10) NOT NULL,
+  `GradingPeriod` int(11) NOT NULL,
+  `StartDate` date NOT NULL,
+  `EndDate` date NOT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `local_iss_grading_period`  ADD PRIMARY KEY (`GradingPeriodID`);
+ALTER TABLE `local_iss_grading_period` CHANGE `GradingPeriodID` `GradingPeriodID` INT(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `local_iss_grading_period` ADD UNIQUE( `RegistrationYear`, `GradingPeriod`);
+
+INSERT INTO `local_iss_grading_period` (`GradingPeriodID`, `RegistrationYear`, `GradingPeriod`, `StartDate`, `EndDate`, `created`, `updated`) VALUES 
+(NULL, '2016-2017', '1', '2016-08-15', '2016-12-31', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
+(NULL, '2016-2017', '2', '2017-01-01', '2017-05-31', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+(NULL, '2017-2018', '1', '2017-08-15', '2017-12-31', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
+(NULL, '2017-2018', '2', '2018-01-01', '2018-05-31', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+(NULL, '2018-2019', '1', '2018-08-15', '2018-12-31', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
+(NULL, '2018-2019', '2', '2019-01-01', '2019-05-31', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+
+
+-- TABLE
+CREATE TABLE `local_iss_student` (
+`StudentViewID` int(11)
+,`RegistrationYear` varchar(9)
+,`ParentID` int(11)
+,`FatherFirstName` varchar(100)
+,`FatherLastName` varchar(100)
+,`FatherEmail` varchar(100)
+,`MotherFirstName` varchar(100)
+,`MotherLastName` varchar(100)
+,`MotherEmail` varchar(100)
+,`StudentID` int(11)
+,`StudentFirstName` varchar(35)
+,`StudentLastName` varchar(35)
+,`StudentGender` varchar(1)
+,`StudentStatus` varchar(10)
+,`StudentEmail` varchar(100)
+,`ISSGrade` varchar(2)
+);
+
+
+CREATE TABLE `local_iss_class` (
+  `ClassID` int(11) NOT NULL,
+  `RegistrationYear` varchar(10) NOT NULL,
+  `ISSGrade` varchar(2) NOT NULL DEFAULT 'KG',
+  `Subject` varchar(100) NOT NULL DEFAULT 'Islamic Studies',
+  `Category` varchar(10) NOT NULL DEFAULT 'kgis'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `local_iss_class` ADD `Status` VARCHAR(10) NOT NULL DEFAULT 'active' AFTER `Category`;
+
+ALTER TABLE `local_iss_class` ADD PRIMARY KEY (`ClassID`),
+  ADD KEY `iss_Class_RegistrationYear_FK` (`RegistrationYear`);
+
+ALTER TABLE `local_iss_class`  MODIFY `ClassID` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `local_iss_class`
+  ADD CONSTRAINT `iss_Class_RegistrationYear_FK` FOREIGN KEY (`RegistrationYear`) REFERENCES `local_iss_regyear` (`RegistrationYear`);
+COMMIT;
+
+INSERT INTO `local_iss_class` ( `RegistrationYear`, `ISSGrade`, `Subject`, `Category`) VALUES
+( '2016-2017', 'KG', 'Islamic Studies', 'kgis'),
+( '2016-2017', 'KG', 'Quranic Studies', 'kgis'),
+( '2016-2017', '1', 'Islamic Studies', 'g1is'),
+( '2016-2017', '1', 'Quranic Studies', 'g1is'),
+( '2016-2017', '2', 'Islamic Studies', 'g2is'),
+( '2016-2017', '2', 'Quranic Studies', 'g2is'),
+( '2016-2017', '3', 'Islamic Studies', 'g3is'),
+( '2016-2017', '3', 'Quranic Studies', 'g3is'),
+( '2016-2017', '4', 'Islamic Studies', 'g4is'),
+( '2016-2017', '4', 'Quranic Studies', 'g4is'),
+( '2016-2017', '5', 'Islamic Studies', 'g5is'),
+( '2016-2017', '5', 'Quranic Studies', 'g5is'),
+( '2016-2017', '6', 'Islamic Studies', 'g6is'),
+( '2016-2017', '6', 'Quranic Studies', 'g6is'),
+( '2016-2017', '7', 'Islamic Studies', 'g7is'),
+( '2016-2017', '7', 'Quranic Studies', 'g7is'),
+( '2016-2017', '8', 'Islamic Studies', 'g8is'),
+( '2016-2017', '8', 'Quranic Studies', 'g8is'),
+( '2016-2017', 'YB', 'Islamic Studies', 'ybis'),
+( '2016-2017', 'YB', 'Quranic Studies', 'ybis'),
+( '2016-2017', 'YG', 'Islamic Studies', 'ygis'),
+( '2016-2017', 'YG', 'Quranic Studies', 'ygis');
+
+( '2017-2018', 'KG', 'Islamic Studies', 'kgis'),
+( '2017-2018', 'KG', 'Quranic Studies', 'kgis'),
+( '2017-2018', '1', 'Islamic Studies', 'g1is'),
+( '2017-2018', '1', 'Quranic Studies', 'g1is'),
+( '2017-2018', '2', 'Islamic Studies', 'g2is'),
+( '2017-2018', '2', 'Quranic Studies', 'g2is'),
+( '2017-2018', '3', 'Islamic Studies', 'g3is'),
+( '2017-2018', '3', 'Quranic Studies', 'g3is'),
+( '2017-2018', '4', 'Islamic Studies', 'g4is'),
+( '2017-2018', '4', 'Quranic Studies', 'g4is'),
+( '2017-2018', '5', 'Islamic Studies', 'g5is'),
+( '2017-2018', '5', 'Quranic Studies', 'g5is'),
+( '2017-2018', '6', 'Islamic Studies', 'g6is'),
+( '2017-2018', '6', 'Quranic Studies', 'g6is'),
+( '2017-2018', '7', 'Islamic Studies', 'g7is'),
+( '2017-2018', '7', 'Quranic Studies', 'g7is'),
+( '2017-2018', '8', 'Islamic Studies', 'g8is'),
+( '2017-2018', '8', 'Quranic Studies', 'g8is'),
+( '2017-2018', 'YB', 'Islamic Studies', 'ybis'),
+( '2017-2018', 'YB', 'Quranic Studies', 'ybis'),
+( '2017-2018', 'YG', 'Islamic Studies', 'ygis'),
+( '2017-2018', 'YG', 'Quranic Studies', 'ygis');
+
+( '2018-2019', 'KG', 'Islamic Studies', 'kgis'),
+( '2018-2019', 'KG', 'Quranic Studies', 'kgis'),
+( '2018-2019', '1', 'Islamic Studies', 'g1is'),
+( '2018-2019', '1', 'Quranic Studies', 'g1is'),
+( '2018-2019', '2', 'Islamic Studies', 'g2is'),
+( '2018-2019', '2', 'Quranic Studies', 'g2is'),
+( '2018-2019', '3', 'Islamic Studies', 'g3is'),
+( '2018-2019', '3', 'Quranic Studies', 'g3is'),
+( '2018-2019', '4', 'Islamic Studies', 'g4is'),
+( '2018-2019', '4', 'Quranic Studies', 'g4is'),
+( '2018-2019', '5', 'Islamic Studies', 'g5is'),
+( '2018-2019', '5', 'Quranic Studies', 'g5is'),
+( '2018-2019', '6', 'Islamic Studies', 'g6is'),
+( '2018-2019', '6', 'Quranic Studies', 'g6is'),
+( '2018-2019', '7', 'Islamic Studies', 'g7is'),
+( '2018-2019', '7', 'Quranic Studies', 'g7is'),
+( '2018-2019', '8', 'Islamic Studies', 'g8is'),
+( '2018-2019', '8', 'Quranic Studies', 'g8is'),
+( '2018-2019', 'YB', 'Islamic Studies', 'ybis'),
+( '2018-2019', 'YB', 'Quranic Studies', 'ybis'),
+( '2018-2019', 'YG', 'Islamic Studies', 'ygis'),
+( '2018-2019', 'YG', 'Quranic Studies', 'ygis');
+
+DROP TABLE IF EXISTS `local_iss_userclassmap`;
+CREATE TABLE `local_iss_userclassmap` (
+  `UCMapID` int(11) NOT NULL,
+  `UserID` int(11) NOT NULL,
+  `ClassID` int(11) NOT NULL,
+  `Access` varchar(10) NOT NULL DEFAULT 'read'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `local_iss_userclassmap`
+  ADD PRIMARY KEY (`UCMapID`),
+  ADD UNIQUE KEY `UserID` (`UserID`,`ClassID`);
+
+ALTER TABLE `local_iss_userclassmap`
+  MODIFY `UCMapID` int(11) NOT NULL AUTO_INCREMENT;COMMIT;
+  
+DROP TABLE IF EXISTS `local_iss_students`;
+CREATE  VIEW `local_iss_students`  AS  select `s`.`StudentViewID` AS `StudentViewID`,`s`.`RegistrationYear` AS `RegistrationYear`,`s`.`ParentID` AS `ParentID`,`s`.`FatherFirstName` AS `FatherFirstName`,`s`.`FatherLastName` AS `FatherLastName`,`s`.`FatherEmail` AS `FatherEmail`,`s`.`MotherFirstName` AS `MotherFirstName`,`s`.`MotherLastName` AS `MotherLastName`,`s`.`MotherEmail` AS `MotherEmail`,`s`.`StudentID` AS `StudentID`,`s`.`StudentFirstName` AS `StudentFirstName`,`s`.`StudentLastName` AS `StudentLastName`,`s`.`StudentGender` AS `StudentGender`,`s`.`StudentStatus` AS `StudentStatus`,`s`.`StudentEmail` AS `StudentEmail`,`s`.`ISSGrade` AS `ISSGrade`,`c`.`Subject` AS `Subject`,`c`.`ClassID` AS `ClassID` 
+from (`local_iss_student` `s` join `local_iss_class` `c`) where (`s`.`ISSGrade` = `c`.`ISSGrade`) ;
+
+DROP TABLE IF EXISTS `local_iss_class_access`;
+CREATE  VIEW `local_iss_class_access` AS 
+select `c`.`ClassID` AS `ClassID`,`c`.`RegistrationYear` AS `RegistrationYear`,
+`c`.`ISSGrade` AS `ISSGrade`,`c`.`Subject` AS `Subject`,`c`.`Category` AS `Category`,
+`c`.`Status` AS `Status`,`u`.`UserID` AS `UserID` , `u`.`Access` AS `Access`
+from (`local_iss_class` `c` join `local_iss_userclassmap` `u`) where (`c`.`ClassID` = `u`.`ClassID`)
+
+DROP TABLE IF EXISTS `local_assignment_post`;
+CREATE TABLE `local_assignment_post` (
+  `ID` bigint(20) UNSIGNED NOT NULL,
+  `PossiblePoints` bigint(20) DEFAULT 10,
+  `DueDate` date NOT NULL DEFAULT '0000-00-00',
+  `Category` varchar(255) DEFAULT NULL,
+  `ClassID` bigint(20) DEFAULT 0,
+  `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `local_assignment_post` (`id`, `possible_points`, `due_date`, `iss_category`, `classid`) VALUES
+(128, '10', '0000-00-00', 'g5is', '13'),
+(133, '30', '2018-08-10', 'g5is', '13'),
+(144, '10', '2018-08-30', 'g5is', '13'),
+(183, '10', '2018-08-18', 'g1is', '3');
+
+DROP TABLE IF EXISTS `local_assignment_posts`;
+
+CREATE  VIEW `local_assignment_posts`  AS  
+select `p`.`ID` AS `ID`,`p`.`post_author` AS `post_author`,`p`.`post_date` AS `post_date`,
+`p`.`post_content` AS `post_content`,`p`.`post_title` AS `post_title`,`p`.`post_status` AS `post_status`,
+`p`.`post_name` AS `post_name`,`p`.`guid` AS `guid`,
+`p`.`post_type` AS `post_type`,`d`.`ClassID` AS `ClassID`,
+`d`.`DueDate` AS `DueDate`,`d`.`Category` AS `Category`,`d`.`PossiblePoints` AS `PossiblePoints` 
+from (`local_assignment_post` `d` join `local_posts` `p`) where (`d`.`id` = `p`.`ID`) ;
