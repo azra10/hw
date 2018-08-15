@@ -29,7 +29,7 @@ class ISS_UserPreferencePlugin {
 		) );
 	}
 	public function add_plugin_page() {
-		add_menu_page ( 'iss_userpref', 'User Preference', 'iss_board', 'user_home', array (
+		add_menu_page ( 'iss_userpref', 'User Preference', 'read', 'user_home', array (
 				$this,
 				'users_page' 
 		), 'dashicons-admin-customizer', 98 );
@@ -60,9 +60,9 @@ class ISS_UserPreferencePlugin {
 		} // form post request
 	}
 	public function users_page() {
-		if (! iss_current_user_on_board())
-			wp_die ( __ ( 'You do not have sufficient permissions to access this page.', 'iss_userpref_text' ) );
-		?>
+		// if (! iss_current_user_on_board())
+		// 	wp_die ( __ ( 'You do not have sufficient permissions to access this page.', 'iss_userpref_text' ) );
+		// ?>
 
 <div class="wrap">
 	<h2><?php _e( 'User Specific Preferences', 'iss_userpref_text' ); ?></h2>
