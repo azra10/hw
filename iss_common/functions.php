@@ -53,8 +53,8 @@ if (!function_exists('load_custom_iss_style')) {
         // wp_enqueue_script ( 'custom_iss_jqueryui_script' );
         // wp_register_script ( 'custom_iss_export_script', ISS_COMMON_URL . '/js/multiselect.min.js' );
         // wp_enqueue_script ( 'custom_iss_export_script' );       
-        // wp_register_script ( 'custom_iss_form_script', ISS_COMMON_URL . '/js/iss_form.js' );
-        // wp_enqueue_script ( 'custom_iss_form_script' );
+        wp_register_script ( 'custom_iss_form_script', ISS_COMMON_URL . '/js/iss_form.js' );
+        wp_enqueue_script ( 'custom_iss_form_script' );
        
     }
 }
