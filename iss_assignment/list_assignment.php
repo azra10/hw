@@ -1,5 +1,5 @@
 <?php 
-$result_set = null;
+$result_set = null; $cid = null;
 if (isset($_GET['cid'])) {
     $cid = iss_sanitize_input($_GET['cid']);
     if (!empty($cid)) {

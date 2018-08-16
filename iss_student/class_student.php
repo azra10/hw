@@ -10,17 +10,31 @@ class ISS_Student
     public $StudentBirthDate;
     public $StudentGender;
     public $created;
-    public $updated;
-	public $RegularSchoolGrade;
+    public $updated;   
+    public $RegularSchoolGrade;
     public $ISSGrade;
     public $RegistrationYear;
-    
+    public $FatherFirstName;
+    public $FatherLastName;
+    public $FatherEmail;
+    public $MotherFirstName;
+    public $MotherLastName;
+    public $MotherEmail;
+    public $UserEmail;
+    public $Access;
+
+    public static function GetAccountViewName()
+    {
+        global $wpdb;
+        return $wpdb->prefix . "iss_student_accounts";
+    }
+
     public static function GetViewName()
     {
         global $wpdb;
         return $wpdb->prefix . "iss_class_students";
     }
-    public static function GetTableName()
+     public static function GetTableName()
     {
         global $wpdb;
         return $wpdb->prefix . "iss_student";
@@ -49,7 +63,34 @@ class ISS_Student
             if (isset($row['StudentLastName'])) {
                 $this->StudentLastName = $row['StudentLastName'];
             }
-            if (isset($row['ISSGrade'])) {
+            if (isset($row['StudentEmail'])) {
+                $this->StudentEmail = $row['StudentEmail'];
+            }
+            if (isset($row['FatherFirstName'])) {
+                $this->FatherFirstName = $row['FatherFirstName'];
+            }
+            if (isset($row['FatherLastName'])) {
+                $this->FatherLastName = $row['FatherLastName'];
+            }
+            if (isset($row['FatherEmail'])) {
+                $this->FatherEmail = $row['FatherEmail'];
+            }
+            if (isset($row['MotherFirstName'])) {
+                $this->MotherFirstName = $row['MotherFirstName'];
+            }
+            if (isset($row['MotherLastName'])) {
+                $this->MotherLastName = $row['MotherLastName'];
+            }
+            if (isset($row['MotherEmail'])) {
+                $this->MotherEmail = $row['MotherEmail'];
+            }
+            if (isset($row['UserEmail'])) {
+                $this->UserEmail = $row['UserEmail'];
+            }
+            if (isset($row['Access'])) {
+                $this->Access = $row['Access'];
+            }
+             if (isset($row['ISSGrade'])) {
                 $this->ISSGrade = $row['ISSGrade'];
             }
             if (isset($row['RegularSchoolGrade'])) {
@@ -123,27 +164,54 @@ class ISS_StudentService
         return null;
     }
     /**
-     * GetStudents function
+     * GetClassStudents function
      *
      * @return array of ISS_Student Objects
      */
-    public static function GetStudents($cid)
+    public static function GetStudentsByClassID($cid)
     {
-        self::debug("GetClasses");
-            $list = array();
+        self::debug("GetStudentsByClassID");
+        $list = array();
 
-            global $wpdb;
-            $userid = get_current_user_id();
-            if (ISS_PermissionService::class_student_list_all_access($cid)) {
-                $table = ISS_Student::GetViewName();
-                $query = "SELECT *  FROM {$table} WHERE  StudentStatus = 'active' and ClassID = $cid order by  StudentFirstName";
-            }
-            else {
-                $table = ISS_Student::GetViewName();
-                $table1 = ISS_UserStudentMap::GetTableName();
-                $query = "SELECT *  FROM {$table} WHERE  StudentStatus = 'active' and ClassID = $cid and StudentID in " . 
+        global $wpdb;
+        $userid = get_current_user_id();
+        if (ISS_PermissionService::class_student_list_all_access($cid)) {
+            $table = ISS_Student::GetViewName();
+            $query = "SELECT *  FROM {$table} WHERE  StudentStatus = 'active' and ClassID = $cid order by  StudentFirstName";
+        } 
+        else {
+            $table = ISS_Student::GetViewName();
+            $table1 = ISS_UserStudentMap::GetTableName();
+            $query = "SELECT *  FROM {$table} WHERE  StudentStatus = 'active' and ClassID = $cid and StudentID in " .
                 " (SELECT StudentID FROM {$table1} WHERE UserID = {$userid} )  order by  StudentFirstName";
+        }
+        $result_set = $wpdb->get_results($query, ARRAY_A);
+        foreach ($result_set as $obj) {
+            try {
+                $list[] = ISS_Student::Create($obj);
+            } catch (Throwable $ex) {
+                self::error($ex->getMessage());
             }
+        }
+
+        return $list;
+    }
+    /**
+     * GetStudents function
+     * @return  array of ISS_Student Objects
+     */
+    public static function GetStudentAccounts()
+    {
+        self::debug("GetStudentAccounts");
+        $list = array();
+
+        global $wpdb;
+        $regyear = iss_registration_period();
+       
+        if (ISS_PermissionService::student_list_all_access()) {
+            $table = ISS_Student::GetAccountViewName();
+            $query = "SELECT  *  FROM {$table} WHERE  RegistrationYear = '{$regyear}' order by  StudentFirstName";
+
             $result_set = $wpdb->get_results($query, ARRAY_A);
             foreach ($result_set as $obj) {
                 try {
@@ -151,8 +219,12 @@ class ISS_StudentService
                 } catch (Throwable $ex) {
                     self::error($ex->getMessage());
                 }
-            }
-        
-        return $list;
+            }          
+                    
+            return $list;
+
+        }
+        return null;
     }
 }
+?>

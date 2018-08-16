@@ -3,7 +3,7 @@ $result_set = null;
 if (isset($_GET['cid'])) {
     $cid = iss_sanitize_input($_GET['cid']);
     if (!empty($cid)) {
-        $result_set = ISS_StudentService::GetStudents($cid);
+        $result_set = ISS_StudentService::GetStudentsByClassID($cid);
     }
 }
 

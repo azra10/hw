@@ -7,10 +7,8 @@
  * Text Domain: iss_user_pref
  */
 
-require_once(plugin_dir_path(__FILE__) . "../iss_common/function_registration.php");
-require_once(plugin_dir_path(__FILE__) . "../iss_common/class_gradingperiod.php");
-require_once(plugin_dir_path(__FILE__) . "../iss_common/function_validate.php");
-require_once(plugin_dir_path(__FILE__) . "../iss_common/constants.php");
+
+require_once(plugin_dir_path(__FILE__) . "../iss_common/function.php");
 
 class ISS_UserPreferencePlugin {
 	private $errorstring;
