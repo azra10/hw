@@ -13,6 +13,10 @@ class ISS_Class
     public $Status;
     public $created;
     public $updated;
+    public $Teacher;
+    public $Access;
+    public $UserID;
+    public $UserEmail;
 
     public static function Errors($errors)
     {
@@ -25,16 +29,13 @@ class ISS_Class
         if (!isset($errors['GradingPeriod'])) {
             $errors['GradingPeriod'] = '';
         }
-        if (!isset($errors['Name'])) {
-            $errors['Name'] = '';
-        }
         if (!isset($errors['ISSGrade'])) {
             $errors['ISSGrade'] = '';
         }
         if (!isset($errors['Subject'])) {
             $errors['Subject'] = '';
         }
-        
+ 
         if (!isset($errors['Status'])) {
             $errors['Status'] = '';
         }
@@ -42,23 +43,28 @@ class ISS_Class
     }
     public static function GetTableFields()
     {
-        return array("ClassID", "RegistrationYear", "Category","ISSGrade", "Subject", "Status");
+        return array("ClassID", "RegistrationYear", "Category", "ISSGrade", "Subject", "Status");
     }
     public static function GetTableName()
     {
         global $wpdb;
         return $wpdb->prefix . "iss_class";
     }
-    public static function GetViewName()
+    public static function GetAccessViewName()
     {
         global $wpdb;
         return $wpdb->prefix . "iss_class_access";
+    }
+    public static function GetAccountViewName()
+    {
+        global $wpdb;
+        return $wpdb->prefix . "iss_classes";
     }
     public static function GetSubjectList()
     {
         $isssubjectlist = array(
             'IS' => 'Islamic Studies',
-            'QS' => 'Quranic Studies'            
+            'QS' => 'Quranic Studies'
         );
         return $isssubjectlist;
     }
@@ -109,6 +115,18 @@ class ISS_Class
             if (isset($row['ISSGrade'])) {
                 $this->ISSGrade = $row['ISSGrade'];
             }
+            if (isset($row['Teacher'])) {
+                $this->Teacher = $row['Teacher'];
+            }
+            if (isset($row['UserEmail'])) {
+                $this->UserEmail = $row['UserEmail'];
+            }
+            if (isset($row['UserID'])) {
+                $this->UserID = $row['UserID'];
+            }
+            if (isset($row['Access'])) {
+                $this->Access = $row['Access'];
+            }
             if (isset($row['Status'])) {
                 $this->Status = $row['Status'];
             }
@@ -153,12 +171,12 @@ class ISS_ClassService
             $list = array();
 
             global $wpdb;
-             $userid = get_current_user_id();
+            $userid = get_current_user_id();
             if (ISS_PermissionService::class_list_all_access()) {
                 $table = ISS_Class::GetTableName();
                 $query = "SELECT *  FROM {$table} WHERE RegistrationYear = '{$regyear}' order by  Status, ISSGrade";
-            } else{
-                $table = ISS_Class::GetViewName();
+            } else {
+                $table = ISS_Class::GetAccessViewName();
                 $query = "SELECT ClassID, Subject, Status, ISSGrade  FROM {$table} WHERE RegistrationYear = '{$regyear}' 
                         and UserID = {$userid}  group by ClassID, Subject, Status, ISSGrade order by  Status, ISSGrade";
             }
@@ -324,6 +342,83 @@ class ISS_ClassService
             self::error($ex->getMessage());
         }
         return 0;
+    }
+
+    public static function LoadByUserID($cid, $uid)
+    {
+        try {
+            self::debug("LoadByUserID ClassId:{$cid} UserID:{$uid}");
+            global $wpdb;
+            $table = ISS_Class::GetAccountViewName();
+            $query = "SELECT *  FROM {$table} where UserID = {$uid} and ClassID = {$cid}";
+            $row = $wpdb->get_row($query, ARRAY_A);
+            if (null != $row) {
+                return ISS_Class::Create($row);
+            }
+        } catch (Throwable $ex) {
+            self::error($ex->getMessage());
+        }
+        return null;
+    }
+    
+    public static function RemoveMapping($cid, $uid){
+        try {
+            self::debug("RemoveMapping ClassID{$cid} UserID:{$uid}");
+            global $wpdb;
+            $table = ISS_UserClassMap::GetTableName();
+            $result = $wpdb->delete($table, array('UserID' => $uid, 'ClassID'=> $cid), array("%d", "%d"));
+            if (1 == $result) {
+                return 1;
+            }
+        } catch (Throwable $ex) {
+            self::error($ex->getMessage());
+        }
+        return 0;
+    }
+    public static function AddMapping($cid, $uid)
+    {
+        try {
+            self::debug("AddMapping ClassId:{$cid} UserID:{$uid}");
+            global $wpdb;
+            $table = ISS_UserClassMap::GetTableName();
+            $result = $wpdb->insert($table, array('UserID' => $uid, 'ClassID' => $cid), array("%d", "%d"));
+            if (1 == $result) {
+                return 1;
+            }
+        } catch (Throwable $ex) {
+            self::error($ex->getMessage());
+        }
+        return 0;
+    }
+    /**
+     * GetTeacherAccounts function
+     * @return  array of ISS_Classß Objects
+     */
+    public static function GetTeacherAccounts()
+    {
+        self::debug("GetTeacherAccounts");
+        $list = array();
+
+        global $wpdb;
+        $regyear = iss_registration_period();
+       
+        if (ISS_PermissionService::user_manage_access()) {
+            $table = ISS_Class::GetAccountViewName();
+            $query = "SELECT  *  FROM {$table} WHERE  RegistrationYear = '{$regyear}' order by  Subject, ISSGrade";
+
+            $result_set = $wpdb->get_results($query, ARRAY_A);
+            foreach ($result_set as $obj) {
+                try {
+                    $list[] = ISS_Class::Create($obj);
+                } catch (Throwable $ex) {
+                    self::error($ex->getMessage());
+                }
+            }          
+                    
+            return $list;
+
+        }
+        return null;
     }
 }
 

@@ -21,18 +21,19 @@ class ISS_Student
     public $MotherLastName;
     public $MotherEmail;
     public $UserEmail;
+    public $UserID;
     public $Access;
 
-    public static function GetAccountViewName()
+    public static function GetClassStudentViewName()
     {
         global $wpdb;
-        return $wpdb->prefix . "iss_student_accounts";
+        return $wpdb->prefix . "iss_class_students";
     }
 
     public static function GetViewName()
     {
         global $wpdb;
-        return $wpdb->prefix . "iss_class_students";
+        return $wpdb->prefix . "iss_students";
     }
      public static function GetTableName()
     {
@@ -86,6 +87,9 @@ class ISS_Student
             }
             if (isset($row['UserEmail'])) {
                 $this->UserEmail = $row['UserEmail'];
+            }
+            if (isset($row['UserID'])) {
+                $this->UserID = $row['UserID'];
             }
             if (isset($row['Access'])) {
                 $this->Access = $row['Access'];
@@ -163,6 +167,50 @@ class ISS_StudentService
         }
         return null;
     }
+    public static function LoadByUserID($sid, $uid)
+    {
+        try {
+            self::debug("LoadByID StudentId:{$sid} UserID:{$uid}");
+            global $wpdb;
+            $table = ISS_Student::GetViewName();
+            $query = "SELECT *  FROM {$table} where UserID = {$uid} and StudentID = {$sid}";
+            $row = $wpdb->get_row($query, ARRAY_A);
+            if (null != $row) {
+                return ISS_Student::Create($row);
+            }
+        } catch (Throwable $ex) {
+            self::error($ex->getMessage());
+        }
+        return null;
+    }
+    public static function RemoveMapping($sid, $uid){
+        try {
+            self::debug("RemoveMapping {$sid} UserID:{$uid}");
+            global $wpdb;
+            $table = ISS_UserStudentMap::GetTableName();
+            $result = $wpdb->delete($table, array('UserID' => $uid, 'StudentID'=> $sid), array("%d", "%d"));
+            if (1 == $result) {
+                return 1;
+            }
+        } catch (Throwable $ex) {
+            self::error($ex->getMessage());
+        }
+        return 0;
+    }
+    public static function AddMapping($sid, $uid){
+        try {
+            self::debug("AddMapping StudentId:{$sid} UserID:{$uid}");
+            global $wpdb;
+            $table = ISS_UserStudentMap::GetTableName();
+            $result = $wpdb->insert($table, array('UserID' => $uid, 'StudentID'=>$sid), array("%d", "%d"));
+            if (1 == $result) {
+                return 1;
+            }
+        } catch (Throwable $ex) {
+            self::error($ex->getMessage());
+        }
+        return 0;
+    }
     /**
      * GetClassStudents function
      *
@@ -176,11 +224,11 @@ class ISS_StudentService
         global $wpdb;
         $userid = get_current_user_id();
         if (ISS_PermissionService::class_student_list_all_access($cid)) {
-            $table = ISS_Student::GetViewName();
+            $table = ISS_Student::GetClassStudentViewName();
             $query = "SELECT *  FROM {$table} WHERE  StudentStatus = 'active' and ClassID = $cid order by  StudentFirstName";
         } 
         else {
-            $table = ISS_Student::GetViewName();
+            $table = ISS_Student::GetClassStudentViewName();
             $table1 = ISS_UserStudentMap::GetTableName();
             $query = "SELECT *  FROM {$table} WHERE  StudentStatus = 'active' and ClassID = $cid and StudentID in " .
                 " (SELECT StudentID FROM {$table1} WHERE UserID = {$userid} )  order by  StudentFirstName";
@@ -208,8 +256,8 @@ class ISS_StudentService
         global $wpdb;
         $regyear = iss_registration_period();
        
-        if (ISS_PermissionService::student_list_all_access()) {
-            $table = ISS_Student::GetAccountViewName();
+        if (ISS_PermissionService::user_manage_access()) {
+            $table = ISS_Student::GetViewName();
             $query = "SELECT  *  FROM {$table} WHERE  RegistrationYear = '{$regyear}' order by  StudentFirstName";
 
             $result_set = $wpdb->get_results($query, ARRAY_A);

@@ -9,7 +9,7 @@ $result_set = ISS_ClassService::GetClasses();
             <thead>
                 <tr>      
                     <th>Name</th>
-                    <!-- <th>ISSGrade</th>  <th>Subject</th> -->
+                    <!-- <th>Teacher</th> -->
                     <th>Status</th>
                     <th></th>
                 </tr>
@@ -18,7 +18,7 @@ $result_set = ISS_ClassService::GetClasses();
                 <?php foreach ($result_set as $row) { ?>
                 <tr>
                 <td><?php echo $row->Name; ?></td>
-                <!-- <td> <?php echo $row->ISSGrade; ?> </td> <td> <?php echo $row->Subject; ?> </td> -->
+                <!-- <td><?php echo $row->Teacher; ?></td> -->
                 <td> <?php echo $row->Status == 'inactive' ? 'No' : 'Yes'; ?> </td>
                 <td>
                 <?php if (is_student_plugin_active()) { ?>

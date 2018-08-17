@@ -167,6 +167,10 @@ class ISS_PermissionService
     public static function student_list_all_access() {
         return self::class_list_all_access();
     }
+    public static function user_manage_access()
+    {
+        return current_user_can('iss_admin');
+    }
     public static function class_list_all_access()
     {
         return current_user_can('iss_admin') || current_user_can('iss_board') || current_user_can('iss_secretary');

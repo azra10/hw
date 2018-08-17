@@ -8,7 +8,7 @@
  */
 
 
-require_once(plugin_dir_path(__FILE__) . "../iss_common/function.php");
+require_once(plugin_dir_path(__FILE__) . "../iss_common/functions.php");
 
 class ISS_UserPreferencePlugin {
 	private $errorstring;

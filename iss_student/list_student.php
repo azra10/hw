@@ -1,5 +1,5 @@
 <?php 
-$result_set = null;
+$result_set = null; $cid=null;
 if (isset($_GET['cid'])) {
     $cid = iss_sanitize_input($_GET['cid']);
     if (!empty($cid)) {
@@ -27,7 +27,7 @@ iss_show_heading("Grade {$class->ISSGrade}  {$class->Subject}  Students ");
                 <?php if (null != $result_set) {
                     foreach ($result_set as $row) { ?>
                 <tr>
-                <td><?php echo $row->StudentFirstName  . $row->StudentLastName; ?></td>
+                <td><?php echo "{$row->StudentFirstName}  {$row->StudentLastName}"; ?></td>
                 <!-- <td> <?php echo $row->StudentStatus == 'inactive' ? 'No' : 'Yes'; ?> </td>
                 <td> <?php echo $row->ISSGrade; ?> </td>
                 <td> <?php echo $class->Subject; ?> </td>  -->
