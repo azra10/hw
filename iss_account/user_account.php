@@ -8,6 +8,12 @@ if (isset($_POST['_wpnonce-iss-user-account-form-page'])) {
         $result = ISS_StudentService::AddMapping($_POST['studentid'], $_POST['userid']);
        
         if (1 == $result) {
+            $user = new WP_User($uid); 
+            if (null != $user){
+                $user->set_role('iss_student');
+                iss_write_log("student role added to user " . $userid);
+                iss_write_log($user->roles);           
+            }
             echo "<div class=\"container text-primary\"><p><strong>Account Mapped.</strong></p></div>";
             exit;
         } else {

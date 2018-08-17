@@ -10,7 +10,7 @@ $result_set = ISS_ClassService::GetClasses();
                 <tr>      
                     <th>Name</th>
                     <!-- <th>Teacher</th> -->
-                    <th>Status</th>
+                    <th>Active</th>
                     <th></th>
                 </tr>
             </thead>

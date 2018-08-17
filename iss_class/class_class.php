@@ -375,13 +375,13 @@ class ISS_ClassService
         }
         return 0;
     }
-    public static function AddMapping($cid, $uid)
+    public static function AddMapping($cid, $uid, $access)
     {
         try {
             self::debug("AddMapping ClassId:{$cid} UserID:{$uid}");
             global $wpdb;
             $table = ISS_UserClassMap::GetTableName();
-            $result = $wpdb->insert($table, array('UserID' => $uid, 'ClassID' => $cid), array("%d", "%d"));
+            $result = $wpdb->insert($table, array('UserID' => $uid, 'ClassID' => $cid, 'Access'=> $access), array("%d", "%d", "%s"));
             if (1 == $result) {
                 return 1;
             }

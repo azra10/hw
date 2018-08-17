@@ -15,7 +15,7 @@ iss_show_heading("Teacher Accounts");
                     <th>Account</th> 
                     <th>Access</th> 
                     <th>UserID</th> 
-                    <th>Status</th>
+                    <th>Active</th>
                     <th>ISSGrade</th>                  
                     <th></th>
                 </tr>

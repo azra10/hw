@@ -19,6 +19,12 @@ if (null != $class) {
     $result = ISS_ClassService::RemoveMapping($cid, $uid);
 
     if (1 == $result) {
+        $user = new WP_User($uid);
+            if (null != $user){
+                $user->set_role('subscriber');
+                iss_write_log("teacher role added to user " . $userid);
+                iss_write_log($user->roles);           
+            }
         echo "<h4>User removed.</h4>";
         exit;
     }
