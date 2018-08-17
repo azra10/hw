@@ -149,17 +149,6 @@ ALTER TABLE `local_iss_userclassmap`
 ALTER TABLE `local_iss_userclassmap`
   MODIFY `UCMapID` int(11) NOT NULL AUTO_INCREMENT;COMMIT;
   
-DROP TABLE IF EXISTS `local_iss_students`;
-CREATE  VIEW `local_iss_students`  AS  select `s`.`StudentViewID` AS `StudentViewID`,`s`.`RegistrationYear` AS `RegistrationYear`,`s`.`ParentID` AS `ParentID`,`s`.`FatherFirstName` AS `FatherFirstName`,`s`.`FatherLastName` AS `FatherLastName`,`s`.`FatherEmail` AS `FatherEmail`,`s`.`MotherFirstName` AS `MotherFirstName`,`s`.`MotherLastName` AS `MotherLastName`,`s`.`MotherEmail` AS `MotherEmail`,`s`.`StudentID` AS `StudentID`,`s`.`StudentFirstName` AS `StudentFirstName`,`s`.`StudentLastName` AS `StudentLastName`,`s`.`StudentGender` AS `StudentGender`,`s`.`StudentStatus` AS `StudentStatus`,`s`.`StudentEmail` AS `StudentEmail`,`s`.`ISSGrade` AS `ISSGrade`,`c`.`Subject` AS `Subject`,`c`.`ClassID` AS `ClassID` 
-from (`local_iss_student` `s` join `local_iss_class` `c`) where (`s`.`ISSGrade` = `c`.`ISSGrade`) ;
-
-DROP TABLE IF EXISTS `local_iss_class_access`;
-CREATE  VIEW `local_iss_class_access` AS 
-select `c`.`ClassID` AS `ClassID`,`c`.`RegistrationYear` AS `RegistrationYear`,
-`c`.`ISSGrade` AS `ISSGrade`,`c`.`Subject` AS `Subject`,`c`.`Category` AS `Category`,
-`c`.`Status` AS `Status`,`u`.`UserID` AS `UserID` , `u`.`Access` AS `Access`
-from (`local_iss_class` `c` join `local_iss_userclassmap` `u`) where (`c`.`ClassID` = `u`.`ClassID`)
-
 DROP TABLE IF EXISTS `local_assignment_post`;
 CREATE TABLE `local_assignment_post` (
   `ID` bigint(20) UNSIGNED NOT NULL,
@@ -170,18 +159,72 @@ CREATE TABLE `local_assignment_post` (
   `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `local_assignment_post` (`id`, `possible_points`, `due_date`, `iss_category`, `classid`) VALUES
-(128, '10', '0000-00-00', 'g5is', '13'),
-(133, '30', '2018-08-10', 'g5is', '13'),
-(144, '10', '2018-08-30', 'g5is', '13'),
-(183, '10', '2018-08-18', 'g1is', '3');
+DROP view IF EXISTS lh3i_iss_class_accounts;
 
-DROP TABLE IF EXISTS `local_assignment_posts`;
+CREATE   VIEW lh3i_iss_class_accounts  AS  select m.UCMapID AS MapID,m.ClassID AS ClassID,u.ID AS ID,u.user_email AS UserEmail,m.Access AS Access,
+u.user_nicename AS Name 
+from lh3i_iss_userclassmap m , lh3i_users u
+where m.UserID = u.ID;
 
-CREATE  VIEW `local_assignment_posts`  AS  
-select `p`.`ID` AS `ID`,`p`.`post_author` AS `post_author`,`p`.`post_date` AS `post_date`,
-`p`.`post_content` AS `post_content`,`p`.`post_title` AS `post_title`,`p`.`post_status` AS `post_status`,
-`p`.`post_name` AS `post_name`,`p`.`guid` AS `guid`,
-`p`.`post_type` AS `post_type`,`d`.`ClassID` AS `ClassID`,
-`d`.`DueDate` AS `DueDate`,`d`.`Category` AS `Category`,`d`.`PossiblePoints` AS `PossiblePoints` 
-from (`local_assignment_post` `d` join `local_posts` `p`) where (`d`.`id` = `p`.`ID`) ;
+
+
+DROP VIEW  IF EXISTS lh3i_iss_classes;
+
+CREATE   VIEW lh3i_iss_classes  AS  select s.ClassID AS ClassID,s.RegistrationYear AS RegistrationYear,s.ISSGrade AS ISSGrade,s.Subject AS Subject,
+s.Category AS Category,s.Status AS Status,lh3i_iss_class_accounts.ID AS UserID,lh3i_iss_class_accounts.UserEmail AS UserEmail,
+lh3i_iss_class_accounts.Access AS Access,lh3i_iss_class_accounts.Name AS Teacher 
+from lh3i_iss_class s left join lh3i_iss_class_accounts on s.ClassID = lh3i_iss_class_accounts.ClassID;
+
+
+DROP view IF EXISTS lh3i_iss_class_access;
+
+CREATE   VIEW lh3i_iss_class_access  AS  
+select c.ClassID AS ClassID,c.RegistrationYear AS RegistrationYear,c.ISSGrade AS ISSGrade,c.Subject AS Subject,
+c.Category AS Category,c.Status AS Status,u.UserID AS UserID,u.Access AS Access,r.user_email AS UserEmail,r.user_nicename AS Teacher 
+from lh3i_iss_userclassmap  u, lh3i_iss_class c , lh3i_users r   where c.ClassID = u.ClassID and u.UserID = r.ID
+
+union 
+
+select c.ClassID AS ClassID,c.RegistrationYear AS RegistrationYear,c.ISSGrade AS ISSGrade,c.Subject AS Subject,c.Category AS Category,c.Status AS Status,
+m.UserID AS UserID,m.Access AS Access,r.user_email AS UserEmail,r.user_nicename AS Teacher 
+from  lh3i_iss_userstudentmap m , lh3i_iss_student s , lh3i_iss_class c,  lh3i_users r
+where m.StudentID = s.StudentID and s.ISSGrade = c.ISSGrade and s.RegistrationYear = c.RegistrationYear and m.UserID = r.ID;
+
+
+DROP view  IF EXISTS lh3i_iss_class_assignments;
+
+CREATE   VIEW lh3i_iss_class_assignments  AS  select d.ClassID AS ClassID,d.DueDate AS DueDate,d.Category AS Category,d.PossiblePoints AS PossiblePoints,
+c.ISSGrade AS ISSGrade,c.RegistrationYear AS RegistrationYear,c.Subject AS Subject,p.ID AS ID,p.post_author AS post_author,p.post_date AS post_date,
+p.post_content AS post_content,p.post_title AS post_title,p.post_status AS post_status,p.post_name AS post_name,p.guid AS guid,p.post_type AS post_type 
+from lh3i_iss_assignment d , lh3i_posts p,  lh3i_iss_class c where d.ID = p.ID and c.ClassID = d.ClassID ;
+
+-- --------------------------------------------------------
+
+
+DROP view IF EXISTS lh3i_iss_class_students;
+
+CREATE   VIEW lh3i_iss_class_students  AS  select s.StudentViewID AS StudentViewID,c.RegistrationYear AS RegistrationYear,s.ParentID AS ParentID,
+s.FatherFirstName AS FatherFirstName,s.FatherLastName AS FatherLastName,s.FatherEmail AS FatherEmail,s.MotherFirstName AS MotherFirstName,
+s.MotherLastName AS MotherLastName,s.MotherEmail AS MotherEmail,s.StudentID AS StudentID,s.StudentFirstName AS StudentFirstName,
+s.StudentLastName AS StudentLastName,s.StudentGender AS StudentGender,s.StudentStatus AS StudentStatus,s.StudentEmail AS StudentEmail,
+c.ISSGrade AS ISSGrade,c.ClassID AS ClassID,c.Subject AS Subject,c.Category AS Category,c.Status AS Status 
+from (lh3i_iss_class c join lh3i_iss_student s) 
+where c.ISSGrade = s.ISSGrade and c.RegistrationYear = s.RegistrationYear ;
+
+
+
+DROP view IF EXISTS lh3i_iss_student_accounts;
+
+CREATE   VIEW lh3i_iss_student_accounts  AS  select m.USMapID AS MapID,m.StudentID AS StudentID,u.ID AS UserID,u.user_email AS UserEmail,
+m.Access AS Access,u.user_nicename AS Name from (lh3i_iss_userstudentmap m , lh3i_users u) where (m.UserID = u.ID) ;
+
+
+DROP view IF EXISTS lh3i_iss_students;
+
+CREATE   VIEW lh3i_iss_students  AS  select s.StudentViewID AS StudentViewID,s.RegistrationYear AS RegistrationYear,s.ParentID AS ParentID,
+s.FatherFirstName AS FatherFirstName,s.FatherLastName AS FatherLastName,s.FatherEmail AS FatherEmail,s.MotherFirstName AS MotherFirstName,
+s.MotherLastName AS MotherLastName,s.MotherEmail AS MotherEmail,s.StudentID AS StudentID,s.StudentFirstName AS StudentFirstName,
+s.StudentLastName AS StudentLastName,s.StudentGender AS StudentGender,s.StudentStatus AS StudentStatus,s.StudentEmail AS StudentEmail,
+s.ISSGrade AS ISSGrade,lh3i_iss_student_accounts.UserID AS UserID,lh3i_iss_student_accounts.UserEmail AS UserEmail,
+lh3i_iss_student_accounts.Access AS Access,lh3i_iss_student_accounts.Name AS Name 
+from lh3i_iss_student s left join lh3i_iss_student_accounts on  s.StudentID = lh3i_iss_student_accounts.StudentID ;
