@@ -21,7 +21,7 @@ $result_set = ISS_ClassService::GetClasses();
                 <!-- <td><?php echo $row->Teacher; ?></td> -->
                 <td> <?php echo $row->Status == 'inactive' ? 'No' : 'Yes'; ?> </td>
                 <td>
-                <?php if (is_student_plugin_active()) { ?>
+                <?php if (is_student_plugin_active() && ISS_PermissionService::class_student_list_all_access()) { ?>
                     <a href="admin.php?page=issvslist&cid=<?php echo $row->ClassID; ?>">
                         <span style="padding-left: 10px; white-space: nowrap;"> <i class="glyphicon "></i> Students </span>
                     </a>

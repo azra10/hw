@@ -1,9 +1,24 @@
 <?php
-function iss_current_user_can_admin(){ return current_user_can ( 'iss_admin' ); }
-function iss_current_user_on_board(){ return current_user_can ( 'iss_board' ); }
-function iss_current_user_can_editparent(){ return current_user_can ( 'iss_secretary' ); }
-function iss_current_user_can_runtest(){ return current_user_can ( 'iss_test' ); }
-function iss_current_user_can_teach(){ return current_user_can ( 'iss_teacher' ); }
+function iss_current_user_can_admin()
+{
+    return current_user_can('iss_admin');
+}
+function iss_current_user_on_board()
+{
+    return current_user_can('iss_board');
+}
+function iss_current_user_can_editparent()
+{
+    return current_user_can('iss_secretary');
+}
+function iss_current_user_can_runtest()
+{
+    return current_user_can('iss_test');
+}
+function iss_current_user_can_teach()
+{
+    return current_user_can('iss_teacher');
+}
 
 class ISS_UserClassMap
 {
@@ -93,7 +108,7 @@ class ISS_UserStudentMap
     public $Access;
     public $created;
     public $updated;
-   
+
     public static function GetTableName()
     {
         global $wpdb;
@@ -164,7 +179,8 @@ class ISS_PermissionService
     {
         iss_write_log("Debug ISS_PermissionService::" . print_r($message, true));
     }
-    public static function student_list_all_access() {
+    public static function student_list_all_access()
+    {
         return self::class_list_all_access();
     }
     public static function user_manage_access()
@@ -175,13 +191,15 @@ class ISS_PermissionService
     {
         return current_user_can('iss_admin') || current_user_can('iss_board') || current_user_can('iss_secretary');
     }
-    public static function class_student_list_all_access($cid)
+    public static function class_student_list_all_access($cid = null)
     {
         if (current_user_can('iss_admin') || current_user_can('iss_board') || current_user_can('iss_secretary')) {
             return true;
         }
         if (current_user_can('iss_teacher')) {
-
+            if (null == $cid) {
+                return true;
+            }
             $obj = self::LoadByClassID($cid);
             if (null != $obj) {
                 return (($obj->Access === 'read') || ($obj->Access === 'write'));
