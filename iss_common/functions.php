@@ -33,36 +33,29 @@ if (!function_exists('load_custom_iss_style')) {
     function load_custom_iss_style()
     {
         define('ISS_COMMON_URL', plugin_dir_url(__FILE__));
-        wp_register_style('custom_iss_bootstrap_min_css', ISS_COMMON_URL . '/css/bootstrap.min.css');
-        wp_enqueue_style('custom_iss_bootstrap_min_css');
-        wp_register_style('custom_iss_bootstrap_table_min_css', ISS_COMMON_URL . '/css/bootstrap-table.min.css');
-        wp_enqueue_style('custom_iss_bootstrap_table_min_css');
-        // wp_register_style ( 'custom_iss_form_css', ISS_COMMON_URL . '/css/iss_form.css' );
-        // wp_enqueue_style ( 'custom_iss_form_css' );
-        // wp_register_style ( 'custom_iss_datepicker_css', ISS_COMMON_URL . '/css/datepicker.css' );
-        // wp_enqueue_style ( 'custom_iss_datepicker_css' );
+        wp_register_script('custom_iss_form_script', ISS_COMMON_URL . '/js/iss_form.js');
+        wp_enqueue_script('custom_iss_form_script');
 
-        wp_register_script('custom_iss_jquery_script', ISS_COMMON_URL . '/js/jquery-3.3.1.js');
-        wp_enqueue_script('custom_iss_jquery_script');
-        wp_register_script('custom_iss_bootstrap_script', ISS_COMMON_URL . '/js/bootstrap.min.js');
-        wp_enqueue_script('custom_iss_bootstrap_script');
-
-        
-        wp_register_script('custom_iss_datatables_script0', ISS_COMMON_URL . '/js/jquery.dataTables.min.js');
-        wp_enqueue_script('custom_iss_datatables_script0');
-        wp_register_script('custom_iss_bootstrap_script1', ISS_COMMON_URL . '/js/bootstrap-table.min.js');
-        wp_enqueue_script('custom_iss_bootstrap_script1');
-        wp_register_script('custom_iss_datatables_script', ISS_COMMON_URL . '/js/dataTables.bootstrap.min.js');
-        wp_enqueue_script('custom_iss_datatables_script');
-        // wp_register_script ( 'custom_iss_jqueryui_script', ISS_COMMON_URL . '/js/bootstrap-datepicker.js' ); 
-        // wp_enqueue_script ( 'custom_iss_jqueryui_script' );
-        // wp_register_script ( 'custom_iss_export_script', ISS_COMMON_URL . '/js/multiselect.min.js' );
-        // wp_enqueue_script ( 'custom_iss_export_script' );       
-        wp_register_script ( 'custom_iss_form_script', ISS_COMMON_URL . '/js/iss_form.js' );
-        wp_enqueue_script ( 'custom_iss_form_script' );
+        wp_register_script('jquery1', '//code.jquery.com/jquery-3.3.1.js', array('jquery'), true);
+        wp_enqueue_script('jquery1'); // enqueue datepicker from WP
+        wp_register_script('datatables', '//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js', array('jquery'), true);
+        wp_enqueue_script('datatables');
        
+       wp_register_script('datatables_bootstrap', '//cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js', array('jquery'), true);
+       wp_enqueue_script('datatables_bootstrap');
+
+       wp_register_style('bootstrap_style', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css');
+       wp_enqueue_style('bootstrap_style');
+     
+       wp_register_style('datatables_style', '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css');
+       wp_enqueue_style('datatables_style');
+
+       wp_register_style('fontawesome_style', '//use.fontawesome.com/releases/v5.2.0/css/all.css');
+       wp_enqueue_style('fontawesome_style');
+
     }
 }
+
 function iss_datepicker_enqueue()
 {
     wp_enqueue_script('jquery-ui-datepicker'); // enqueue datepicker from WP
@@ -91,13 +84,13 @@ if (!function_exists('iss_show_heading')) {
 if (!function_exists('is_student_plugin_active')) {
     function is_student_plugin_active()
     {
-        return (is_plugin_active( "iss_student/iss_student.php" ));
+        return (is_plugin_active("iss_student/iss_student.php"));
     }
 }
 if (!function_exists('is_assignment_plugin_active')) {
     function is_assignment_plugin_active()
     {
-        return (is_plugin_active( "iss_assignment/iss_assignment.php" ));
+        return (is_plugin_active("iss_assignment/iss_assignment.php"));
     }
 }
 

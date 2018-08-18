@@ -23,13 +23,13 @@ $result_set = ISS_ClassService::GetClasses();
                 <td>
                 <?php if (is_student_plugin_active() && ISS_PermissionService::class_student_list_all_access()) { ?>
                     <a href="admin.php?page=issvslist&cid=<?php echo $row->ClassID; ?>">
-                        <span style="padding-left: 10px; white-space: nowrap;"> <i class="glyphicon "></i> Students </span>
+                        <span style="padding-left: 10px; white-space: nowrap;"> <i class="fas fa-users "></i> Students </span>
                     </a>
                 <?php 
             } ?> 
                 <?php if (is_assignment_plugin_active()) { ?>              
                     <a href="admin.php?page=issvalist&cid=<?php echo $row->ClassID; ?>">
-                        <span style="padding-left: 10px; white-space: nowrap;"> <i class="glyphicon "></i> Assignments </span>
+                        <span style="padding-left: 10px; white-space: nowrap;"> <i class="fas fa-pen "></i> Assignments </span>
                     </a>                   
                 <?php 
             } ?>
