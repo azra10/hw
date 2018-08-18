@@ -4,7 +4,13 @@ if (isset($_GET['cid'])) {
     $cid = iss_sanitize_input($_GET['cid']);
     if (!empty($cid)) {
         $result_set = ISS_AssignmentService::GetAssignments($cid);
+    } else {
+        iss_show_heading( "Sorry cannot find the class/assignments");
+        exit;
     }
+} else {
+    iss_show_heading( "Sorry Class / Assignments  not found!");
+    exit;
 }
 
 $class = ISS_ClassService::LoadByID($cid);
@@ -26,7 +32,9 @@ iss_show_heading("Grade {$class->ISSGrade}  {$class->Subject}  Assignments ",
                 <?php foreach ($result_set as $row) { ?>
                 <tr>
                 <td><?php echo $row->Name; ?>
-                <a href="admin.php?page=issvaview&postid=<?php echo $row->PostID; ?>">
+
+                <a target="_blank" href="<?php echo get_permalink($row->PostID); ?>">
+                <!-- <a href="admin.php?page=issvaview&postid=<?php echo $row->PostID; ?>"> -->
                         <span style="padding-left: 10px; white-space: nowrap;"> <i class="glyphicon "></i> View </span>
                     </a>
                
@@ -35,6 +43,14 @@ iss_show_heading("Grade {$class->ISSGrade}  {$class->Subject}  Assignments ",
                         <span style="padding-left: 10px; white-space: nowrap;"> <i class="glyphicon "></i> Edit </span>
                     </a>                 
                 <?php } ?>
+
+                 <?php if (ISS_PermissionService::class_assignment_write_access($cid)) { ?>              
+                    <a href="admin.php?page=issvadelete&postid=<?php echo "{$row->PostID}&cid={$cid}"; ?>"
+                    onclick="return confirm('Are you sure you want to delete this assignment?';">
+                        <span style="padding-left: 10px; white-space: nowrap;"> <i class="glyphicon "></i> Delete </span>
+                    </a>               
+                <?php } ?>
+
                 </td>
                 <td> <?php echo $row->DueDate; ?> </td>
                 <td> <?php echo $row->PossiblePoints; ?> </td> 

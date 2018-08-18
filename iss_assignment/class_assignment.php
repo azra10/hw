@@ -11,7 +11,7 @@ class ISS_Assignment
     public $Content;
     public $created;
     public $updated;
-		
+
     public static function GetViewName()
     {
         global $wpdb;
@@ -24,7 +24,7 @@ class ISS_Assignment
     }
     public static function GetTableFields()
     {
-        return array("ClassID", "Category", "Category","ID", "DueDate", "PossiblePoints");
+        return array("ClassID", "Category", "Category", "ID", "DueDate", "PossiblePoints");
     }
     public static function Create(array $row)
     {
@@ -53,14 +53,14 @@ class ISS_Assignment
             if (isset($row['Category'])) {
                 $this->Category = $row['Category'];
             }
-            
+
             if (isset($row['post_name'])) {
                 $this->Name = $row['post_name'];
-            }  
+            }
             if (isset($row['post_content'])) {
                 $this->Content = $row['post_content'];
-            }         
-             
+            }
+
             if (isset($row['created'])) {
                 $this->created = $row['created'];
             }
@@ -127,38 +127,56 @@ class ISS_AssignmentService
     public static function GetAssignments($cid)
     {
         self::debug("GetAssignments");
-            $list = array();
+        $list = array();
 
+        global $wpdb;
+        $table = ISS_Assignment::GetViewName();
+        $userid = get_current_user_id();
+        $query = "SELECT *  FROM {$table} WHERE   classid = $cid  order by  DueDate";
+
+        $result_set = $wpdb->get_results($query, ARRAY_A);
+        foreach ($result_set as $obj) {
+            try {
+                $list[] = ISS_Assignment::Create($obj);
+            } catch (Throwable $ex) {
+                self::error($ex->getMessage());
+            }
+        }
+
+        return $list;
+    }
+    public static function DeleteByPostID($postid)
+    {
+        try {
+            self::debug("DeleteByID {$postid}");
             global $wpdb;
-            $table = ISS_Assignment::GetViewName();
-            $userid = get_current_user_id();
-            $query = "SELECT *  FROM {$table} WHERE   classid = $cid  order by  DueDate";
-           
-            $result_set = $wpdb->get_results($query, ARRAY_A);
-            foreach ($result_set as $obj) {
-                try {
-                    $list[] = ISS_Assignment::Create($obj);
-                } catch (Throwable $ex) {
-                    self::error($ex->getMessage());
+            $table = ISS_Assignment::GetTableName();
+            $result = $wpdb->delete($table, array('ID' => $postid), array("%d"));
+            if (1 == $result) {
+                $result1 = wp_delete_post($postid, true);
+                if (false !== $result1) {
+                    return 1;
                 }
             }
-        
-        return $list;
+        } catch (Throwable $ex) {
+            self::error($ex->getMessage());
+        }
+        return 0;
     }
     public static function Add($postid, $classid, $category, $possiblepoints, $duedate)
     {
         try {
             if (null == $postid) return;
             self::debug("Add {$postid}");
-           $dsarray = array();
+            $dsarray = array();
             $dsarray['ID'] = $postid;
             $dsarray['ClassID'] = $classid;
             $dsarray['Category'] = $category;
             $dsarray['PossiblePoints'] = $possiblepoints;
             $dsarray['DueDate'] = $duedate;
             $dsarray['created'] = current_time('mysql'); // date('d-m-Y H:i:s');
-            
-            $typearray = array('%d', '%d', '%s','%s', '%s', '%s');          
+
+            $typearray = array('%d', '%d', '%s', '%s', '%s', '%s');
 
             self::debug($dsarray);
 
@@ -168,7 +186,7 @@ class ISS_AssignmentService
             if ($result == 1) {
                 return 1;
             }
-            
+
         } catch (Throwable $ex) {
             self::error($ex->getMessage());
         }
@@ -184,7 +202,7 @@ class ISS_AssignmentService
             $dsarray = array();
             $dsarray["PossiblePoints"] = $possiblepoints;
             $dsarray["DueDate"] = $duedate;
-            $typearray = array( '%s', '%s');
+            $typearray = array('%s', '%s');
             $result = $wpdb->update($table, $dsarray, array(
                 'ID' => $postid
             ), $typearray, array(
@@ -193,7 +211,7 @@ class ISS_AssignmentService
             if (1 === $result) {
                 return 1;
             }
-            
+
         } catch (Throwable $ex) {
             self::error($ex->getMessage());
         }

@@ -206,11 +206,14 @@ class ISS_AdminRolePlugin
        // Admin Role is also board member & secretary
         forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array ('issadminrole','iss_board') );
         forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array ('issadminrole','iss_secretary') );
-
+        forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array ('issadminrole','iss_teacher') );
+ 
         // wordpress admnistrator has unittest, admin, secretary & board  capabilities
         forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array ('administrator','iss_admin') );
         forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array ('administrator','iss_secretary') );
         forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array ('administrator','iss_board') );
+        forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array ('administrator','iss_admin') );
+        forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array ('administrator','iss_teacher') );
         forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array ('administrator','iss_test') );
     }
 }

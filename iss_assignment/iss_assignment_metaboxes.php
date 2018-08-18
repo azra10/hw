@@ -27,7 +27,7 @@ class ISS_Assignment_Post_Type_Metaboxes
     {
         $classid = 1;
         $category = 'g1is';
-        $duedate = current_time('mysql');
+        $duedate = date("Y-m-d");
         $possiblepoints = 10;
         $grading = ISS_AssignmentService::LoadByID($post->ID);
         if (null != $grading) {
@@ -85,7 +85,7 @@ class ISS_Assignment_Post_Type_Metaboxes
         <script>
         jQuery(document).ready(function($){
             $('.my-custom-datepicker-field').datepicker({
-                dateFormat: 'yyyy-mm-dd', //maybe you want something like this
+                dateFormat: 'yy-mm-dd', //maybe you want something like this
                 showButtonPanel: true
             });
         });

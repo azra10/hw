@@ -18,15 +18,19 @@ function iss_assignment_list_page()
 }
 function iss_assignment_view_page()
 {
-    include(plugin_dir_path(__FILE__) . "/view_assignment.php");
+    include(plugin_dir_path(__FILE__) . "/assignment_view.php");
 }
-
+function iss_assignment_delete_page()
+{
+    include(plugin_dir_path(__FILE__) . "/assignment_delete.php");
+}
 function iss_assignment_register_menu_page()
 {
     //add_submenu_page( string $parent_slug, string $page_title, string $menu_title, string $capability, string $menu_slug, callable $function = '' )
 
     $my_pages[] = add_submenu_page(null, 'Assignments', 'Assignments', 'read', 'issvalist', 'iss_assignment_list_page');
     $my_pages[] = add_submenu_page(null, 'View Assignment', 'View Assignments', 'read', 'issvaview', 'iss_assignment_view_page');
+    $my_pages[] = add_submenu_page(null, 'Delete Assignment', 'Delete Assignments', 'read', 'issvadelete', 'iss_assignment_delete_page');
  
     foreach ($my_pages as $my_page) {
         add_action('load-' . $my_page, 'iss_load_admin_custom_css');
@@ -52,7 +56,7 @@ function iss_assignment_cpt()
         'description' => 'Assignment / Test / Attendance / Participation',
         'public' => true,
         'menu_position' => 4,
-        'public' => false,
+       // 'public' => false,
         'show_ui' => true,
         'map_meta_cap' => true,
         'supports' => array('title', 'editor')

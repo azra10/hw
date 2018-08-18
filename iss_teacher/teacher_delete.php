@@ -1,4 +1,5 @@
 <?php 
+
 $class = null;
 $cid = null;
 $uid = null;
@@ -13,23 +14,29 @@ if (!empty($uid)) {
     $class = ISS_ClassService::LoadByUserID($cid, $uid);
 }
 
-if (null != $class) {
-    iss_show_heading("Class: {$class->Name} {$class->Teacher} - Email: {$class->UserEmail}");
 
+
+if (null != $class) {
+    iss_show_heading("Remove Teacher Map to Class");
+    $backurl = admin_url('users.php?page=issvtlist');
+    echo "<a  href='{$backurl}'>Back to Teachers List</a>";
+    echo "<br/><br/>  Teacher: {$class->Teacher} <br/> Email: {$class->UserEmail} <br/> Class {$class->Name}";
+ 
     $result = ISS_ClassService::RemoveMapping($cid, $uid);
 
     if (1 == $result) {
-        $user = new WP_User($uid);
-            if (null != $user){
-                $user->set_role('subscriber');
-                iss_write_log("teacher role added to user " . $userid);
-                iss_write_log($user->roles);           
-            }
-        echo "<h4>User removed.</h4>";
+        $userobj = new WP_User($uid);
+        if (null != $userobj) {
+            $userobj->set_role('subscriber');
+            iss_write_log("teacher role added to user " . $uid);
+            iss_write_log($userobj->roles);
+        }
+
+        echo "<h4>Mapping Removed.</h4>";
         exit;
     }
 }
-echo "<h4>Error removing user.</h4>";
+
+echo "<h4>Error Removing Mapping.</h4>";
+
 ?>
-
-

@@ -1,24 +1,30 @@
 <?php 
+$backurl = admin_url('users.php?page=issvactlist');
 
 if (isset($_POST['_wpnonce-iss-user-account-form-page'])) {
-    check_admin_referer('iss-user-account-form-page', '_wpnonce-iss-user-account-form-page');
-   
-    if (isset($_POST['studentid']) && isset($_POST['userid'])) {
+    iss_show_heading("Map User to Student ");
 
-        $result = ISS_StudentService::AddMapping($_POST['studentid'], $_POST['userid']);
-       
+    check_admin_referer('iss-user-account-form-page', '_wpnonce-iss-user-account-form-page');
+
+    if (isset($_POST['studentid']) && isset($_POST['userid'])) {
+        $userid = $_POST['userid'];
+        $studentid = $_POST['studentid'];
+        $result = ISS_StudentService::AddMapping($studentid, $userid);
+
         if (1 == $result) {
-            $user = new WP_User($uid); 
-            if (null != $user){
-                $user->set_role('iss_student');
-                iss_write_log("student role added to user " . $userid);
-                iss_write_log($user->roles);           
+            $user = new WP_User($userid);
+            if (null != $user) {
+                $user->set_role('issstudentrole');
+                iss_write_log($user);
+                iss_write_log("student role added to user ");
+                iss_write_log($user->roles);
             }
-            echo "<div class=\"container text-primary\"><p><strong>Account Mapped.</strong></p></div>";
+            echo "<a  href='{$backurl}'>Back to Student List</a>";
+            echo "<h4>Account Mapped</h4>";
             exit;
         } else {
-            echo "<div class=\"container text-danger\"><p><strong>Error Mapping Account.</strong></p></div>";
-            echo $result->get_error_message();
+            echo "<a  href='{$backurl}'>Back to Student List</a>";
+            echo "<h4>Error Mapping Account.</h4>";
             exit;
         }
     }
@@ -37,19 +43,19 @@ if (!empty($sid)) {
     $student = ISS_StudentService::LoadByID($sid);
 }
 if (!empty($uid)) {
-    $student = ISS_StudentService::LoadByUserID($sid,$uid);
+    $student = ISS_StudentService::LoadByUserID($sid, $uid);
     if (null == $student) {
-        echo 'Error mapping user';
+        echo '<h4>Error Mapping User</h4>';
         exit;
     }
     if ($student->StudentID == $sid) {
-        echo "<div class=\"container \">User already mapped</div>";
+        echo "<h4>User already mapped</h4>";
         exit;
     }
 }
 
-iss_show_heading("Student: Account {$student->StudentFirstName} {$student->StudentLastName} - Grade: {$student->ISSGrade} ");
-
+iss_show_heading("Map User to Student  {$student->StudentFirstName} {$student->StudentLastName} - Grade: {$student->ISSGrade} ");
+echo "<a  href='{$backurl}'>Back to Student List</a>";
 ?> 
 
 <div class="container">

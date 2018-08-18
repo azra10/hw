@@ -1,24 +1,32 @@
 <?php 
+$backurl = admin_url('users.php?page=issvtlist');
 
 if (isset($_POST['_wpnonce-iss-user-account-form-page'])) {
-    check_admin_referer('iss-user-account-form-page', '_wpnonce-iss-user-account-form-page');
-   
-    if (isset($_POST['classid']) && isset($_POST['userid'])) {
+    iss_show_heading("Map Teacher to Class ");
 
-        $result = ISS_ClassService::AddMapping($_POST['classid'], $_POST['userid'],$_POST['access']);
-       
+    check_admin_referer('iss-user-account-form-page', '_wpnonce-iss-user-account-form-page');
+
+    if (isset($_POST['classid']) && isset($_POST['userid'])) {
+        $userid = $_POST['userid'];
+        $classid = $_POST['classid'];
+        $access = $_POST['access'];
+        $result = ISS_ClassService::AddMapping($classid, $userid, $access);
+
         if (1 == $result) {
-            $user = new WP_User($uid);
-            if (null != $user){
+            $user = new WP_User($userid);
+            if (null != $user) {
                 $user->set_role('issteacherrole');
-                iss_write_log("teacher role added to user " . $userid);
-                iss_write_log($user->roles);           
+                iss_write_log($user);
+                iss_write_log("teacher role added to user ");
+                iss_write_log($user->roles);
             }
-            echo "<div class=\"container text-primary\"><p><strong>Account Mapped.</strong></p></div>";
+            echo "<a  href='{$backurl}'>Back to Teachers List</a>";
+            echo "<h4>Account Mapped</h4>";
             exit;
         } else {
-            echo "<div class=\"container text-danger\"><p><strong>Error Mapping Account.</strong></p></div>";
-             exit;
+            echo "<a  href='{$backurl}'>Back to Teachers List</a>";
+            echo "<h4>Error Mapping Account.</h4>";
+            exit;
         }
     }
 }
@@ -38,16 +46,17 @@ if (!empty($cid)) {
 if (!empty($uid)) {
     $class = ISS_ClassService::LoadByUserID($cid, $uid);
     if (null == $class) {
-        echo 'Error mapping user';
+        echo '<h4>Error Mapping User</h4>';
         exit;
     }
     if ($class->ClassID == $cid) {
-        echo "<div class=\"container \">User already mapped</div>";
+        echo "<h4>User Already Mapped</h4>";
         exit;
     }
 }
 
-iss_show_heading("Class: {$class->Name} {$class->Teacher}  ");
+iss_show_heading("Map Teacher to Class {$class->Name} ");
+echo "<a  href='{$backurl}'>Back to Teachers List</a>";
 
 ?> 
 
