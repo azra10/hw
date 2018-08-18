@@ -64,13 +64,16 @@ echo "<a  href='{$backurl}'>Back to Teachers List</a>";
 <form class="form-horizontal" method="post" action="" enctype="multipart/form-data">
     <?php wp_nonce_field('iss-user-account-form-page', '_wpnonce-iss-user-account-form-page') ?>
     <div class="row">
-        Class ID: <input type="text" id="classid" name="classid" required value="<?php echo $class->ClassID; ?>" />          
-        User ID: <input type="text" id="userid" name="userid" reuired value="<?php echo $class->UserID; ?>" />   
-        Access: <select  id="access" name="access" >
-        <option>read</option>
+        <div class="col-md-4">
+        <label>Class ID:</label> <input type="text" id="classid" name="classid" class="form-control" required value="<?php echo $class->ClassID; ?>" />        
+        <label>User ID: </label><input type="text" id="userid" name="userid"  class="form-control" reuired value="<?php echo $class->UserID; ?>" />   
+        <label>Access:</label> <select  id="access" name="access" class="form-control"  >   
         <option>write</opion>
-        </select>
-        <button type="submit" name="submit" value="user" class="btn btn-primary ">Connect</button>		     
+        <option>read</option>        
+        </select>  
+        <br/>
+        <button type="submit" name="submit" value="user" class="btn btn-primary  class="form-control" ">Connect</button>
+        </div>		     
     </div> 
 </form>
 </div>

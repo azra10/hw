@@ -52,6 +52,11 @@ iss_show_heading("Teacher Accounts");
 </div>
 <script>
      $(document).ready(function(){
-	    $('#iss_student_table').DataTable({ "lengthChange": false,"pageLength": 25});
+	    $('#iss_student_table').DataTable(
+            { 
+                "lengthChange": true,
+                "pageLength": 25 ,
+                "order": [[ 4, "desc" ], [1, "asc"]]
+            });
     });
 </script>
