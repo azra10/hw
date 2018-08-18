@@ -13,7 +13,7 @@ require_once(plugin_dir_path(__FILE__) . "../iss_class/class_class.php");
 
 function iss_teacher_account_list_page()
 {
-    include(plugin_dir_path(__FILE__) . "/list_account.php");
+    include(plugin_dir_path(__FILE__) . "/list_teacher.php");
 }    
 function iss_teacher_user_page()
 {
