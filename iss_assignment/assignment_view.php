@@ -35,7 +35,7 @@ if (null != $post) {
     var pfHideImages = 0;
     var pfImageDisplayStyle = 'right';
     var pfDisablePDF = 0;
-    var pfDisableEmail = 0;
+    var pfDisableEmail = 1;
     var pfDisablePrint = 0;
     var pfCustomCSS = '';
     var pfBtVersion='2';(function(){
@@ -46,7 +46,7 @@ if (null != $post) {
         <a href="https://www.printfriendly.com" style="color:#6D9F00;text-decoration:none;" class="printfriendly" 
         onclick="window.print();return false;" 
         title="Printer Friendly and PDF"><img style="border:none;-webkit-box-shadow:none;box-shadow:none;" 
-        src="//cdn.printfriendly.com/buttons/printfriendly-pdf-email-button-md.png" alt="Print Friendly and PDF"/></a>
+        src="//cdn.printfriendly.com/buttons/printfriendly-pdf-button-nobg-md.png" alt="Print Friendly and PDF"/></a>
     
         <?php
         echo "</div></div>";
