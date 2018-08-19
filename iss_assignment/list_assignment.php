@@ -33,8 +33,8 @@ iss_show_heading("Grade {$class->ISSGrade}  {$class->Subject}  Assignments ",
                 <tr>
                 <td><?php echo $row->Name; ?>
 
-                <a target="_blank" href="<?php echo get_permalink($row->PostID); ?>">
-                <!-- <a href="admin.php?page=issvaview&postid=<?php echo $row->PostID; ?>"> -->
+                <!-- <a target="_blank" href="<?php echo get_permalink($row->PostID); ?>"> -->
+                <a href="admin.php?page=issvaview&post=<?php echo "{$row->PostID}&cid={$cid}"; ?>" > 
                         <span style="padding-left: 10px; white-space: nowrap;"> <i class="fas fa-eye "></i> View </span>
                     </a>
                
@@ -45,7 +45,7 @@ iss_show_heading("Grade {$class->ISSGrade}  {$class->Subject}  Assignments ",
                 <?php } ?>
 
                  <?php if (ISS_PermissionService::class_assignment_write_access($cid)) { ?>              
-                    <a href="admin.php?page=issvadelete&postid=<?php echo "{$row->PostID}&cid={$cid}"; ?>"
+                    <a href="admin.php?page=issvadelete&post=<?php echo "{$row->PostID}&cid={$cid}"; ?>"
                     onclick="return confirm('Are you sure you want to delete this assignment?';">
                         <span style="padding-left: 10px; white-space: nowrap;"> <i class="fas fa-trash-alt "></i> Delete </span>
                     </a>               

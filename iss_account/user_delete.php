@@ -1,4 +1,6 @@
 <?php 
+ $backurl = admin_url('users.php?page=issvactlist');
+ iss_show_heading_with_backurl("Remove Student User Map", $backurl);
 
 $student = null;
 $sid = null;
@@ -15,9 +17,6 @@ if (!empty($uid)) {
 }
 
 if (null != $student) {
-    iss_show_heading("Remove Student User Map");
-    $backurl = admin_url('users.php?page=issvactlist');
-    echo "<a  href='{$backurl}'>Back to Student List</a>";
     echo "<br/><br/>Student: {$student->StudentFirstName} {$student->StudentLastName} <br/> Grade: {$student->ISSGrade} <br/> Email: {$student->UserEmail}";
    
     $result = ISS_StudentService::RemoveMapping($sid,$uid);

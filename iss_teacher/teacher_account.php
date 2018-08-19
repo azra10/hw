@@ -2,7 +2,7 @@
 $backurl = admin_url('users.php?page=issvtlist');
 
 if (isset($_POST['_wpnonce-iss-user-account-form-page'])) {
-    iss_show_heading("Map Teacher to Class ");
+    iss_show_heading_with_backurl("Map Teacher to Class ", $backurl);
 
     check_admin_referer('iss-user-account-form-page', '_wpnonce-iss-user-account-form-page');
 
@@ -20,11 +20,9 @@ if (isset($_POST['_wpnonce-iss-user-account-form-page'])) {
                 iss_write_log("teacher role added to user ");
                 iss_write_log($user->roles);
             }
-            echo "<a  href='{$backurl}'>Back to Teachers List</a>";
             echo "<h4>Account Mapped</h4>";
             exit;
         } else {
-            echo "<a  href='{$backurl}'>Back to Teachers List</a>";
             echo "<h4>Error Mapping Account.</h4>";
             exit;
         }
@@ -55,8 +53,7 @@ if (!empty($uid)) {
     }
 }
 
-iss_show_heading("Map Teacher to Class {$class->Name} ");
-echo "<a  href='{$backurl}'>Back to Teachers List</a>";
+iss_show_heading_with_backurl("Map Teacher to Class {$class->Name} ",$backurl);
 
 ?> 
 
@@ -72,7 +69,7 @@ echo "<a  href='{$backurl}'>Back to Teachers List</a>";
         <option>read</option>        
         </select>  
         <br/>
-        <button type="submit" name="submit" value="user" class="btn btn-primary  class="form-control" ">Connect</button>
+        <button type="submit" name="submit" value="user" class="btn btn-primary form-control" ">Connect</button>
         </div>		     
     </div> 
 </form>

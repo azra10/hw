@@ -81,6 +81,17 @@ if (!function_exists('iss_show_heading')) {
         }
     }
 }
+if (!function_exists('iss_show_heading_with_backurl')) {
+    function iss_show_heading_with_backurl($message, $url = null)
+    {
+         if (!empty($message) && !empty($url)) {
+            echo "<h3><a href=\"{$url}\" class=\"btn btn-primary\"> Back</a> {$message} </h3>";
+        } elseif (!empty($message)) {
+            echo "<h3>{$message} </h3>";
+        }
+    }
+}
+
 if (!function_exists('is_student_plugin_active')) {
     function is_student_plugin_active()
     {

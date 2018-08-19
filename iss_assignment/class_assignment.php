@@ -44,7 +44,13 @@ class ISS_Assignment
             if (isset($row['ClassID'])) {
                 $this->ClassID = $row['ClassID'];
             }
-            if (isset($row['PossiblePoints'])) {
+            if (isset($row['ISSGrade'])) {
+                $this->ISSGrade = $row['ISSGrade'];
+            }
+            if (isset($row['Subject'])) {
+                $this->Subject = $row['Subject'];
+            }
+           if (isset($row['PossiblePoints'])) {
                 $this->PossiblePoints = $row['PossiblePoints'];
             }
             if (isset($row['DueDate'])) {

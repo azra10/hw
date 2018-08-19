@@ -2,7 +2,7 @@
 $backurl = admin_url('users.php?page=issvactlist');
 
 if (isset($_POST['_wpnonce-iss-user-account-form-page'])) {
-    iss_show_heading("Map User to Student ");
+    iss_show_heading_with_backurl("Map User to Student ",$backurl);
 
     check_admin_referer('iss-user-account-form-page', '_wpnonce-iss-user-account-form-page');
 
@@ -19,11 +19,9 @@ if (isset($_POST['_wpnonce-iss-user-account-form-page'])) {
                 iss_write_log("student role added to user ");
                 iss_write_log($user->roles);
             }
-            echo "<a  href='{$backurl}'>Back to Student List</a>";
-            echo "<h4>Account Mapped</h4>";
+             echo "<h4>Account Mapped</h4>";
             exit;
         } else {
-            echo "<a  href='{$backurl}'>Back to Student List</a>";
             echo "<h4>Error Mapping Account.</h4>";
             exit;
         }
@@ -54,17 +52,18 @@ if (!empty($uid)) {
     }
 }
 
-iss_show_heading("Map User to Student  {$student->StudentFirstName} {$student->StudentLastName} - Grade: {$student->ISSGrade} ");
-echo "<a  href='{$backurl}'>Back to Student List</a>";
+iss_show_heading_with_backurl("Map User to Student  {$student->StudentFirstName} {$student->StudentLastName} - Grade: {$student->ISSGrade} ",$backurl);
 ?> 
 
 <div class="container">
 <form class="form-horizontal" method="post" action="" enctype="multipart/form-data">
     <?php wp_nonce_field('iss-user-account-form-page', '_wpnonce-iss-user-account-form-page') ?>
     <div class="row">
-        Student ID: <input type="text" id="studentid" name="studentid" required value="<?php echo $student->StudentID; ?>" />          
-        User ID: <input type="text" id="userid" name="userid" reuired value="<?php echo $student->UserID; ?>" />          
-        <button type="submit" name="submit" value="user" class="btn btn-primary ">Connect</button>		     
+    <div class="col-md-4">
+        <label>Student ID:</label> <input type="text" id="studentid" name="studentid" class="form-control" required value="<?php echo $student->StudentID; ?>" />          
+        <label>User ID:</label> <input type="text" id="userid" name="userid" class="form-control" reuired value="<?php echo $student->UserID; ?>" />          
+        <br/>
+        <button type="submit" name="submit" value="user" class="btn btn-primary form-control" >Connect</button>		     
     </div> 
 </form>
 </div>
