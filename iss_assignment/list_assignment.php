@@ -23,7 +23,7 @@ iss_show_heading("Grade {$class->ISSGrade}  {$class->Subject}  Assignments ",
         <table class="table table-striped table-responsive table-condensed" id="iss_assignment_table">
             <thead>
                 <tr>      
-                     <th>Name</th>
+                     <th>Title</th>
                      <th>Due Date</th>
                     <th>Possible Points</th> 
                 </tr>
@@ -31,7 +31,7 @@ iss_show_heading("Grade {$class->ISSGrade}  {$class->Subject}  Assignments ",
             <tbody>
                 <?php foreach ($result_set as $row) { ?>
                 <tr>
-                <td><?php echo $row->Name; ?>
+                <td><?php echo $row->Title; ?>
 
                 <!-- <a target="_blank" href="<?php echo get_permalink($row->PostID); ?>"> -->
                 <a href="admin.php?page=issvaview&post=<?php echo "{$row->PostID}&cid={$cid}"; ?>" > 

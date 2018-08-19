@@ -19,7 +19,7 @@ if (isset($_GET['post'])) {
     }
 }
 if (null != $post) {
-    echo "<h3> {$post->Name} </h3>";
+    echo "<h3> {$post->Title} </h3>";
 
 
     echo "<div class='row'>";
@@ -56,11 +56,11 @@ if (null != $post) {
     <div class='col-md-12'>
     <?php
 
-    if (strncmp($post->Name, 'participation', strlen('participation')) === 0) { ?>
+    if (strncmp($post->Title, 'Participation', strlen('Participation')) === 0) { ?>
             <h3>Class Presence and Participation</h3> 
             <span>Class presence and participation points are given to encourage active class participation and discussion.</span>
         <?php 
-    } else if (strncmp($post->Name, 'attendance', strlen('attendance')) === 0) {
+    } else if (strncmp($post->Title, 'Attendance', strlen('Attendance')) === 0) {
         ?>
             <h3>Islamic School of Silicon Valley Guidelines and Regulations</h3>
             <h4>F. Attendance</h4>
@@ -76,13 +76,14 @@ if (null != $post) {
             <span style='text-decoration: underline;'>3 Consecutive Un-Excused Absences or a large number of non-contiguous absences during the school year, could result in the student’s Suspension or Expulsion from the school.</span>           
             <?php
 
-        } else {
+    } else {
             $shortcodetext = '[post-content id=' . $postid . ']';
             echo do_shortcode($shortcodetext);
-        }
-        echo "</div></div>";
     }
-    ?> 
+}
+?> 
+    </div>
+   </div>
 </div>
 
 

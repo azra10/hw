@@ -7,7 +7,7 @@ class ISS_Assignment
     public $DueDate;
     public $Category;
     public $ISSGrade;
-    public $Name;
+    public $Title;
     public $Content;
     public $created;
     public $updated;
@@ -59,7 +59,9 @@ class ISS_Assignment
             if (isset($row['Category'])) {
                 $this->Category = $row['Category'];
             }
-
+            if (isset($row['post_title'])) {
+                $this->Title = $row['post_title'];
+            }
             if (isset($row['post_name'])) {
                 $this->Name = $row['post_name'];
             }
