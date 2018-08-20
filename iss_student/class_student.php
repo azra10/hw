@@ -10,7 +10,7 @@ class ISS_Student
     public $StudentBirthDate;
     public $StudentGender;
     public $created;
-    public $updated;   
+    public $updated;
     public $RegularSchoolGrade;
     public $ISSGrade;
     public $RegistrationYear;
@@ -35,7 +35,7 @@ class ISS_Student
         global $wpdb;
         return $wpdb->prefix . "iss_students";
     }
-     public static function GetTableName()
+    public static function GetTableName()
     {
         global $wpdb;
         return $wpdb->prefix . "iss_student";
@@ -94,7 +94,7 @@ class ISS_Student
             if (isset($row['Access'])) {
                 $this->Access = $row['Access'];
             }
-             if (isset($row['ISSGrade'])) {
+            if (isset($row['ISSGrade'])) {
                 $this->ISSGrade = $row['ISSGrade'];
             }
             if (isset($row['RegularSchoolGrade'])) {
@@ -183,12 +183,13 @@ class ISS_StudentService
         }
         return null;
     }
-    public static function RemoveMapping($sid, $uid){
+    public static function RemoveMapping($sid, $uid)
+    {
         try {
             self::debug("RemoveMapping {$sid} UserID:{$uid}");
             global $wpdb;
             $table = ISS_UserStudentMap::GetTableName();
-            $result = $wpdb->delete($table, array('UserID' => $uid, 'StudentID'=> $sid), array("%d", "%d"));
+            $result = $wpdb->delete($table, array('UserID' => $uid, 'StudentID' => $sid), array("%d", "%d"));
             if (1 == $result) {
                 return 1;
             }
@@ -197,12 +198,13 @@ class ISS_StudentService
         }
         return 0;
     }
-    public static function AddMapping($sid, $uid){
+    public static function AddMapping($sid, $uid)
+    {
         try {
             self::debug("AddMapping StudentId:{$sid} UserID:{$uid}");
             global $wpdb;
             $table = ISS_UserStudentMap::GetTableName();
-            $result = $wpdb->insert($table, array('UserID' => $uid, 'StudentID'=>$sid), array("%d", "%d"));
+            $result = $wpdb->insert($table, array('UserID' => $uid, 'StudentID' => $sid), array("%d", "%d"));
             if (1 == $result) {
                 return 1;
             }
@@ -226,8 +228,7 @@ class ISS_StudentService
         if (ISS_PermissionService::class_student_list_all_access($cid)) {
             $table = ISS_Student::GetClassStudentViewName();
             $query = "SELECT *  FROM {$table} WHERE  StudentStatus = 'active' and ClassID = $cid order by  StudentFirstName";
-        } 
-        else {
+        } else {
             $table = ISS_Student::GetClassStudentViewName();
             $table1 = ISS_UserStudentMap::GetTableName();
             $query = "SELECT *  FROM {$table} WHERE  StudentStatus = 'active' and ClassID = $cid and StudentID in " .
@@ -248,17 +249,27 @@ class ISS_StudentService
      * GetStudents function
      * @return  array of ISS_Student Objects
      */
-    public static function GetStudentAccounts()
+    public static function GetStudentAccounts($initial)
     {
         self::debug("GetStudentAccounts");
         $list = array();
 
         global $wpdb;
         $regyear = iss_registration_period();
-       
+
         if (ISS_PermissionService::user_manage_access()) {
             $table = ISS_Student::GetViewName();
-            $query = "SELECT  *  FROM {$table} WHERE  RegistrationYear = '{$regyear}' order by  StudentFirstName";
+            $query = "SELECT  *  FROM {$table} WHERE  RegistrationYear = '{$regyear}' ";
+            if (null == $initial) {
+                $query .= " and StudentStatus = 'active' ";
+            } else {
+                if ('inactive' == $initial) {
+                    $query .= " and StudentStatus = 'inactive' ";
+                } else {
+                    $query .= " and ISSGrade = '{$initial}' ";
+                }
+            }
+            $query .= " order by  StudentFirstName ";
 
             $result_set = $wpdb->get_results($query, ARRAY_A);
             foreach ($result_set as $obj) {
@@ -267,8 +278,8 @@ class ISS_StudentService
                 } catch (Throwable $ex) {
                     self::error($ex->getMessage());
                 }
-            }          
-                    
+            }
+
             return $list;
 
         }

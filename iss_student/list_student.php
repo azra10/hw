@@ -17,7 +17,7 @@ iss_show_heading("Grade {$class->ISSGrade}  {$class->Subject}  Students ");
             <thead>
                 <tr>      
                     <th>Name</th>
-                     <th>Active</th>
+                    <th>Gender</th>
                     <th>Emails</th>
                    
                     <th></th>
@@ -28,7 +28,7 @@ iss_show_heading("Grade {$class->ISSGrade}  {$class->Subject}  Students ");
                     foreach ($result_set as $row) { ?>
                 <tr>
                 <td><?php echo "{$row->StudentFirstName}  {$row->StudentLastName}"; ?></td>
-                <td> <?php echo $row->StudentStatus == 'inactive' ? 'No' : 'Yes'; ?> </td>
+                <td> <?php echo $row->Gender; ?> </td>
                 <td> <?php echo "Student: {$row->StudentEmail} <br/>Father: {$row->FatherEmail} <br/>Mother: {$row->MotherEmail}"; ?> </td>                 
                 
                 <td>
