@@ -40,7 +40,7 @@ if (isset($_GET['uid'])) {
 if (!empty($sid)) {
     $student = ISS_StudentService::LoadByID($sid);
 }
-if (!empty($uid)) {
+if (!empty($uid) && !empty($sid)) {
     $student = ISS_StudentService::LoadByUserID($sid, $uid);
     if (null == $student) {
         echo '<h4>Error Mapping User</h4>';

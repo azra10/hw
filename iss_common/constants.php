@@ -65,6 +65,7 @@ if (!function_exists('iss_field_displaynames')) {
 			"PaidInFull" => "Paid In Full",
 
 			"StudentID" => "StudentID",
+			"StudentViewID" => "StudentViewID",
 			"StudentFirstName" => "Student First Name",
 			"StudentLastName" => "Student Last Name",
 			"RegularSchoolGrade" => "Regular School Grade",
@@ -153,6 +154,7 @@ if (!function_exists('iss_fields_lengths')) {
 			"SpecialNeedNote" => 300,
 
 			"StudentID" => 11,
+			"StudentViewID" => 11,
 			"StudentFirstName" => 100,
 			"StudentLastName" => 100,
 			"RegularSchoolGrade" => 2,
@@ -237,6 +239,7 @@ if (!function_exists('iss_fields_types')) {
 			"PaidInFull" => "string",
 
 			"StudentID" => "int",
+			"StudentViewID" => "int",
 			"StudentFirstName" => "string",
 			"StudentLastName" => "string",
 			"RegularSchoolGrade" => "string",

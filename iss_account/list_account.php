@@ -59,12 +59,14 @@ iss_show_heading("Student Accounts");
                <td> 
                    <?php echo " {$row->StudentFirstName} {$row->StudentLastName} (Student)<br/>"; ?>
                     <?php echo "{$row->FatherFirstName} {$row->FatherLastName}  (Father) <br/>"; ?>
-                    <?php echo "{$row->MotherFirstName} {$row->MotherLastName} (Student)"; ?>
+                    <?php echo "{$row->MotherFirstName} {$row->MotherLastName} (Mother)"; ?>
                 </td>
                
                 <td> <?php echo "Student: {$row->StudentEmail} <br/>Father: {$row->FatherEmail} <br/>Mother: {$row->MotherEmail}"; ?> </td>  
                 <td><?php echo $row->UserEmail;
                     if (ISS_PermissionService::user_manage_access()) {
+                        $archive = ($row->StudentStatus == 'inactive')?  "UnArchive" : "Archive";
+                        echo "<br/><a href=\"admin.php?page=issvuserstatus&svid={$row->StudentViewID}\">{$archive}</a>";
                         echo "<br/><a href=\"admin.php?page=issvuser&sid={$row->StudentID}\">Add Map</a>";
                         if (!empty($row->UserID)) {
                             echo "<br/><a href=\"admin.php?page=issvuserdelete&uid={$row->UserID}&sid={$row->StudentID}\">Remove Map</a>";
