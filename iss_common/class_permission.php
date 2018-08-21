@@ -209,7 +209,7 @@ class ISS_PermissionService
     }
     public static function class_assignment_write_access($cid)
     {
-        if (current_user_can('iss_admin')) return true;
+        if (current_user_can('iss_admin') || current_user_can('iss_secretary')) return true;
         if (current_user_can('iss_teacher')) {
 
             $obj = self::LoadByClassID($cid);

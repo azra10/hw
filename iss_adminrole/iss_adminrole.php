@@ -192,6 +192,14 @@ class ISS_AdminRolePlugin
 
         // Secretary Role is also board member
         forward_static_call_array ( array ('ISS_AdminRolePlugin','addcapability'), array ('isssecretaryrole', 'iss_board') );
+        forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array (  'isssecretaryrole', 'edit_posts' ) );
+        forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array (  'isssecretaryrole', 'upload_files' ) );
+        forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array (  'isssecretaryrole', 'publish_posts' ) );
+        forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array (  'isssecretaryrole', 'delete_posts' ) );
+        forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array (  'isssecretaryrole', 'edit_published_posts' ) );
+        forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array (  'isssecretaryrole', 'delete_published_posts' ) );
+        forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array (  'isssecretaryrole', 'edit_others_posts' ) );
+        forward_static_call_array ( array ( 'ISS_AdminRolePlugin', 'addcapability'  ), array (  'isssecretaryrole', 'delete_others_posts' ) );
 
          // Admin Role
         forward_static_call_array ( array (
