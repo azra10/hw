@@ -25,7 +25,7 @@ if (null != $post) {
     echo "<div class='row'>";
     echo "<div class='col-md-3'><strong>Class</strong>: Grade{$post->ISSGrade}-{$post->Subject}</div>";
     echo "<div class='col-md-3'><strong>Due Date</strong>: {$post->DueDate}</div>";
-    echo "<div class='col-md-3'><strong>Possible Point: {$post->PossiblePoints}</div>";
+    echo "<div class='col-md-3'><strong>Possible Point:</strong> {$post->PossiblePoints}</div>";
     echo "<div class='col-md-3'>";
     ?>
     <script>
@@ -76,12 +76,16 @@ if (null != $post) {
             <span style='text-decoration: underline;'>3 Consecutive Un-Excused Absences or a large number of non-contiguous absences during the school year, could result in the student’s Suspension or Expulsion from the school.</span>           
             <?php
 
-    } else {
-            $shortcodetext = '[post-content id=' . $postid . ']';
-            echo do_shortcode($shortcodetext);
+        } else {
+
+            $content_post = get_post($postid);
+            $content = $content_post->post_content;
+            $content = apply_filters('the_content', $content);
+            $content = str_replace(']]>', ']]&gt;', $content);
+            echo $content;
+        }
     }
-}
-?> 
+    ?> 
     </div>
    </div>
 </div>
