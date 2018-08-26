@@ -22,17 +22,12 @@ class ISS_Student
     public $UserEmail;
     public $UserID;
     public $Access;
+    public $LastLogin;
 
-    public static function GetClassStudentViewName()
+    public static function GetStudentAccountViewName()
     {
         global $wpdb;
-        return $wpdb->prefix . "iss_class_students";
-    }
-
-    public static function GetViewName()
-    {
-        global $wpdb;
-        return $wpdb->prefix . "iss_students";
+        return $wpdb->prefix . "issv_student_accounts";
     }
     public static function GetTableName()
     {
@@ -58,7 +53,7 @@ class ISS_Student
     {
         // fill all properties from array
         if (is_array($row) && !empty($row)) {
-           if (isset($row['ParentID'])) {
+            if (isset($row['ParentID'])) {
                 $this->ParentID = $row['ParentID'];
             }
             if (isset($row['StudentID'])) {
@@ -114,6 +109,9 @@ class ISS_Student
             }
             if (isset($row['StudentStatus'])) {
                 $this->StudentStatus = $row['StudentStatus'];
+            }
+            if (isset($row['LastLogin'])) {
+                $this->LastLogin = $row['LastLogin'];
             }
             if (isset($row['created'])) {
                 $this->created = $row['created'];
@@ -180,7 +178,7 @@ class ISS_StudentService
         try {
             self::debug("LoadByID StudentId:{$sid} UserID:{$uid}");
             global $wpdb;
-            $table = ISS_Student::GetViewName();
+            $table = ISS_Student::GetStudentAccountViewName();
             $regyear = iss_registration_period();
 
             $query = "SELECT *  FROM {$table} where  RegistrationYear = '{$regyear}'  and UserID = {$uid} and StudentID = {$sid}";
@@ -209,36 +207,7 @@ class ISS_StudentService
         }
         return null;
     }
-    public static function RemoveMapping($sid, $uid)
-    {
-        try {
-            self::debug("RemoveMapping {$sid} UserID:{$uid}");
-            global $wpdb;
-            $table = ISS_UserStudentMap::GetTableName();
-            $result = $wpdb->delete($table, array('UserID' => $uid, 'StudentID' => $sid), array("%d", "%d"));
-            if (1 == $result) {
-                return 1;
-            }
-        } catch (Throwable $ex) {
-            self::error($ex->getMessage());
-        }
-        return 0;
-    }
-    public static function AddMapping($sid, $uid)
-    {
-        try {
-            self::debug("AddMapping StudentId:{$sid} UserID:{$uid}");
-            global $wpdb;
-            $table = ISS_UserStudentMap::GetTableName();
-            $result = $wpdb->insert($table, array('UserID' => $uid, 'StudentID' => $sid), array("%d", "%d"));
-            if (1 == $result) {
-                return 1;
-            }
-        } catch (Throwable $ex) {
-            self::error($ex->getMessage());
-        }
-        return 0;
-    }
+
     /**
      * GetClassStudents function
      *
@@ -251,24 +220,51 @@ class ISS_StudentService
 
         global $wpdb;
         $userid = get_current_user_id();
-        if (ISS_PermissionService::class_student_list_all_access($cid)) {
-            $table = ISS_Student::GetClassStudentViewName();
-            $query = "SELECT *  FROM {$table} WHERE  StudentStatus = 'active' and ClassID = $cid order by  StudentFirstName";
-        } else {
-            $table = ISS_Student::GetClassStudentViewName();
-            $table1 = ISS_UserStudentMap::GetTableName();
-            $query = "SELECT *  FROM {$table} WHERE  StudentStatus = 'active' and ClassID = $cid and StudentID in " .
-                " (SELECT StudentID FROM {$table1} WHERE UserID = {$userid} )  order by  StudentFirstName";
-        }
-        $result_set = $wpdb->get_results($query, ARRAY_A);
-        foreach ($result_set as $obj) {
-            try {
+        $columns = "ClassID , StudentViewID, StudentFirstName , StudentLastName , StudentGender, LastLogin";
+        $table = ISS_Class::GetClassStudentsViewName();
+
+        if (ISS_PermissionService::is_user_parent_role() || ISS_PermissionService::is_user_student_role() || ISS_PermissionService::is_user_teacher_role()) {
+
+            $accesstable = ISS_UserStudentMap::GetTableName();
+        //SELECT * FROM `local_issv_class_students` S, local_iss_userstudentmap M where S.`StudentID` = M.StudentID  AND ClassID = 15 AND M.USerId = 7
+            $query = "SELECT {$columns} FROM {$table} S , {$accesstable} M  "
+                . "WHERE M.StudentID = S.StudentID AND ClassID = {$cid} AND UserID = {$userid}";
+
+            self::debug("Student / Parent Access class students " . $userid . $query);
+            $result_set = $wpdb->get_results($query, ARRAY_A);
+            self::debug($result_set);
+
+            foreach ($result_set as $obj) {
                 $list[] = ISS_Student::Create($obj);
-            } catch (Throwable $ex) {
-                self::error($ex->getMessage());
             }
         }
 
+        $accesstable = ISS_UserStudentMap::GetLastLoginTableName();
+       
+        // A parent can also be teacher / admin          
+        if (ISS_ClassService::is_teacher_access($cid)) {
+
+            // SELECT * FROM `local_issv_class_students` S LEFT JOIN local_iss_userstudentmap M ON S.`StudentID` = M.StudentID WHERE ClassID = 15
+            $query = "SELECT {$columns} FROM {$table} S LEFT JOIN {$accesstable} M ON M.StudentID = S.StudentID WHERE  ClassID = {$cid}";
+            self::debug("Teache Access class students " . $query);
+            $result_set = $wpdb->get_results($query, ARRAY_A);
+            self::debug($result_set);
+
+            foreach ($result_set as $obj) {
+                $list[] = ISS_Student::Create($obj);
+            }
+        } else if (ISS_PermissionService::class_student_list_all_access($cid)) {
+
+             // SELECT * FROM `local_issv_class_students` S LEFT JOIN local_iss_userstudentmap M ON S.`StudentID` = M.StudentID WHERE ClassID = 15
+            $query = "SELECT {$columns} FROM {$table} S LEFT JOIN {$accesstable} M ON M.StudentID = S.StudentID WHERE  ClassID = {$cid}";
+            self::debug("Teache / Admin Access class students " . $query);
+            $result_set = $wpdb->get_results($query, ARRAY_A);
+            self::debug($result_set);
+
+            foreach ($result_set as $obj) {
+                $list[] = ISS_Student::Create($obj);
+            }
+        }
         return $list;
     }
     /**
@@ -284,7 +280,7 @@ class ISS_StudentService
         $regyear = iss_registration_period();
 
         if (ISS_PermissionService::user_manage_access()) {
-            $table = ISS_Student::GetViewName();
+            $table = ISS_Student::GetStudentAccountViewName();
             $query = "SELECT  *  FROM {$table} WHERE  RegistrationYear = '{$regyear}' ";
             if (null == $initial) {
                 $query .= " and StudentStatus = 'active' ";
@@ -308,6 +304,25 @@ class ISS_StudentService
 
             return $list;
 
+        }
+        return null;
+    }
+    public static function GetStudentAccountsByStudentID($svid)
+    {
+        self::debug("GetStudentAccountsByStudentViewID");
+        $list = array();
+
+        global $wpdb;
+        if (ISS_PermissionService::user_manage_access()) {
+            $table = ISS_Student::GetStudentAccountViewName();
+            $query = "SELECT  *  FROM {$table} WHERE  StudentID = '{$svid}' ";
+
+            $result_set = $wpdb->get_results($query, ARRAY_A);
+            self::debug($result_set);
+            foreach ($result_set as $obj) {
+                $list[] = ISS_Student::Create($obj);
+            }
+            return $list;
         }
         return null;
     }
@@ -447,5 +462,59 @@ class ISS_StudentService
         }
         return '';
     }
+
+
+    public static function CreateUserAccount($student, $email_address, $role, $password, $isscustomeditor, &$error)
+    {
+        if (null == username_exists($email_address)) {
+
+        // Generate the password and create the user
+            if (empty($password))
+                $password = wp_generate_password(12, false);
+
+            self::debug("CreateUserAccount SID:{$student->StudentID} U:{$email_address} P:{$password} Role:{$role}");
+            $user_id = wp_create_user($email_address, $password, $email_address);
+            self::debug($user_id);
+            if( is_wp_error( $user_id ) ) {
+                $error = $user_id->get_error_message();
+                return 1;
+            }
+            // Set the nickname
+            wp_update_user(array(
+                'ID' => $user_id,
+                'nickname' => $student->StudentFirstName,
+                'first_name' => $student->StudentFirstName,
+                'last_name' => $student->StudentLastName,
+                'role' => $role
+            ));
+            $result = ISS_UserStudentMapService::AddMapping($student->StudentID, $user_id);
+            if (1 == $result) {
+                $isscustomeditor =  $isscustomeditor . "
+                 Username: {$email_address}
+                 Password: {$password}
+                 ";
+                 
+                if (substr($email_address, -5) == 'gmail')
+                    $isscustomeditor =  $isscustomeditor . "
+                     You can login with your gmail password, click on Sign with Google button.";
+                else
+                    $isscustomeditor =  $isscustomeditor . "
+                     You can always link your gmail account with this account, watch the video in help sectin for instructions.";
+
+                wp_mail($email_address, 'Welcome to ISSV Homework and Grading Site!', $isscustomeditor . "
+                School Admin");
+                return $result;
+            }
+        } else {
+            $user = get_user_by('email', $email_address);
+            self::debug($user);
+            if (null != $user) {
+                $user->set_role($role);
+                return ISS_UserStudentMapService::AddMapping($student->StudentID, $user->ID);
+            }
+        }
+        return 0;
+    }
+
 }
 ?>

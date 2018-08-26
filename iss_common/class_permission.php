@@ -20,154 +20,6 @@ function iss_current_user_can_teach()
     return current_user_can('iss_teacher');
 }
 
-class ISS_UserClassMap
-{
-    public $UCMapID;
-    public $ClassID;
-    public $GradingPeriod;
-    public $RegistrationYear;
-    public $ISSGrade;
-    public $Subject;
-    public $Category;
-    public $Status;
-    public $UserID;
-    public $Access;
-    public $created;
-    public $updated;
-
-    public static function GetTableName()
-    {
-        global $wpdb;
-        return $wpdb->prefix . "iss_userclassmap";
-    }
-    public static function Create(array $row)
-    {
-        $instance = new self();
-        $instance->fill($row);
-        return $instance;
-    }
-
-	// TODO Add more fields to make the complete row
-    public function fill(array $row)
-    {
-        // fill all properties from array
-        if (is_array($row) && !empty($row)) {
-
-            if (isset($row['UCMapID'])) {
-                $this->UCMapID = $row['UCMapID'];
-            }
-            if (isset($row['ClassID'])) {
-                $this->ClassID = $row['ClassID'];
-            }
-            if (isset($row['RegistrationYear'])) {
-                $this->RegistrationYear = $row['RegistrationYear'];
-            }
-            if (isset($row['ISSGrade'])) {
-                $this->ISSGrade = $row['ISSGrade'];
-            }
-            if (isset($row['Subject'])) {
-                $this->Subject = $row['Subject'];
-            }
-            if (isset($row['ISSGrade'])) {
-                $this->ISSGrade = $row['ISSGrade'];
-            }
-            if (isset($row['Category'])) {
-                $this->Category = $row['Category'];
-            }
-            if (isset($row['Status'])) {
-                $this->Status = $row['Status'];
-            }
-            if (isset($row['UserID'])) {
-                $this->UserID = $row['UserID'];
-            }
-            if (isset($row['Access'])) {
-                $this->Access = $row['Access'];
-            }
-            if (isset($row['created'])) {
-                $this->created = $row['created'];
-            }
-            if (isset($row['updated'])) {
-                $this->updated = $row['updated'];
-            }
-            return;
-        }
-        throw new Throwable("__construct input object is null/empty");
-    }
-}
-class ISS_UserStudentMap
-{
-    public $USMapID;
-    public $StudentD;
-    public $GradingPeriod;
-    public $RegistrationYear;
-    public $ISSGrade;
-    public $Subject;
-    public $Category;
-    public $Status;
-    public $UserID;
-    public $Access;
-    public $created;
-    public $updated;
-
-    public static function GetTableName()
-    {
-        global $wpdb;
-        return $wpdb->prefix . "iss_userstudentmap";
-    }
-    public static function Create(array $row)
-    {
-        $instance = new self();
-        $instance->fill($row);
-        return $instance;
-    }
-
-	// TODO Add more fields to make the complete row
-    public function fill(array $row)
-    {
-        // fill all properties from array
-        if (is_array($row) && !empty($row)) {
-
-            if (isset($row['UCMapID'])) {
-                $this->UCMapID = $row['UCMapID'];
-            }
-            if (isset($row['ClassID'])) {
-                $this->ClassID = $row['ClassID'];
-            }
-            if (isset($row['RegistrationYear'])) {
-                $this->RegistrationYear = $row['RegistrationYear'];
-            }
-            if (isset($row['ISSGrade'])) {
-                $this->ISSGrade = $row['ISSGrade'];
-            }
-            if (isset($row['Subject'])) {
-                $this->Subject = $row['Subject'];
-            }
-            if (isset($row['ISSGrade'])) {
-                $this->ISSGrade = $row['ISSGrade'];
-            }
-            if (isset($row['Category'])) {
-                $this->Category = $row['Category'];
-            }
-            if (isset($row['Status'])) {
-                $this->Status = $row['Status'];
-            }
-            if (isset($row['UserID'])) {
-                $this->UserID = $row['UserID'];
-            }
-            if (isset($row['Access'])) {
-                $this->Access = $row['Access'];
-            }
-            if (isset($row['created'])) {
-                $this->created = $row['created'];
-            }
-            if (isset($row['updated'])) {
-                $this->updated = $row['updated'];
-            }
-            return;
-        }
-        throw new Throwable("__construct input object is null/empty");
-    }
-}
 class ISS_PermissionService
 {
 
@@ -191,20 +43,29 @@ class ISS_PermissionService
     {
         return current_user_can('iss_admin') || current_user_can('iss_board') || current_user_can('iss_secretary');
     }
+    public static function is_user_teacher_role(){
+        return current_user_can('iss_teacher');
+    }
+    public static function is_user_parent_role(){
+        return current_user_can('iss_parent');
+    }
+    public static function is_user_student_role(){
+        return current_user_can('iss_student');
+    }
     public static function class_student_list_all_access($cid = null)
     {
         if (current_user_can('iss_admin') || current_user_can('iss_board') || current_user_can('iss_secretary')) {
             return true;
         }
-        if (current_user_can('iss_teacher')) {
-            if (null == $cid) {
-                return true;
-            }
-            $obj = self::LoadByClassID($cid);
-            if (null != $obj) {
-                return (($obj->Access === 'read') || ($obj->Access === 'write'));
-            }
-        }
+        // if (current_user_can('iss_teacher')) {
+        //     if (null == $cid) {
+        //         return true;
+        //     }
+        //     $obj = self::LoadByClassID($cid);
+        //     if (null != $obj) {
+        //         return (($obj->Access === 'read') || ($obj->Access === 'write'));
+        //     }
+        // }
         return false;
     }
     public static function class_assignment_write_access($cid)
@@ -213,8 +74,9 @@ class ISS_PermissionService
         if (current_user_can('iss_teacher')) {
 
             $obj = self::LoadByClassID($cid);
+            self::debug($obj);
             if (null != $obj) {
-                return ($obj->Access === 'write');
+                return (($obj->Access === 'write') || ($obj->Access === 'primary'));
             }
         }
         return false;

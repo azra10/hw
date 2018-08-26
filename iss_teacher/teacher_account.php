@@ -10,7 +10,7 @@ if (isset($_POST['_wpnonce-iss-user-account-form-page'])) {
         $userid = $_POST['userid'];
         $classid = $_POST['classid'];
         $access = $_POST['access'];
-        $result = ISS_ClassService::AddMapping($classid, $userid, $access);
+        $result = ISS_UserClassMapService::AddMapping($classid, $userid, $access);
 
         if (1 == $result) {
             $user = new WP_User($userid);
@@ -34,28 +34,29 @@ $cid = null;
 $uid = null;
 if (isset($_GET['cid'])) {
     $cid = iss_sanitize_input($_GET['cid']);
-}
-if (isset($_GET['uid'])) {
-    $uid = iss_sanitize_input($_GET['uid']);
-}
-if (!empty($cid)) {
-    $class = ISS_ClassService::LoadByID($cid);
-}
-if (!empty($uid)) {
-    $class = ISS_ClassService::LoadByUserID($cid, $uid);
-    if (null == $class) {
-        echo '<h4>Error Mapping User</h4>';
-        exit;
-    }
-    if ($class->ClassID == $cid) {
-        echo "<h4>User Already Mapped</h4>";
-        exit;
+    if (!empty($cid)) {
+        $class = ISS_ClassService::LoadByID($cid);
     }
 }
+// if (isset($_GET['uid'])) {
+//     $uid = iss_sanitize_input($_GET['uid']);
+// }
 
-iss_show_heading_with_backurl("Map Teacher to Class {$class->Name} ",$backurl);
+// if (!empty($uid)) {
+//     $class = ISS_ClassService::LoadByUserID($cid, $uid);
+//     if (null == $class) {
+//         echo '<h4>Error Mapping User</h4>';
+//         exit;
+//     }
+//     if ($class->ClassID == $cid) {
+//         echo "<h4>User Already Mapped</h4>";
+//         exit;
+//     }
+// }
 
-?> 
+    iss_show_heading_with_backurl("Map Teacher to Class {$class->Name} ", $backurl);
+
+    ?> 
 
 <div class="container">
 <form class="form-horizontal" method="post" action="" enctype="multipart/form-data">
@@ -63,10 +64,11 @@ iss_show_heading_with_backurl("Map Teacher to Class {$class->Name} ",$backurl);
     <div class="row">
         <div class="col-md-4">
         <label>Class ID:</label> <input type="text" id="classid" name="classid" class="form-control" required value="<?php echo $class->ClassID; ?>" />        
-        <label>User ID: </label><input type="text" id="userid" name="userid"  class="form-control" reuired value="<?php echo $class->UserID; ?>" />   
+        <label>User ID: </label><input type="text" id="userid" name="userid"  class="form-control" reuired value="" />   
         <label>Access:</label> <select  id="access" name="access" class="form-control"  >   
-        <option>write</opion>
-        <option>read</option>        
+        <option value="primary">Primary</opion>
+        <option value="write">Write</opion>
+        <option value="read">Read</option>        
         </select>  
         <br/>
         <button type="submit" name="submit" value="user" class="btn btn-primary form-control" ">Connect</button>

@@ -21,7 +21,7 @@ if (!empty($uid)) {
 if (null != $class) {
      echo "<br/><br/>  Teacher: {$class->Teacher} <br/> Email: {$class->UserEmail} <br/> Class {$class->Name}";
  
-    $result = ISS_ClassService::RemoveMapping($cid, $uid);
+    $result = ISS_UserClassMapService::RemoveMapping($cid, $uid);
 
     if (1 == $result) {
         $userobj = new WP_User($uid);

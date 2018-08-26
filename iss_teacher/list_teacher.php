@@ -13,35 +13,27 @@ iss_show_heading("Teacher Accounts");
                     <th> Class</th>
                     <th>Teacher</th>                    
                     <th>Account</th> 
-                    <th>Access</th> 
+                    <th>Last Login</th> 
                     <th>UserID</th> 
-                    <th>Active</th>
-                    <th>ISSGrade</th>                  
-                    <th></th>
+                    <th>Active</th>                  
                 </tr>
             </thead>
             <tbody>
                 <?php if (null != $result_set) {
                     foreach ($result_set as $row) { ?>
                 <tr>
-                <td> <?php 
-                echo $row->ClassID;
-                if (ISS_PermissionService::user_manage_access())
-                        echo "<br/><a href=\"admin.php?page=issvteacher&cid={$row->ClassID}\">Add</a>";
-                  ?> </td>
+                <td> <?php echo $row->ClassID; ?>  </td>
                  <td><?php echo $row->Name; ?></td>
-                 <td><?php echo $row->Teacher; ?></td>
-                <td><?php  echo $row->UserEmail;  
-                if (ISS_PermissionService::user_manage_access()) {
-                    if (!empty($row->UserID)) echo "<br/><a href=\"admin.php?page=issvteacherdelete&uid={$row->UserID}&cid={$row->ClassID}\">Remove</a>";
-                 } ?> </td>
-                <td><?php echo $row->Access; ?></td>
-                <td><?php  echo $row->UserID; ?> </td>
+                 <td><?php echo $row->Teacher . "<br/>" .  $row->Access; ?></td>
+                <td><?php echo $row->UserEmail;
+                    if (ISS_PermissionService::user_manage_access()) {
+                        echo "<br/><a href=\"admin.php?page=issvteacheraccount&cid={$row->ClassID}\">Add Mapping</a>";
+                        if (!empty($row->UserID)) echo "<br/><a href=\"admin.php?page=issvteacherdelete&uid={$row->UserID}&cid={$row->ClassID}\">Remove Mapping</a>";
+                    }
+                    ?> </td>
+                <td><?php echo $row->LastLogin; ?></td>
+                <td><?php echo $row->UserID; ?> </td>
                 <td> <?php echo $row->Status == 'inactive' ? 'No' : 'Yes'; ?> </td>
-                 <td> <?php echo $row->ISSGrade; ?> </td>                
-                <td>
-                
-                </td>
                 </tr>
                 <?php 
             }

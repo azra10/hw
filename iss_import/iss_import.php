@@ -1,6 +1,6 @@
 <?php
 /*
- * Plugin Name: 25. ISS Import Students Information From CSV
+ * Plugin Name: 25. ISS Import Students
  * Plugin URI: http://learnislam.org/
  * Description: <strong>Depends: ISS Common, ISS Class, ISS Roles.</strong>  Import students data from a csv file. Existing records are updated if different.
  * Author: Azra Syed
@@ -281,7 +281,7 @@ function iss_import_file($file)
 		}
 	}
 
-	$pageurl = get_admin_url() . 'users.php?page=issvactlist';
+	$pageurl = get_admin_url() . 'users.php?page=issvuserlist';
 	echo "</table> <br /> <p> Process finished you can go <a href=\"{$pageurl}\">here to see results</a></p>";
 
 	// fclose($manager);

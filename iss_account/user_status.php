@@ -1,5 +1,6 @@
+<div class="container">
 <?php 
- $backurl = admin_url('users.php?page=issvactlist');
+ $backurl = admin_url('users.php?page=issvuserlist');
  iss_show_heading_with_backurl("Student Status Change", $backurl);
 
 $student = null;
@@ -26,5 +27,6 @@ if (null != $student) {
 
 echo "<h4>Error Changing Status.</h4>";
 ?>
+</div>
 
 

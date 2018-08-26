@@ -1,15 +1,16 @@
+<div class="container">
 <?php 
-$backurl = admin_url('users.php?page=issvactlist');
+$backurl = admin_url('users.php?page=issvuserlist');
 
 if (isset($_POST['_wpnonce-iss-user-account-form-page'])) {
-    iss_show_heading_with_backurl("Map User to Student ",$backurl);
+    iss_show_heading_with_backurl("Map User to Student ", $backurl);
 
     check_admin_referer('iss-user-account-form-page', '_wpnonce-iss-user-account-form-page');
 
     if (isset($_POST['studentid']) && isset($_POST['userid'])) {
         $userid = $_POST['userid'];
         $studentid = $_POST['studentid'];
-        $result = ISS_StudentService::AddMapping($studentid, $userid);
+        $result = ISS_UserStudentMapService::AddMapping($studentid, $userid);
 
         if (1 == $result) {
             $user = new WP_User($userid);
@@ -19,10 +20,10 @@ if (isset($_POST['_wpnonce-iss-user-account-form-page'])) {
                 iss_write_log("student role added to user ");
                 iss_write_log($user->roles);
             }
-             echo "<h4>Account Mapped</h4>";
+            echo "<h4>Account Mapping Added</h4>";
             exit;
         } else {
-            echo "<h4>Error Mapping Account.</h4>";
+            echo "<h4>Error Mapping Account</h4>";
             exit;
         }
     }
@@ -52,7 +53,7 @@ if (!empty($uid) && !empty($sid)) {
     }
 }
 
-iss_show_heading_with_backurl("Map User to Student  {$student->StudentFirstName} {$student->StudentLastName} - Grade: {$student->ISSGrade} ",$backurl);
+iss_show_heading_with_backurl("Map User to Student  {$student->StudentFirstName} {$student->StudentLastName} - Grade: {$student->ISSGrade} ", $backurl);
 ?> 
 
 <div class="container">
@@ -67,4 +68,5 @@ iss_show_heading_with_backurl("Map User to Student  {$student->StudentFirstName}
     </div> 
 </form>
 </div>
-<?php 
+</div>
+

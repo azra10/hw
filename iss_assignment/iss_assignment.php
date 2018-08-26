@@ -9,8 +9,6 @@
  * 
  */
 
-require_once(plugin_dir_path(__FILE__) . "../iss_common/functions.php");
-require_once(plugin_dir_path(__FILE__) . "/class_assignment.php");
 
 function iss_assignment_list_page()
 {

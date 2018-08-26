@@ -1,9 +1,4 @@
 <?php
-require_once(plugin_dir_path(__FILE__) . "../iss_common/class_gradingperiod.php");
-require_once(plugin_dir_path(__FILE__) . "../iss_common/class_permission.php");
-require_once(plugin_dir_path(__FILE__) . "../iss_common/constants.php");
-require_once(plugin_dir_path(__FILE__) . "../iss_common/function_registration.php");
-require_once(plugin_dir_path(__FILE__) . "../iss_common/function_validate.php");
 
 if (!function_exists('iss_write_log')) {
     function iss_write_log($log)
@@ -70,14 +65,10 @@ if (!function_exists('iss_load_admin_custom_css')) {
 }
 
 if (!function_exists('iss_show_heading')) {
-    function iss_show_heading($message, $url = null)
+    function iss_show_heading($message)
     {
-        $regyear = iss_registration_period();
-        //echo "<form><input class=\"btn btn-primary\" type=\"button\" value=\"Back\" onclick=\"history.back()\"></form>";
-        if (!empty($message) && !empty($url)) {
-            echo "<h3>{$message} ({$regyear}) <a href=\"{$url}\" class=\"btn btn-primary\"> Add New</a></h3>";
-        } elseif (!empty($message)) {
-            echo "<h3>{$message} ({$regyear}) </h3>";
+        if (!empty($message)) {
+            echo "<h3>{$message}  </h3>";
         }
     }
 }
@@ -92,6 +83,15 @@ if (!function_exists('iss_show_heading_with_backurl')) {
     }
 }
 
+if (!function_exists('iss_show_heading_with_regyear')) {
+    function iss_show_heading_with_regyear($message)
+    {
+        $regyear = iss_registration_period();
+         if (!empty($message)) {
+            echo "<h3>{$message} ($regyear)</h3>";
+        }
+    }
+}
 if (!function_exists('is_student_plugin_active')) {
     function is_student_plugin_active()
     {

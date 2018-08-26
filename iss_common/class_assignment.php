@@ -15,7 +15,7 @@ class ISS_Assignment
     public static function GetViewName()
     {
         global $wpdb;
-        return $wpdb->prefix . "iss_class_assignments";
+        return $wpdb->prefix . "issv_class_assignments";
     }
     public static function GetTableName()
     {

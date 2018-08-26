@@ -8,8 +8,6 @@
  * Author: Azra Syed
  * 
  */
-require_once(plugin_dir_path(__FILE__) . "../iss_common/functions.php");
-require_once(plugin_dir_path(__FILE__) . "../iss_class/class_class.php");
 
 function iss_teacher_account_list_page()
 {
@@ -26,8 +24,8 @@ function iss_teacher_userdelete_page()
 function iss_teacher_account_register_menu_page()
 {
     //add_users_page( string $page_title, string $menu_title, string $capability, string $menu_slug, callable $function = '' )
-    $my_pages[] = add_users_page('Teachers', 'Teachers', 'iss_admin', 'issvtlist', 'iss_teacher_account_list_page');
-    $my_pages[] = add_submenu_page(null, 'Teacher Account', 'Teacher Account', 'iss_admin', 'issvteacher', 'iss_teacher_user_page');
+    $my_pages[] = add_menu_page('Teachers', 'Teachers', 'iss_admin', 'issvtlist', 'iss_teacher_account_list_page', 'dashicons-format-gallery', 5);
+    $my_pages[] = add_submenu_page(null, 'Teacher Account', 'Teacher Account', 'iss_admin', 'issvteacheraccount', 'iss_teacher_user_page');
     $my_pages[] = add_submenu_page(null, 'Teacher Account Delete', 'Teacher Account Delete', 'iss_admin', 'issvteacherdelete', 'iss_teacher_userdelete_page');
  
     foreach ($my_pages as $my_page) {

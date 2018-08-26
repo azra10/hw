@@ -1,4 +1,6 @@
 <?php 
+$backurl = admin_url('admin.php?page=issvclasslist');
+
 $result_set = null; $cid = null;
 if (isset($_GET['cid'])) {
     $cid = iss_sanitize_input($_GET['cid']);
@@ -14,9 +16,9 @@ if (isset($_GET['cid'])) {
 }
 
 $class = ISS_ClassService::LoadByID($cid);
-iss_show_heading("Grade {$class->ISSGrade}  {$class->Subject}  Assignments ", 
-    ISS_PermissionService::class_assignment_write_access($cid) ? 
-    "post-new.php?post_type=iss_assignment&cat={$class->Category}&cid={$cid}" : null);
+iss_show_heading_with_backurl("Grade {$class->ISSGrade}  {$class->Subject} Assignments", $backurl);
+if (ISS_PermissionService::class_assignment_write_access($cid)) 
+  echo  "<a class='btn btn-success' href='post-new.php?post_type=iss_assignment&cat={$class->Category}&cid={$cid}'>Add New</a>";
 ?>
 <div>
     <div class="container">

@@ -1,3 +1,5 @@
+<div>
+    <div class="container">
 <?php 
 $result_set = null; $cid=null;
 if (isset($_GET['cid'])) {
@@ -8,19 +10,18 @@ if (isset($_GET['cid'])) {
 }
 
 $class = ISS_ClassService::LoadByID($cid);
-iss_show_heading("Grade {$class->ISSGrade}  {$class->Subject}  Students ");        
+$backurl = admin_url('admin.php?page=issvclasslist');
+iss_show_heading_with_backurl("Grade {$class->ISSGrade}  {$class->Subject}  Students ", $backurl);        
 
 ?>
-<div>
-    <div class="container">
         <table class="table table-striped table-responsive table-condensed" id="iss_student_table">
             <thead>
                 <tr>      
                     <th>Name</th>
                     <th>Gender</th>
-                    <th>Emails</th>
-                   
-                    <th></th>
+                    <!-- <th>Emails</th> -->
+                    
+                    <th>Last Login</th>
                 </tr>
             </thead>
             <tbody>
@@ -28,12 +29,9 @@ iss_show_heading("Grade {$class->ISSGrade}  {$class->Subject}  Students ");
                     foreach ($result_set as $row) { ?>
                 <tr>
                 <td><?php echo "{$row->StudentFirstName}  {$row->StudentLastName}"; ?></td>
-                <td> <?php echo $row->Gender; ?> </td>
-                <td> <?php echo "Student: {$row->StudentEmail} <br/>Father: {$row->FatherEmail} <br/>Mother: {$row->MotherEmail}"; ?> </td>                 
-                
-                <td>
-                
-                </td>
+                <td> <?php echo $row->StudentGender; ?> </td>
+                <!-- <td> <?php echo "Student: {$row->StudentEmail} <br/>Father: {$row->FatherEmail} <br/>Mother: {$row->MotherEmail}"; ?> </td>                                  -->
+                <td>  <?php echo $row->LastLogin; ?></td>              
                 </tr>
                 <?php 
             }

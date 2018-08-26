@@ -1,3 +1,4 @@
+<div class="container">
 <?php 
 $initial = null;
 if (isset($_GET['initial'])) {
@@ -5,10 +6,10 @@ if (isset($_GET['initial'])) {
 }
 $result_set = ISS_StudentService::GetStudentAccounts($initial);
 
-iss_show_heading("Student Accounts");
+iss_show_heading_with_regyear("Student Accounts");
 
 ?>
-<div class="container">
+
 <nav aria-label="Page navigation">
 	<ul class="pagination">
         <?php
@@ -16,7 +17,7 @@ iss_show_heading("Student Accounts");
         if (null == $initial) {
             echo "  active\"";
         }
-        echo "\"><a class=\"page-link\" href=\"users.php?page=issvactlist\">All</a></li>";
+        echo "\"><a class=\"page-link\" href=\"users.php?page=issvuserlist\">All</a></li>";
 
         $letters = ISS_Class::GetClassList();
 
@@ -27,13 +28,13 @@ iss_show_heading("Student Accounts");
             if ($letter == $initial) {
                 echo " active\"";
             }
-            echo "\"><a class=\"page-link\" href=\"users.php?page=issvactlist&initial={$letter}\">{$value}</a></li>";
+            echo "\"><a class=\"page-link\" href=\"users.php?page=issvuserlist&initial={$letter}\">{$value}</a></li>";
         }
         echo "<li class=\"page-item ";
         if ('InActive' == $initial) {
             echo "  active\"";
         }
-        echo "\"><a class=\"page-link\" href=\"users.php?page=issvactlist&initial=inactive\">Archived</a></li>";
+        echo "\"><a class=\"page-link\" href=\"users.php?page=issvuserlist&initial=inactive\">Archived</a></li>";
 
         ?>
     </ul>
@@ -48,6 +49,7 @@ iss_show_heading("Student Accounts");
                      <th> Emails</th> 
                     <th>Account</th> 
                     <th>UserID</th> 
+                    <th>Last Login</th> 
                 </tr>
             </thead>
             <tbody>
@@ -57,23 +59,24 @@ iss_show_heading("Student Accounts");
                 <td> <?php echo $row->StudentID; ?> </td>
                 <td> <?php echo $row->ISSGrade; ?> </td>
                <td> 
-                   <?php echo " {$row->StudentFirstName} {$row->StudentLastName} (Student)<br/>"; ?>
+                   <?php echo " {$row->StudentFirstName} {$row->StudentLastName} (Student)  <br/>" ?>
                     <?php echo "{$row->FatherFirstName} {$row->FatherLastName}  (Father) <br/>"; ?>
-                    <?php echo "{$row->MotherFirstName} {$row->MotherLastName} (Mother)"; ?>
+                    <?php echo "{$row->MotherFirstName} {$row->MotherLastName} (Mother) "; ?>
                 </td>
                
                 <td> <?php echo "Student: {$row->StudentEmail} <br/>Father: {$row->FatherEmail} <br/>Mother: {$row->MotherEmail}"; ?> </td>  
                 <td><?php echo $row->UserEmail;
                     if (ISS_PermissionService::user_manage_access()) {
-                        $archive = ($row->StudentStatus == 'inactive')?  "UnArchive" : "Archive";
-                        echo "<br/><a href=\"admin.php?page=issvuserstatus&svid={$row->StudentViewID}\">{$archive}</a>";
-                        echo "<br/><a href=\"admin.php?page=issvuser&sid={$row->StudentID}\">Add Map</a>";
+                        echo "<br/><a href='admin.php?page=issvusercreate&svid={$row->StudentViewID}'>Add New Account</a>";
+                        $archive = ($row->StudentStatus == 'inactive') ? "UnArchive" : "Archive";
+                        echo "<br/><a href=\"admin.php?page=issvarchiveuser&svid={$row->StudentViewID}\">{$archive}</a>";
+                        echo "<br/><a href=\"admin.php?page=issvadduser&sid={$row->StudentID}\">Add Mapping</a>";
                         if (!empty($row->UserID)) {
-                            echo "<br/><a href=\"admin.php?page=issvuserdelete&uid={$row->UserID}&sid={$row->StudentID}\">Remove Map</a>";
+                            echo "<br/><a href=\"admin.php?page=issvremoveuser&uid={$row->UserID}&sid={$row->StudentID}\">Remove Mapping</a>";
                         }
-
                     } ?> </td>
                 <td><?php echo $row->UserID; ?> </td>
+                <td><?php echo $row->LastLogin; ?> </td>
                  </tr>
                 <?php 
             }
