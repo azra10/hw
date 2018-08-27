@@ -114,7 +114,7 @@ class ISS_UserClassMapService
     public static function AddMapping($cid, $uid, $access)
     {
         self::debug("AddMapping ClassId:{$cid} UserID:{$uid}");
-        if ((0 == $sid) || (0 == $uid)) {
+        if ((0 == $cid) || (0 == $uid)) {
             return 0;
         }
         if (ISS_PermissionService::user_manage_access()) {
