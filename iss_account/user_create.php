@@ -93,7 +93,7 @@ Login to check homework and assessment at https://learnislam.org/engrade";
     <form class="form-horizontal" method="post" action="" enctype="multipart/form-data">
         <?php wp_nonce_field('iss-user-account-form-page', '_wpnonce-iss-user-account-form-page') ?>
         <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-10">
             <input type="hidden" id="studentid" name="studentid" value="<?php echo $student->StudentID; ?>" />          
             <label class="control-label">Email Address:</label> <input type="text" id="email" name="email" class="form-control" reuired value="<?php echo $email_address ?>" />          
             <label class="control-label">Password:</label> <input type="text" id="password" name="password" class="form-control" reuired value="<?php echo $password; ?>" />          
