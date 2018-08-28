@@ -526,8 +526,7 @@ Username: {$email_address}
 Password: {$password}
 
 Note:You can link your gmail account, watch the video in help sectin for instructions.
-";
-                $isscustomeditor . "
+
 School Admin";
                 wp_mail($email_address, 'Welcome to ISSV Homework and Grading Site!', $isscustomeditor);
                 return $result;
