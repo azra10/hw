@@ -236,7 +236,7 @@ class ISS_ClassService
             self::debug($result_set);
 
             foreach ($result_set as $obj) {
-                $list[] = ISS_Class::Create($obj);
+                $list[$obj['ClassID']] = ISS_Class::Create($obj);
             }
         } 
             // A parent can also be teacher / admin
@@ -249,7 +249,7 @@ class ISS_ClassService
             self::debug($result_set);
 
             foreach ($result_set as $obj) {
-                $list[] = ISS_Class::Create($obj);
+                $list[$obj['ClassID']] = ISS_Class::Create($obj);
             }
         } else
             if (ISS_PermissionService::is_user_teacher_role()) {
@@ -261,7 +261,7 @@ class ISS_ClassService
             self::debug($result_set);
 
             foreach ($result_set as $obj) {
-                $list[] = ISS_Class::Create($obj);
+                $list[$obj['ClassID']] = ISS_Class::Create($obj);
             }
         }
 
@@ -481,17 +481,18 @@ class ISS_ClassService
         return null;
     }
 
-    public static function LoadTeacherAccountByClassID($cid) {
+    public static function LoadTeacherAccountByClassID($cid)
+    {
         self::debug("LoadTeacherAccountByClassID");
-        
-        global $wpdb; 
+
+        global $wpdb;
         $table = ISS_Class::GetAccountViewName();
         $query = "SELECT  *  FROM {$table} WHERE  ClassID = '{$cid}' AND Access = 'primary'";
         $result_set = $wpdb->get_results($query, ARRAY_A);
 
         // there should be more than one
-        foreach ($result_set as $obj) {          
-                return ISS_Class::Create($obj);           
+        foreach ($result_set as $obj) {
+            return ISS_Class::Create($obj);
         }
         return null;
     }
