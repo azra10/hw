@@ -2,25 +2,25 @@
 iss_write_log($_POST);
 check_admin_referer('iss-email-teacher-form-page', '_wpnonce-iss-email-teacher-form-page');
 
-if (isset($_POST['postid']) && !empty($_POST['postid'])) {
+if (isset($_POST['postid'])) {// && !empty($_POST['postid'])) {
     $postid = $_POST['postid'];
 }
-if (isset($_POST['title']) && !empty($_POST['title'])) {
+if (isset($_POST['title'])) {// && !empty($_POST['title'])) {
     $title = $_POST['title'];
 } else {
     $errTitle = ' required';
 }
-if (isset($_POST['content']) && !empty($_POST['content'])) {
+if (isset($_POST['content'])) {// && !empty($_POST['content'])) {
     $content = $_POST['content'];
 } else {
     $errContent = ' required';
 }
-if (isset($_POST['duedate']) && !empty($_POST['duedate'])) {
+if (isset($_POST['duedate'])) {//&& !empty($_POST['duedate'])) {
     $duedate = $_POST['duedate'];
 } else {
     $errDuedate = ' required';
 }
-if (isset($_POST['possiblepoints']) && !empty($_POST['possiblepoints'])) {
+if (isset($_POST['possiblepoints'])) {//&& !empty($_POST['possiblepoints'])) {
     $possiblepoints = $_POST['possiblepoints'];
 } else {
     $errPossiblepoints = ' required';
