@@ -239,7 +239,7 @@ class ISS_StudentService
             self::debug($result_set);
 
             foreach ($result_set as $obj) {
-                $list[] = ISS_Student::Create($obj);
+                $list[$obj['StudentViewID']] = ISS_Student::Create($obj);
             }
         }
 
@@ -255,7 +255,7 @@ class ISS_StudentService
             self::debug($result_set);
 
             foreach ($result_set as $obj) {
-                $list[] = ISS_Student::Create($obj);
+                $list[$obj['StudentViewID']] = ISS_Student::Create($obj);
             }
         } else if (ISS_PermissionService::class_student_list_all_access($cid)) {
 
@@ -266,7 +266,7 @@ class ISS_StudentService
             self::debug($result_set);
 
             foreach ($result_set as $obj) {
-                $list[] = ISS_Student::Create($obj);
+                $list[$obj['StudentViewID']] = ISS_Student::Create($obj);
             }
         }
         return $list;
