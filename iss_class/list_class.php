@@ -14,7 +14,8 @@ $result_set = ISS_ClassService::GetClasses();
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($result_set as $row) { ?>
+            <?php $currentuser= wp_get_current_user();
+            foreach ($result_set as $row) { ?>
         <tr>
             <td><?php echo $row->Name; ?></td>
             <td> <?php echo $row->Teacher; ?> </td>
@@ -32,8 +33,9 @@ $result_set = ISS_ClassService::GetClasses();
                 <?php 
             }
 
-            if (is_email_plugin_active()) {
-                if (ISS_PermissionService::can_email_class()) { ?>              
+            if (is_email_plugin_active()) { 
+                $teacher = (strpos( $row->Teacher, $currentuser->display_name) !==false);
+                if (ISS_PermissionService::can_email_class() && $teacher) { ?>              
                     <a href="admin.php?page=issemailclass&cid=<?php echo $row->ClassID; ?>">
                         <span style="padding-left: 10px; white-space: nowrap;"> <i class="fas fa-envelope "></i> Email Class </span>
                     </a>                   

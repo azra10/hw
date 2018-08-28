@@ -257,7 +257,7 @@ class ISS_ClassService
             $ttable = ISS_Class::GetTeacherClassAccessViewName();
             $query = "SELECT {$columns} FROM {$ttable}  WHERE UserID = {$userid} AND RegistrationYear = '{$regyear}'";
             $result_set = $wpdb->get_results($query, ARRAY_A);
-            self::debug("All Access Classes " . $userid);
+            self::debug("Teacher Access Classes " . $userid);
             self::debug($result_set);
 
             foreach ($result_set as $obj) {

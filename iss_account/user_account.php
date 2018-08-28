@@ -15,7 +15,7 @@ if (isset($_POST['_wpnonce-iss-user-account-form-page'])) {
         if (1 == $result) {
             $user = new WP_User($userid);
             if (null != $user) {
-                $user->set_role('issstudentrole');
+                $user->add_role('issstudentrole');
                 iss_write_log($user);
                 iss_write_log("student role added to user ");
                 iss_write_log($user->roles);
