@@ -32,7 +32,7 @@ if (isset($_POST['_wpnonce-iss-email-account-form-page'])) {
     }
     $copy = $_POST['copy'];
     $to = 'IslamicSchoolOfSiliconValley@learnislam.org'; // TODO make configurable
-    $subject = 'Contact Form Admin From {$name}';
+    $subject = "Contact Form Admin From {$name}";
     $body = "Message: {$message}";
     $current_user = wp_get_current_user();
     $from = $current_user->user_email;
