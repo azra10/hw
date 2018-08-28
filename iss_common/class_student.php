@@ -89,7 +89,7 @@ class ISS_Student
             }
             if (isset($row['SchoolEmail'])) {
                 $this->SchoolEmail = $row['SchoolEmail'];
-            }           
+            }
             if (isset($row['UserEmail'])) {
                 $this->UserEmail = $row['UserEmail'];
             }
@@ -322,8 +322,8 @@ class ISS_StudentService
         if (ISS_PermissionService::can_email_class()) {
             $table = ISS_Student::GetTableName();
             $query = "SELECT  StudentViewID, StudentEmail, FatherEmail, MotherEmail, SchoolEmail  FROM {$table} "
-            . "WHERE  RegistrationYear = '{$regyear}'  and StudentStatus = 'active'  and ISSGrade = '{$initial}' ";
-               
+                . "WHERE  RegistrationYear = '{$regyear}'  and StudentStatus = 'active'  and ISSGrade = '{$initial}' ";
+
             self::debug($query);
             $result_set = $wpdb->get_results($query, ARRAY_A);
             foreach ($result_set as $obj) {
@@ -501,7 +501,7 @@ class ISS_StudentService
             self::debug("CreateUserAccount SID:{$student->StudentID} U:{$email_address} P:{$password} Role:{$role}");
             $user_id = wp_create_user($email_address, $password, $email_address);
             self::debug($user_id);
-            if( is_wp_error( $user_id ) ) {
+            if (is_wp_error($user_id)) {
                 $error = $user_id->get_error_message();
                 return 1;
             }
@@ -515,20 +515,20 @@ class ISS_StudentService
             ));
             $result = ISS_UserStudentMapService::AddMapping($student->StudentID, $user_id);
             if (1 == $result) {
-                $isscustomeditor =  $isscustomeditor . "
+                $isscustomeditor = $isscustomeditor . "
                  Username: {$email_address}
                  Password: {$password}
                  ";
 
                 if (substr($email_address, -5) == 'gmail')
-                    $isscustomeditor =  $isscustomeditor . "
-                     You can login with your gmail password, click on Sign with Google button.";
+                    $isscustomeditor = $isscustomeditor . "
+Click on 'Sign in with Google' to login with you google Username/Password (this would allow you to not remember a new password)";
                 else
-                    $isscustomeditor =  $isscustomeditor . "
-                     You can always link your gmail account with this account, watch the video in help sectin for instructions.";
-
-                wp_mail($email_address, 'Welcome to ISSV Homework and Grading Site!', $isscustomeditor . "
-                School Admin");
+                    $isscustomeditor = $isscustomeditor . "
+You can link your gmail account with this account, watch the video in help sectin for instructions.";
+                $isscustomeditor . "
+School Admin";
+                wp_mail($email_address, 'Welcome to ISSV Homework and Grading Site!', $isscustomeditor);
                 return $result;
             }
         } else {
