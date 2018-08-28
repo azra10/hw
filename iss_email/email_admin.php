@@ -4,46 +4,48 @@
 $backurl = admin_url('/');
 iss_show_heading_with_backurl("Contact Admin", $backurl);
 
-$errName=null; $errEmail = null; $errMessage=null;
+$errName = $errEmail = $errMessage = null;
 
 if (isset($_POST['_wpnonce-iss-email-account-form-page'])) {
     iss_write_log(($_POST));
     check_admin_referer('iss-email-account-form-page', '_wpnonce-iss-email-account-form-page');
-
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $message = $_POST['message'];
-    $copy = intval($_POST['copy']);
-    $to = 'IslamicSchoolOfSiliconValley@learnislam.org'; // TODO make configurable
-    $subject = 'Contact Form Admin';
-
-    $body = "From: $name\n E-Mail: $email\n Message:\n $message";
  
 		// Check if name has been entered
     if (!$_POST['name']) {
         $errName = 'Please enter your name';
+    } else {
+        $name = $_POST['name'];
     }
 		
-		// Check if email has been entered and is valid
-    if (!$_POST['email'] || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-        $errEmail = 'Please enter a valid email address';
-    }
+	// Check if email has been entered and is valid
+    // if (!$_POST['email'] || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+    //     $errEmail = 'Please enter a valid email address';
+    // } else {
+    //     $from = $_POST['email'];
+    // }
 		
 		//Check if message has been entered
     if (!$_POST['message']) {
         $errMessage = 'Please enter your message';
+    } else {
+        $message = $_POST['message'];
     }
- 
-// If there are no errors, send the email
+    $copy = $_POST['copy'];
+    $to = 'IslamicSchoolOfSiliconValley@learnislam.org'; // TODO make configurable
+    $subject = 'Contact Form Admin From {$name}';
+    $body = "Message: {$message}";
+    $current_user = wp_get_current_user();
+    $from = $current_user->user_email;
+
     if (!$errName && !$errEmail && !$errMessage) {
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
-        $headers[] ='From: ' . $email;
-        if (!empty($copy) && ($copy == 'Yes'))
-        $headers[] = 'Cc: ' . $email;
- 
-        wp_mail( $to, $subject, $body, $headers );
-
-        if (mail($to, $subject, $body, $email)) {
+        $headers[] = 'From: ' . $from;
+        if (!empty($copy) && ($copy == 'Yes')) {
+            $headers[] = 'Cc: ' . $from;
+        }
+        iss_write_log("To: {$to}");
+        iss_write_log($headers);
+        if (wp_mail($to, $subject, $body, $headers)) {
             $result = '<div class="alert alert-success">Thank You for contacting us!</div>';
         } else {
             $result = '<div class="alert alert-danger">Sorry there was an error sending your message. Please try again later</div>';
@@ -62,19 +64,19 @@ if (isset($_POST['_wpnonce-iss-email-account-form-page'])) {
         <label class="col-sm-offset-1"> Please include student name and grade for a quick response.</label>
         </div>
 	<div class="form-group">
-		<label for="name" class="col-sm-1 control-label">Name</label>
+		<label for="name" class="col-sm-1 control-label">Your Name</label>
 		<div class="col-sm-10">
 			<input type="text" class="form-control" id="name" name="name" placeholder="Student Name and Grade" value="<?php echo isset($_POST['name']) ?htmlspecialchars($_POST['name']):''; ?>">
 			<?php echo "<p class='text-danger'>$errName</p>"; ?>
 		</div>
     </div>
-	<div class="form-group">
-		<label for="email" class="col-sm-1 control-label">Email</label>
+	<!-- <div class="form-group">
+		<label for="email" class="col-sm-1 control-label">Your Email</label>
 		<div class="col-sm-10">
-			<input type="email" class="form-control" id="email" name="email" placeholder="example@domain.com" value="<?php echo isset($_POST['email'])? htmlspecialchars($_POST['email']):''; ?>">
-			<?php echo "<p class='text-danger'>$errEmail</p>"; ?>
+			<input type="email" class="form-control" id="email" name="email" placeholder="example@domain.com" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
+			<?php //echo "<p class='text-danger'>$errEmail</p>"; ?>
 		</div>
-	</div>
+	</div> -->
 	<div class="form-group">
 		<label for="message" class="col-sm-1 control-label">Message</label>
 		<div class="col-sm-10">

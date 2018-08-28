@@ -95,7 +95,7 @@ Login to check homework and assessment at https://learnislam.org/engrade";
         <div class="row">
         <div class="col-md-4">
             <input type="hidden" id="studentid" name="studentid" value="<?php echo $student->StudentID; ?>" />          
-            <label class="control-label">Email Address:</label> <input type="text" id="email" name="email" class="form-control" reuired value="<?php $email_address ?>" />          
+            <label class="control-label">Email Address:</label> <input type="text" id="email" name="email" class="form-control" reuired value="<?php echo $email_address ?>" />          
             <label class="control-label">Password:</label> <input type="text" id="password" name="password" class="form-control" reuired value="<?php echo $password; ?>" />          
             <label class="control-label">Access:</label> <select  id="role" name="role" class="form-control"  >   
             <option value="issstudentrole">ISS Student Role</opion>

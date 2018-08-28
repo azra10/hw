@@ -480,6 +480,22 @@ class ISS_ClassService
         }
         return null;
     }
+
+    public static function LoadTeacherAccountByClassID($cid) {
+        self::debug("LoadTeacherAccountByClassID");
+        
+        global $wpdb; 
+        $table = ISS_Class::GetAccountViewName();
+        $query = "SELECT  *  FROM {$table} WHERE  ClassID = '{$cid}' AND Access = 'primary'";
+        $result_set = $wpdb->get_results($query, ARRAY_A);
+
+        // there should be more than one
+        foreach ($result_set as $obj) {          
+                return ISS_Class::Create($obj);           
+        }
+        return null;
+    }
+
 }
 
 ?>

@@ -11,6 +11,7 @@ class ISS_Assignment
     public $Content;
     public $created;
     public $updated;
+    public $Guid;
 
     public static function GetViewName()
     {
@@ -50,7 +51,7 @@ class ISS_Assignment
             if (isset($row['Subject'])) {
                 $this->Subject = $row['Subject'];
             }
-           if (isset($row['PossiblePoints'])) {
+            if (isset($row['PossiblePoints'])) {
                 $this->PossiblePoints = $row['PossiblePoints'];
             }
             if (isset($row['DueDate'])) {
@@ -61,6 +62,9 @@ class ISS_Assignment
             }
             if (isset($row['post_title'])) {
                 $this->Title = $row['post_title'];
+            }
+            if (isset($row['guid'])) {
+                $this->Guid = $row['post_title'];
             }
             if (isset($row['post_name'])) {
                 $this->Name = $row['post_name'];
@@ -127,6 +131,18 @@ class ISS_AssignmentService
         }
         return null;
     }
+
+    public static function LoadAttachmentsByID($id)
+    {
+        self::debug("LoadAttachmentsByID {$id}");
+        global $wpdb;
+        $table = $wpdb->prefix . 'posts';
+           // SELECT * FROM local_posts where post_type = \'attachment\' and post_parent = 372"
+        $query = $wpdb->prepare("SELECT ID, post_title, guid  FROM {$table} where  post_type = 'attachment' and post_parent = %d", $id);
+        $result_set = $wpdb->get_results($query, ARRAY_A);
+
+        return $result_set;
+    }
     /**
      * GetAssignments function
      *
@@ -156,7 +172,7 @@ class ISS_AssignmentService
     public static function DeleteByPostID($postid)
     {
         try {
-            self::debug("DeleteByID {$postid}");
+            self::debug("DeleteByPostID {$postid}");
             global $wpdb;
             $table = ISS_Assignment::GetTableName();
             $result = $wpdb->delete($table, array('ID' => $postid), array("%d"));
@@ -170,6 +186,17 @@ class ISS_AssignmentService
             self::error($ex->getMessage());
         }
         return 0;
+    }
+
+    public static function DeleteAttachmentByPostID($postid)
+    {
+        self::debug("DeleteAttachmentByPostID {$postid}");
+        global $wpdb;
+        $result = wp_delete_attachment($postid, true);
+        if (false === $result) {
+            return 0;
+        }
+        return 1;
     }
     public static function Add($postid, $classid, $category, $possiblepoints, $duedate)
     {

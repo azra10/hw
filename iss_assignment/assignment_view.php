@@ -15,6 +15,7 @@ if (isset($_GET['post'])) {
     $postid = iss_sanitize_input($_GET['post']);
     if (!empty($postid)) {
         $post = ISS_AssignmentService::LoadByID($postid);
+        $attachments = ISS_AssignmentService::LoadAttachmentsByID($postid);
         iss_write_log($post);
     }
 }
@@ -83,9 +84,28 @@ if (null != $post) {
             $content = apply_filters('the_content', $content);
             $content = str_replace(']]>', ']]&gt;', $content);
             echo $content;
-        }
+            ?>
+            <div class="form-group">
+                <div class="col-sm-10">
+                <?php if (null != $attachments) {
+                    echo "<label>Attachments:</label>";
+                    echo "<table class='table table-striped' border=1>";
+                    foreach ($attachments as $row) {
+                        echo "<tr><td>";
+                        echo "<a href='{$row['guid']}'>{$row['post_title']}</a> ";
+                        echo "</td></tr>";
+                    }
+                    echo "</table>";
+                }
+                ?>       
+                </div>
+            </div>
+
+        <?php
+
     }
-    ?> 
+}
+?> 
     </div>
    </div>
 </div>

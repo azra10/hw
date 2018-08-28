@@ -23,6 +23,7 @@ class ISS_Student
     public $UserID;
     public $Access;
     public $LastLogin;
+    public $SchoolEmail;
 
     public static function GetStudentAccountViewName()
     {
@@ -37,7 +38,7 @@ class ISS_Student
     public static function GetFieldsArray()
     {
         return array(
-            "StudentViewID", "StudentID", "StudentFirstName", "StudentLastName", "StudentGender", "StudentStatus", "ISSGrade",
+            "StudentViewID", "StudentID", "StudentFirstName", "StudentLastName", "StudentGender", "StudentStatus", "ISSGrade", "SchoolEmail",
             "ParentID", "FatherFirstName", "FatherLastName", "FatherEmail", "MotherFirstName", "MotherLastName", "MotherEmail", "RegistrationYear"
         );
     }
@@ -86,6 +87,9 @@ class ISS_Student
             if (isset($row['MotherEmail'])) {
                 $this->MotherEmail = $row['MotherEmail'];
             }
+            if (isset($row['SchoolEmail'])) {
+                $this->SchoolEmail = $row['SchoolEmail'];
+            }           
             if (isset($row['UserEmail'])) {
                 $this->UserEmail = $row['UserEmail'];
             }
@@ -292,18 +296,40 @@ class ISS_StudentService
                 }
             }
             $query .= " order by  StudentFirstName ";
-
+            self::debug($query);
             $result_set = $wpdb->get_results($query, ARRAY_A);
             foreach ($result_set as $obj) {
-                try {
-                    $list[] = ISS_Student::Create($obj);
-                } catch (Throwable $ex) {
-                    self::error($ex->getMessage());
-                }
+                $list[] = ISS_Student::Create($obj);
             }
 
             return $list;
 
+        }
+        return null;
+    }
+    /**
+     * GetStudents function
+     * @return  array of ISS_Student Objects
+     */
+    public static function GetStudentEmails($initial)
+    {
+        self::debug("GetStudentAccounts");
+        $list = array();
+
+        global $wpdb;
+        $regyear = iss_registration_period();
+
+        if (ISS_PermissionService::can_email_class()) {
+            $table = ISS_Student::GetTableName();
+            $query = "SELECT  StudentViewID, StudentEmail, FatherEmail, MotherEmail, SchoolEmail  FROM {$table} "
+            . "WHERE  RegistrationYear = '{$regyear}'  and StudentStatus = 'active'  and ISSGrade = '{$initial}' ";
+               
+            self::debug($query);
+            $result_set = $wpdb->get_results($query, ARRAY_A);
+            foreach ($result_set as $obj) {
+                $list[] = ISS_Student::Create($obj);
+            }
+            return $list;
         }
         return null;
     }
@@ -493,7 +519,7 @@ class ISS_StudentService
                  Username: {$email_address}
                  Password: {$password}
                  ";
-                 
+
                 if (substr($email_address, -5) == 'gmail')
                     $isscustomeditor =  $isscustomeditor . "
                      You can login with your gmail password, click on Sign with Google button.";

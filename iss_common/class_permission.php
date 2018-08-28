@@ -43,6 +43,15 @@ class ISS_PermissionService
     {
         return current_user_can('iss_admin') || current_user_can('iss_board') || current_user_can('iss_secretary');
     }
+    public static function can_email_teacher() {
+        return current_user_can('iss_admin') || current_user_can('iss_student') || current_user_can('iss_parent')  || current_user_can('iss_secretary');
+    }
+    public static function can_email_student() {
+        return current_user_can('iss_admin') || current_user_can('iss_teacher') || current_user_can('iss_secretary');
+    }
+    public static function can_email_class() {
+        return current_user_can('iss_admin') || current_user_can('iss_teacher') || current_user_can('iss_secretary');
+    }
     public static function is_user_teacher_role(){
         return current_user_can('iss_teacher');
     }

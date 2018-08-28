@@ -28,8 +28,8 @@ if (!function_exists('load_custom_iss_style')) {
     function load_custom_iss_style()
     {
         define('ISS_COMMON_URL', plugin_dir_url(__FILE__));
-        wp_register_script('custom_iss_form_script', ISS_COMMON_URL . '/js/iss_form.js');
-        wp_enqueue_script('custom_iss_form_script');
+       // wp_register_script('custom_iss_form_script', ISS_COMMON_URL . '/js/iss_form.js');
+       // wp_enqueue_script('custom_iss_form_script');
 
         wp_register_script('jquery1', '//code.jquery.com/jquery-3.3.1.js', array('jquery'), true);
         wp_enqueue_script('jquery1'); // enqueue datepicker from WP
@@ -105,6 +105,12 @@ if (!function_exists('is_assignment_plugin_active')) {
     }
 }
 
+if (!function_exists('is_email_plugin_active')) {
+    function is_email_plugin_active()
+    {
+        return (is_plugin_active("iss_email/iss_email.php"));
+    }
+}
 function iss_remove_dashboard_widgets()
 {
     if (!current_user_can('administrator')) {
