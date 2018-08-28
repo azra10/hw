@@ -515,17 +515,18 @@ class ISS_StudentService
             ));
             $result = ISS_UserStudentMapService::AddMapping($student->StudentID, $user_id);
             if (1 == $result) {
-                $isscustomeditor = $isscustomeditor . "
-                 Username: {$email_address}
-                 Password: {$password}
-                 ";
+                
 
-                if (substr($email_address, -5) == 'gmail')
+                if (strpos($email_address, '@gmail.com') !== false)
                     $isscustomeditor = $isscustomeditor . "
-Click on 'Sign in with Google' to login with you google Username/Password (this would allow you to not remember a new password)";
+Click on 'Sign in with Google' to login with you google Username/Password.";
                 else
                     $isscustomeditor = $isscustomeditor . "
-You can link your gmail account with this account, watch the video in help sectin for instructions.";
+Username: {$email_address}
+Password: {$password}
+
+Note:You can link your gmail account, watch the video in help sectin for instructions.
+";
                 $isscustomeditor . "
 School Admin";
                 wp_mail($email_address, 'Welcome to ISSV Homework and Grading Site!', $isscustomeditor);
