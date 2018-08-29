@@ -10,8 +10,8 @@ if (isset($_POST['title'])) {// && !empty($_POST['title'])) {
 } else {
     $errTitle = ' required';
 }
-if (isset($_POST['content'])) {// && !empty($_POST['content'])) {
-    $content = $_POST['content'];
+if (isset($_POST['message'])) {
+    $content = $_POST['message'];
 } else {
     $errContent = ' required';
 }

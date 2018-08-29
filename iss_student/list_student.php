@@ -34,7 +34,7 @@ iss_show_heading_with_backurl("Grade {$class->ISSGrade}  {$class->Subject}  Stud
             <td> 
                 <?php if (ISS_PermissionService::can_email_student()) { ?>              
                     <a href="admin.php?page=issemailstudent&svid=<?php echo $row->StudentViewID; ?>&cid=<?php echo $cid; ?>">
-                        <span style="padding-left: 10px; white-space: nowrap;"> <i class="fas fa-envelope "></i> Email Student </span>
+                        <span style="padding-left: 10px; white-space: nowrap;"> <i class="fas fa-envelope iss_css_email"></i> Email Student </span>
                     </a>                   
                     <?php 
                 } ?>

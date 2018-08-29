@@ -23,9 +23,12 @@ require_once(plugin_dir_path(__FILE__) . "../iss_common/functions.php");
 
 function my_custom_fonts() {
   echo '<style>
-    .dashicons-welcome-write-blog { 
-       
+    .dashicons-id-alt {   
         color:skyblue;
+    }
+    .iss_css_class {
+      color:skyblue;
+      @extend : .dashicons-id-alt;
     }
     .dashicons-controls-play {
        color:orange;
@@ -33,9 +36,18 @@ function my_custom_fonts() {
     .dashicons-admin-users{
         color:#77dcd6;
     }
-    .dashicons-admin-comments {
+    .iss_css_user {
+      color: #77dcd6;
+    }
+    .dashicons-email {
       color: #e2e438;
-}
+    }
+    .iss_css_email {
+      color: #e2e438;
+    }
+    .fa-atom {
+      color: lightgreen;
+    }
   </style>';
 }
 add_action('admin_head', 'my_custom_fonts');
