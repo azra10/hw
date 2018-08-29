@@ -18,4 +18,25 @@ require_once(plugin_dir_path(__FILE__) . "../iss_common/function_registration.ph
 require_once(plugin_dir_path(__FILE__) . "../iss_common/function_validate.php");
 require_once(plugin_dir_path(__FILE__) . "../iss_common/functions.php");
 
+
+
+
+function my_custom_fonts() {
+  echo '<style>
+    .dashicons-welcome-write-blog { 
+       
+        color:skyblue;
+    }
+    .dashicons-controls-play {
+       color:orange;
+    }
+    .dashicons-admin-users{
+        color:#77dcd6;
+    }
+    .dashicons-admin-comments {
+      color: #e2e438;
+}
+  </style>';
+}
+add_action('admin_head', 'my_custom_fonts');
 ?>
