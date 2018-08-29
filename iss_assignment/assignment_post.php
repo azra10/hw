@@ -51,9 +51,9 @@ if (!$errTitle) {
         echo "<div class='text-error'> {$error} </div>";
         echo "<table class='table'><tr>";
         echo "<td><a href='admin.php?page=issvaadd&post={$postid}&cid={$classid}' class='btn btn-primary'>Continue Editing</a></td>";
-        echo "<td><a href='admin.php?page=issvaview&post={$postid}cid={$classid}' class='btn btn-primary'>View Assignment</a></td>";
-        echo "<td><a href='admin.php?page=issvalist&cid={$classid}' class='btn btn-primary'>Finish Editing</a></td></tr></table>";
-
+        echo "<td><a href='admin.php?page=issvalist&cid={$classid}' class='btn btn-primary'>Finish Editing</a></td>";
+        echo "<td><a href='admin.php?page=issvaview&post={$postid}cid={$classid}' class='btn btn-primary'>View Assignment</a></td></tr></table>";
+       
         exit;
     }
 

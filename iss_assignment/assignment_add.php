@@ -89,7 +89,7 @@ iss_show_heading_with_backurl("Assignment", $backurl);
                 echo "<table class='table table-striped' border=1>";
                 foreach ($attachments as $row) {
                     echo "<tr><td>";
-                    echo "<a href='admin.php?page=issvdeleteattachment&post={$row['ID']}&cid={$classid}&backid={$postid}' class='btn btn-primary'>Delete</a>   <a href='{$row['guid']}'>{$row['post_title']}</a> ";
+                    echo "<a href='admin.php?page=issvdeleteattachment&post={$row['ID']}&cid={$classid}&backid={$postid}' class='btn btn-danger btn-sm'>Delete</a>   <a href='{$row['guid']}'>{$row['post_title']}</a> ";
                     echo "</td></tr>";
                 }
                 echo "</table>";
@@ -110,9 +110,9 @@ iss_show_heading_with_backurl("Assignment", $backurl);
         </div>
         <div class="col-sm-5 pull-right">
         <?php if (ISS_PermissionService::class_assignment_write_access($classid) && !empty($postid)) { ?>              
-            <a href="admin.php?page=issvadelete&post=<?php echo "{$postid}&cid={$classid}"; ?>" class="btn btn-warning"
+            <a href="admin.php?page=issvadelete&post=<?php echo "{$postid}&cid={$classid}"; ?>" class="btn btn-danger"
             onclick="return confirm('Are you sure you want to delete this assignment?')">
-                <span style="padding-left: 10px; white-space: nowrap;"> <i class="fas fa-trash-alt "></i> Delete </span>
+                <span style="padding-left: 10px; white-space: nowrap;"> <i class="fas fa-trash-alt"></i> Delete Assignment</span>
             </a>               
             <?php 
         } ?>

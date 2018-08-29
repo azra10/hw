@@ -114,27 +114,48 @@ class ISS_UserStudentMapService
 
         return 0;
     }
-    public static function AddMapping($sid, $uid)
+    public static function AddMapping($sid, $uid, $role = 'issstudentrole')
     {
         self::debug("AddMapping StudentId:{$sid} UserID:{$uid}");
+        $result = 0;
         if ((0 == $sid) || (0 == $uid)) {
-            return 0;
+            return $result;
         }
+        $table = ISS_UserStudentMap::GetTableName();
+       
         if (ISS_PermissionService::user_manage_access()) {
             global $wpdb;
-            $table = ISS_UserStudentMap::GetTableName();
-            $query = "SELECT *  FROM {$table} where  UserID = {$uid} and StudentID = {$sid}";
-            $row = $wpdb->get_row($query, ARRAY_A);
-            if (null != $row) {
-                self::debug('Mapping already exists');
-                return 0;
-            }
-            $result = $wpdb->insert($table, array('UserID' => $uid, 'StudentID' => $sid), array("%d", "%d"));
-            if (1 == $result) {
-                return 1;
+
+            if ($role == 'issparentrole') {
+
+                $stable = ISS_Student::GetTableName();
+                $query = "SELECT B.StudentID  FROM {$stable} A , {$stable} B where  A.ParentID = B.ParentID and A.StudentID = {$sid}";
+
+                $result_set = $wpdb->get_results($query, ARRAY_A);
+
+                foreach ($result_set as $obj) {
+
+                    $siblingStudentID = $obj['StudentID'];
+                    $query = "SELECT *  FROM {$table} where  UserID = {$uid} and StudentID = {$siblingStudentID}";
+                    
+                    $row = $wpdb->get_row($query, ARRAY_A);
+                    if (null == $row) {
+                        $result |= $wpdb->insert($table, array('UserID' => $uid, 'StudentID' => $siblingStudentID), array("%d", "%d"));
+                    }
+                }
+            } else if ($role == 'issstudentrole') {
+
+                $query = "SELECT *  FROM {$table} where  UserID = {$uid} and StudentID = {$sid}";
+                $row = $wpdb->get_row($query, ARRAY_A);
+                if (null != $row) {
+                    self::debug('Mapping already exists');
+                    return 0;
+                }
+                $result = $wpdb->insert($table, array('UserID' => $uid, 'StudentID' => $sid), array("%d", "%d"));
+                 return $result;
             }
         }
-        return 0;
+        return $result;
     }
     public static function RemoveUserMappings($uid)
     {

@@ -513,7 +513,7 @@ class ISS_StudentService
                 'last_name' => $student->StudentLastName,
                 'role' => $role
             ));
-            $result = ISS_UserStudentMapService::AddMapping($student->StudentID, $user_id);
+            $result = ISS_UserStudentMapService::AddMapping($student->StudentID, $user_id, $role);
             if (1 == $result) {
                 
 
@@ -536,7 +536,7 @@ School Admin";
             self::debug($user);
             if (null != $user) {
                 $user->set_role($role);
-                return ISS_UserStudentMapService::AddMapping($student->StudentID, $user->ID);
+                return ISS_UserStudentMapService::AddMapping($student->StudentID, $user->ID, $role);
             }
         }
         return 0;
