@@ -27,7 +27,7 @@ function iss_email_admin_page()
 function iss_email_register_menu_page()
 {
     //add_menu_page( string $page_title, string $menu_title, string $capability, string $menu_slug, callable $function = '', string $icon_url = '', int $position = null )
-    $my_pages[] = add_menu_page('Email Admin', 'Email Admin', 'read', 'issvemailadmin', 'iss_email_admin_page', 'dashicons-id-alt', 6);
+    $my_pages[] = add_menu_page('Email Admin', 'Email Admin', 'read', 'issvemailadmin', 'iss_email_admin_page', 'dashicons-admin-comments', 6);
     $my_pages[] = add_submenu_page(null, 'Email Student', 'Email Student', 'read', 'issemailstudent', 'iss_email_student_page');
     $my_pages[] = add_submenu_page(null, 'Email Class', 'Email Class', 'read', 'issemailclass', 'iss_email_class_page');
     $my_pages[] = add_submenu_page(null, 'Email Teacher', 'Email Teacher', 'read', 'issemailteacher', 'iss_email_teacher_page');
