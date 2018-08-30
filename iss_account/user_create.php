@@ -4,8 +4,7 @@
 $backurl = admin_url('users.php?page=issvuserlist');
 iss_show_heading_with_backurl("Create Student User Account", $backurl);
 
-$student = null;
-$svid = null;
+$student = $email_address = $svid = null;
 
 if (isset($_GET['svid'])) {
     $svid = iss_sanitize_input($_GET['svid']);
