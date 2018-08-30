@@ -505,23 +505,43 @@ class ISS_StudentService
                 $error = $user_id->get_error_message();
                 return 1;
             }
-            // Set the nickname
-            wp_update_user(array(
-                'ID' => $user_id,
-                'nickname' => $student->StudentFirstName,
-                'first_name' => $student->StudentFirstName,
-                'last_name' => $student->StudentLastName,
-                'role' => $role
-            ));
+            if (($role = 'issparentrole') && ($student->FatherEmail == $email_address)) {
+                wp_update_user(array(
+                    'ID' => $user_id,
+                    'display_name' => $student->FatherFirstName . ' ' . $student->FatherLastName,
+                    'nickname' => $student->FatherFirstName,
+                    'first_name' => $student->FatherFirstName,
+                    'last_name' => $student->FatherLastName,                    
+                    'role' => $role
+                ));
+            } else if (($role = 'issparentrole') && ($student->MotherEmail == $email_address)) {
+                wp_update_user(array(
+                    'ID' => $user_id,
+                    'display_name' => $student->MotherFirstName . ' ' . $student->MotherLastName,
+                    'nickname' => $student->MotherFirstName,
+                    'first_name' => $student->MotherFirstName,
+                    'last_name' => $student->MotherLastName,
+                    'role' => $role
+                ));
+            } else {
+                wp_update_user(array(
+                    'ID' => $user_id,
+                    'display_name' => $student->StudentFirstName . ' ' .$student->StudentLastName,
+                    'nickname' => $student->StudentFirstName,
+                    'first_name' => $student->StudentFirstName,
+                    'last_name' => $student->StudentLastName,
+                    'role' => $role
+                ));
+            }
             $result = ISS_UserStudentMapService::AddMapping($student->StudentID, $user_id, $role);
             if (1 == $result) {
-                
+
 
                 if (strpos($email_address, '@gmail.com') !== false)
                     $message = $message . "Click on 'Continue with Google' to login with you google Username/Password.
                     
 OR ";
-                    $message = $message . "
+                $message = $message . "
 
 Login with following username/password (please change password the first time you login)
 
@@ -533,9 +553,11 @@ Note:You can link your gmail account, watch the video in help sectin for instruc
 School Admin";
 
                 $headers[] = 'CC: IslamicSchoolOfSiliconValley@learnislam.org';
-                iss_write_log('To:' . $email_address);   iss_write_log($message);  iss_write_log($headers);
-        
-                wp_mail($email_address, 'Welcome to ISSV Homework and Grading Site!', $message, $headers);
+                iss_write_log('To:' . $email_address);
+                iss_write_log($message);
+                iss_write_log($headers);
+
+              //  wp_mail($email_address, 'Welcome to ISSV Homework and Grading Site!', $message, $headers);
                 return $result;
             }
         } else {
