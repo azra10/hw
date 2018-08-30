@@ -526,7 +526,7 @@ class ISS_StudentService
             } else {
                 wp_update_user(array(
                     'ID' => $user_id,
-                    'display_name' => $student->StudentFirstName . ' ' .  $student->StudentLastName,
+                    'display_name' => $student->StudentFirstName . ' ' . $student->StudentLastName,
                     'nickname' => $student->StudentFirstName,
                     'first_name' => $student->StudentFirstName,
                     'last_name' => $student->StudentLastName,
@@ -535,29 +535,21 @@ class ISS_StudentService
             }
             $result = ISS_UserStudentMapService::AddMapping($student->StudentID, $user_id, $role);
             if (1 == $result) {
-
-
-                if (strpos($email_address, '@gmail.com') !== false) {
-
-                    $message = $message . " Use button 'Continue with Google' to login with you google Username/Password.
-
-OR ";
-
-                } else {
-                    $message = $message . " 
-Please note that you can link a gmail account and login using gmail username/password (video in help section for instructions)
-
-OR ";
-                }
-
                 $message = $message . "
 Login with following username/password (please change password the first time you login)
 
 Username: {$email_address}
 Password: {$password}
-
+";
+                if (strpos($email_address, '@gmail.com') !== false) {
+                    $message = $message . " 
+Use button 'Continue with Google' to login with your google Username/Password.";
+                } else {
+                    $message = $message . " 
+Please note that you can link a gmail account and login using gmail username/password (video in help section for instructions)";
+                }
+                $message = $message . " 
 School Admin";
-
                 $headers[] = 'CC: IslamicSchoolOfSiliconValley@learnislam.org';
                 iss_write_log('To:' . $email_address);
                 iss_write_log($message);
