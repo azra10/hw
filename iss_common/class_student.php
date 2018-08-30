@@ -490,7 +490,7 @@ class ISS_StudentService
     }
 
 
-    public static function CreateUserAccount($student, $email_address, $role, $password, $isscustomeditor, &$error)
+    public static function CreateUserAccount($student, $email_address, $role, $password, $message, &$error)
     {
         if (null == username_exists($email_address)) {
 
@@ -518,17 +518,24 @@ class ISS_StudentService
                 
 
                 if (strpos($email_address, '@gmail.com') !== false)
-                    $isscustomeditor = $isscustomeditor . "
-Click on 'Sign in with Google' to login with you google Username/Password.";
-                else
-                    $isscustomeditor = $isscustomeditor . "
+                    $message = $message . "Click on 'Continue with Google' to login with you google Username/Password.
+                    
+OR ";
+                    $message = $message . "
+
+Login with following username/password (please change password the first time you login)
+
 Username: {$email_address}
 Password: {$password}
 
 Note:You can link your gmail account, watch the video in help sectin for instructions.
 
 School Admin";
-                wp_mail($email_address, 'Welcome to ISSV Homework and Grading Site!', $isscustomeditor);
+
+                $headers[] = 'CC: IslamicSchoolOfSiliconValley@learnislam.org';
+                iss_write_log('To:' . $email_address);   iss_write_log($message);  iss_write_log($headers);
+        
+                wp_mail($email_address, 'Welcome to ISSV Homework and Grading Site!', $message, $headers);
                 return $result;
             }
         } else {
