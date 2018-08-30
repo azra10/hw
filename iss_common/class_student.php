@@ -511,7 +511,7 @@ class ISS_StudentService
                     'display_name' => $student->FatherFirstName . ' ' . $student->FatherLastName,
                     'nickname' => $student->FatherFirstName,
                     'first_name' => $student->FatherFirstName,
-                    'last_name' => $student->FatherLastName,                    
+                    'last_name' => $student->FatherLastName,
                     'role' => $role
                 ));
             } else if (($role = 'issparentrole') && ($student->MotherEmail == $email_address)) {
@@ -526,7 +526,7 @@ class ISS_StudentService
             } else {
                 wp_update_user(array(
                     'ID' => $user_id,
-                    'display_name' => $student->StudentFirstName . ' ' .$student->StudentLastName,
+                    'display_name' => $student->StudentFirstName . ' ' .  $student->StudentLastName,
                     'nickname' => $student->StudentFirstName,
                     'first_name' => $student->StudentFirstName,
                     'last_name' => $student->StudentLastName,
@@ -537,18 +537,24 @@ class ISS_StudentService
             if (1 == $result) {
 
 
-                if (strpos($email_address, '@gmail.com') !== false)
-                    $message = $message . "Click on 'Continue with Google' to login with you google Username/Password.
-                    
-OR ";
-                $message = $message . "
+                if (strpos($email_address, '@gmail.com') !== false) {
 
+                    $message = $message . " Use button 'Continue with Google' to login with you google Username/Password.
+
+OR ";
+
+                } else {
+                    $message = $message . " 
+Please note that you can link a gmail account and login using gmail username/password (video in help section for instructions)
+
+OR ";
+                }
+
+                $message = $message . "
 Login with following username/password (please change password the first time you login)
 
 Username: {$email_address}
 Password: {$password}
-
-Note:You can link your gmail account, watch the video in help sectin for instructions.
 
 School Admin";
 
@@ -557,7 +563,7 @@ School Admin";
                 iss_write_log($message);
                 iss_write_log($headers);
 
-              //  wp_mail($email_address, 'Welcome to ISSV Homework and Grading Site!', $message, $headers);
+                wp_mail($email_address, 'Welcome to ISSV Homework and Grading Site!', $message, $headers);
                 return $result;
             }
         } else {
