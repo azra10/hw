@@ -78,7 +78,7 @@ iss_show_heading_with_backurl("Assignment", $backurl);
     <div class="form-group">
      	<div class="col-sm-10">
             <label for="message" class="control-label"><?php echo "<span class='text-danger'>$errMessage</span>"; ?></label>		     
-            <?php wp_editor($message, 'message', array('media_buttons' => false, 'textarea_rows' => 5)); ?>
+            <?php wp_editor($content, 'message', array('media_buttons' => false, 'textarea_rows' => 5)); ?>
  		</div>
     </div> 
     <hr/>
