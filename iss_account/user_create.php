@@ -54,7 +54,7 @@ Login to check homework and assessment at https://learnislam.org/engrade";
 
 <div><strong>Student: </strong>: <?php echo "{$student->StudentFirstName} {$student->StudentLastName} <b>{$student->StudentEmail}</b>"; ?><br/></div>
 <div><strong>Father: </strong>: <?php echo "{$student->FatherFirstName} {$student->FatherLastName} <b>{$student->FatherEmail}</b>"; ?><br/></div>
-<div><strong>Student: </strong>: <?php echo "{$student->MotherFirstName} {$student->MotherLastName} <b>{$student->MotherEmail}</b>"; ?><br/></div>
+<div><strong>Mother: </strong>: <?php echo "{$student->MotherFirstName} {$student->MotherLastName} <b>{$student->MotherEmail}</b>"; ?><br/></div>
 
  <hr/>
 <h3>Existing Linked Accounts</h3>
@@ -97,14 +97,10 @@ Login to check homework and assessment at https://learnislam.org/engrade";
             <label class="control-label">Email Address:</label> <input type="text" id="email" name="email" class="form-control" reuired value="<?php echo $email_address ?>" />          
             <label class="control-label">Password:</label> <input type="text" id="password" name="password" class="form-control" reuired value="<?php echo $password; ?>" />          
             <label class="control-label">Access:</label> <select  id="role" name="role" class="form-control"  >   
-            <option value="issstudentrole">ISS Student Role</opion>
             <option value="issparentrole">ISS Parent Role</opion>           
+            <option value="issstudentrole">ISS Student Role</opion>
             </select> 
-            <?php
-            $editor_id = 'isscustomeditor';
-            $settings = array('media_buttons' => false);
-            wp_editor($content, $editor_id, $settings);
-            ?>
+            <?php   wp_editor($content, 'isscustomeditor', array('media_buttons' => false, 'textarea_rows' => 5)); ?>
             <br/>
             <button type="submit" name="submit" value="user" class="btn btn-primary form-control" >Create Account</button>		     
         </div> 

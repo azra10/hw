@@ -535,19 +535,25 @@ class ISS_StudentService
             }
             $result = ISS_UserStudentMapService::AddMapping($student->StudentID, $user_id, $role);
             if (1 == $result) {
+                if (strpos($email_address, '@gmail.com') !== false) {
+                    $message = $message . " 
+Use button 'Continue with Google' to login with your google Username/Password.
+
+OR ";
+                } 
+
                 $message = $message . "
-Login with following username/password (please change password the first time you login)
+
+ Login with following username/password (please change password the first time you login)
 
 Username: {$email_address}
 Password: {$password}
 ";
-                if (strpos($email_address, '@gmail.com') !== false) {
-                    $message = $message . " 
-Use button 'Continue with Google' to login with your google Username/Password.";
-                } else {
-                    $message = $message . " 
+              if (strpos($email_address, '@gmail.com') === false)  {
+                $message = $message . " 
 Please note that you can link a gmail account and login using gmail username/password (video in help section for instructions)";
-                }
+            }
+                  
                 $message = $message . " 
 School Admin";
                 $headers[] = 'CC: IslamicSchoolOfSiliconValley@learnislam.org';
