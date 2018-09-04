@@ -11,10 +11,16 @@ if (isset($_GET['cid'])) {
     $cid = iss_sanitize_input($_GET['cid']);
     if (!empty($cid)) {
         $class = ISS_ClassService::LoadTeacherAccountByClassID($cid);
+        if (null != $class) {
+            $accounts = ISS_StudentService::GetStudentEmails($class->ISSGrade);
+        }
     }
 }
-iss_write_log("Email Class " . $cid);
-
+iss_write_log("Email Class CID:" . $cid);
+if ((null == $class) || (null == $accounts)) {
+    echo 'Error sending emails';
+    exit();
+}
 $from = $current_user->user_email;
 $to = $subject = $message = null;
 $errTo = $errSubject = $errMessage = null;
@@ -26,15 +32,12 @@ if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
     if (isset($_POST['subject']) && !empty($_POST['subject'])) {
         $subject = $_POST['subject'];
     } else {
-        $errSubject = ' required';
+        $errSubject = 'subject required';
     }
     if (isset($_POST['message']) && !empty($_POST['message'])) {
         $message = $_POST['message'];
     } else {
-        $errMessage = ' required';
-    }
-    if (isset($_POST['copy']) && !empty($_POST['copy'])) {
-        $copy = $_POST['copy'];
+        $errMessage = 'message required';
     }
     $to = null;
     $toemail = array();
@@ -47,7 +50,7 @@ if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
     if (isset($_POST['motheremail']) && !empty($_POST['motheremail']) && ($_POST['motheremail'] == 'Yes')) {
         $to = $to . '3';
     }
-    
+
     if (!$to) {
         $errTo = ' required';
     }
@@ -57,23 +60,33 @@ if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
 
         $pos = strpos($from, "@");
         $rest = substr($from, 0, $pos);
-        $headers[] = 'From: ' . $rest . '@learnislam.org';
-        $toemail = $rest . '@learnislam.org';
+        $fromemail = $rest . '@learnislam.org';
+        $headers[] = 'From: ' . $fromemail;
+        $toemail = $fromemail;
 
-        $accounts = ISS_StudentService::GetStudentEmails($class->ISSGrade);
-        iss_write_log($accounts);
-        echo '<div class="alert alert-success">Sending Email to following recipients:</div>';
-        foreach($accounts as $account) {
-            if ((strpos($to, '1') !== false ) && !empty($account->StudentEmail)) // Student Email
-            { $headers[] = 'BCC:' . $account->StudentEmail; echo "<br/>{$account->StudentEmail}"; }
-            
-            if ((strpos($to, '2') !== false ) && !empty($account->SchoolEmail)) // School Email
-            { $headers[] = 'BCC:' . $account->SchoolEmail;  echo "<br/>School: {$account->SchoolEmail}";}
-           
-            if ((strpos($to, '3') !== false ) && ($account->SchoolEmail != $account->FatherEmail) && !empty($account->FatherEmail))
-            { $headers[] = 'BCC:' . $account->FatherEmail;  echo "<br/>Second: {$account->FatherEmail}";}
-            else if ((strpos($to, '3') === 2 ) && ($account->SchoolEmail != $account->MotherEmail) && !empty($account->MotherEmail))
-            { $headers[] = 'BCC:' . $account->MotherEmail;  echo "<br/>Second: {$account->MotherEmail}";}
+        echo '<div class="alert alert-success">Sending Email:</div>';
+        echo "<div>From: {$fromemail}</div><div>To: {$toemail}</div><div>Bcc:</div>";
+        echo '<table class="table-striped table-responsive table-condensed" border=1>';
+        echo '<tr><th>Student</th><th>Student Email</th><th>School Email</th><th>Second Email</th></tr>';
+
+        foreach ($accounts as $account) {
+            echo "<tr><td>{$account->StudentFirstName} {$account->StudentLastName}";
+            echo "</td><td>";
+            if ((strpos($to, '1') !== false) && !empty($account->StudentEmail)) {
+                $headers[] = 'BCC:' . $account->StudentEmail;
+                echo $account->StudentEmail;
+            }
+            echo '</td><td>';
+            if ((strpos($to, '2') !== false) && !empty($account->SchoolEmail)) {
+                $headers[] = 'BCC:' . $account->SchoolEmail;
+                echo $account->SchoolEmail;
+            }
+            echo '</td><td>';
+            if ((strpos($to, '3') !== false) && !empty($account->HomeEmail)) {
+                $headers[] = 'BCC:' . $account->HomeEmail;
+                echo $account->HomeEmail;
+            }
+            echo '</td></tr>';
         }
         iss_write_log('To: ' . $toemail);
         iss_write_log($headers);
@@ -81,7 +94,7 @@ if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
             echo '<div class="alert alert-success">Email sent!</div>';
         } else {
             echo '<div class="alert alert-danger">Sorry there was an error sending your message. Please try again later</div>';
-        }
+        }      
         exit;
     }
 }
@@ -99,17 +112,41 @@ if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
     </div>
     <div class="form-group">
 		<div class="col-sm-10">
-        <label for="to" class="control-label">To: <?php echo "Grade{$class->ISSGrade} <span class='text-danger'>{$errTo} </span>"; ?></label>
-        <table class="table">
-		    <?php 
-        
-            echo "<tr><td><input type='checkbox' name='studentemail' value='Yes' checked>  <b>Student Email</b></td></tr>";
-       
-            echo "<tr><td><input type='checkbox' name='fatheremail' value='Yes' checked> <b>Preferred School Email</td></tr>";
-       
-            echo "<tr><td><input type='checkbox' name='motheremail' value='Yes' checked> <b>Parents' Second Email (Optional)</b> </td></tr>";       
-        ?></table>
-		</div>
+        <label for="to" class="control-label">To: <?php echo "Grade{$class->ISSGrade}"; ?></label>
+      	
+       <table class="table-striped table-responsive table-condensed" border=1>      
+            <?php 
+            echo "<tr><th><span class='text-danger'>{$errTo} </span></th>";
+            echo "<th><input type='checkbox' name='studentemail' value='Yes' checked> Student Emails</th>";
+            echo "<th><input type='checkbox' name='fatheremail' value='Yes' checked> Preferred School Emails</th>";
+            echo "<th><input type='checkbox' name='motheremail' value='Yes' checked> Parents' Second Emails</th></tr>";
+
+            foreach ($accounts as $account) {
+                $studentemails = $fathermemails = $motheremails = null;
+                echo "<tr class='more less'>";
+                echo "<td>{$account->StudentFirstName} {$account->StudentLastName}";
+                echo "</td><td>";
+                if (!empty($account->StudentEmail)) {
+                    echo $account->StudentEmail;
+                }
+                echo "</td><td>";
+                if (!empty($account->SchoolEmail)) {
+                    echo $account->SchoolEmail;
+                }
+                echo "</td><td>";
+                if (!empty($account->HomeEmail)) {
+                    echo $account->HomeEmail;
+                }
+                echo "</td></tr>";
+            }
+            ?>
+        </table>
+       </div>
+    </div>
+    <div class="form-group">
+		<div class="col-sm-10">
+            <a class="morelink btn btn-info btn-sm">Show Emails...</a>
+        </div>
     </div>
     <div class="form-group">
 		<div class="col-sm-10">
@@ -132,3 +169,27 @@ if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
 
 </form> 
 </div>
+
+<style>
+.less {
+    display: none;
+}
+</style>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var moretext = "Show Emails...";
+        var lesstext = "Hide Emails...";
+
+        $(".morelink").click(function () {
+            if ($('.more').hasClass("less")) {
+                $('.more').removeClass("less");
+                $(this).html(lesstext);
+            } else {
+                $('.more').addClass("less");
+                $(this).html(moretext);
+            }
+            return false;
+        });
+    });
+</script>

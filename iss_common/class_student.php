@@ -24,6 +24,7 @@ class ISS_Student
     public $Access;
     public $LastLogin;
     public $SchoolEmail;
+    public $HomeEmail;
 
     public static function GetStudentAccountViewName()
     {
@@ -38,7 +39,7 @@ class ISS_Student
     public static function GetFieldsArray()
     {
         return array(
-            "StudentViewID", "StudentID", "StudentFirstName", "StudentLastName", "StudentGender", "StudentStatus", "ISSGrade", "SchoolEmail",
+            "StudentViewID", "StudentID", "StudentFirstName", "StudentLastName", "StudentGender", "StudentStatus", "ISSGrade", "SchoolEmail", "StudentEmail",
             "ParentID", "FatherFirstName", "FatherLastName", "FatherEmail", "MotherFirstName", "MotherLastName", "MotherEmail", "RegistrationYear"
         );
     }
@@ -122,6 +123,14 @@ class ISS_Student
             }
             if (isset($row['updated'])) {
                 $this->updated = $row['updated'];
+            }
+            if (isset($this->MotherEmail) && isset($this->FatherEmail) && isset($this->SchoolEmail)) {
+                if ($this->MotherEmail == $this->SchoolEmail) {
+                    $this->HomeEmail = $this->FatherEmail;
+                }
+                if ($this->FatherEmail == $this->SchoolEmail) {
+                    $this->HomeEmail = $this->MotherEmail;
+                }
             }
             return;
         }
@@ -321,8 +330,31 @@ class ISS_StudentService
 
         if (ISS_PermissionService::can_email_class()) {
             $table = ISS_Student::GetTableName();
-            $query = "SELECT  StudentViewID, StudentEmail, FatherEmail, MotherEmail, SchoolEmail  FROM {$table} "
+            $query = "SELECT  StudentViewID, StudentFirstName, StudentLastName, StudentEmail, FatherEmail, MotherEmail, SchoolEmail  FROM {$table} "
                 . "WHERE  RegistrationYear = '{$regyear}'  and StudentStatus = 'active'  and ISSGrade = '{$initial}' ";
+
+            self::debug($query);
+            $result_set = $wpdb->get_results($query, ARRAY_A);
+            foreach ($result_set as $obj) {
+                $list[] = ISS_Student::Create($obj);
+            }
+            return $list;
+        }
+        return null;
+    }
+    
+    public static function GetSchoolEmails()
+    {
+        self::debug("GetStudentAccounts");
+        $list = array();
+
+        global $wpdb;
+        $regyear = iss_registration_period();
+
+        if (ISS_PermissionService::can_email_school()) {
+            $table = ISS_Student::GetTableName();
+            $query = "SELECT  StudentViewID, StudentFirstName, ISSGrade,StudentLastName, StudentEmail, FatherEmail, MotherEmail, SchoolEmail  FROM {$table} "
+                . "WHERE  RegistrationYear = '{$regyear}'  and StudentStatus = 'active' ORDER BY ISSGrade, StudentFirstName";
 
             self::debug($query);
             $result_set = $wpdb->get_results($query, ARRAY_A);

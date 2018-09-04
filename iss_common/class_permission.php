@@ -52,6 +52,9 @@ class ISS_PermissionService
     public static function can_email_class() {
         return current_user_can('iss_admin') || current_user_can('iss_secretary') || current_user_can('iss_teacher');
     }
+    public static function can_email_school() {
+        return current_user_can('iss_admin') || current_user_can('iss_secretary') || current_user_can('iss_board');
+    }
     public static function is_user_teacher_role(){
         return current_user_can('iss_teacher');
     }
