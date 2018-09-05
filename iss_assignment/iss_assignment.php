@@ -30,6 +30,10 @@ function iss_attachment_delete_page()
 {
     include(plugin_dir_path(__FILE__) . "/attachment_delete.php");
 }
+function iss_assignment_email_page()
+{
+    include(plugin_dir_path(__FILE__) . "/assignment_email.php");
+}
 function iss_assignment_register_menu_page()
 {
     //add_submenu_page( string $parent_slug, string $page_title, string $menu_title, string $capability, string $menu_slug, callable $function = '' )
@@ -39,7 +43,8 @@ function iss_assignment_register_menu_page()
     $my_pages[] = add_submenu_page(null, 'Delete Assignment', 'Delete Assignments', 'read', 'issvadelete', 'iss_assignment_delete_page');
     $my_pages[] = add_submenu_page(null, 'Add Assignment', 'Add Assignments', 'read', 'issvaadd', 'iss_assignment_add_page');
     $my_pages[] = add_submenu_page(null, 'Delete Attachment', 'Delete Attachment', 'read', 'issvdeleteattachment', 'iss_attachment_delete_page');
-   
+    $my_pages[] = add_submenu_page(null, 'Email Assignment', 'Email Assignments', 'read', 'issvaemail', 'iss_assignment_email_page');
+
     foreach ($my_pages as $my_page) {
         add_action('load-' . $my_page, 'iss_load_admin_custom_css');
     }

@@ -43,25 +43,32 @@ class ISS_PermissionService
     {
         return current_user_can('iss_admin') || current_user_can('iss_board') || current_user_can('iss_secretary');
     }
-    public static function can_email_teacher() {
+    public static function can_email_teacher()
+    {
         return current_user_can('iss_admin') || current_user_can('iss_secretary') || current_user_can('iss_student') || current_user_can('iss_parent');
     }
-    public static function can_email_student() {
+    public static function can_email_student()
+    {
         return current_user_can('iss_admin') || current_user_can('iss_secretary') || current_user_can('iss_teacher');
     }
-    public static function can_email_class() {
+    public static function can_email_class()
+    {
         return current_user_can('iss_admin') || current_user_can('iss_secretary') || current_user_can('iss_teacher');
     }
-    public static function can_email_school() {
+    public static function can_email_school()
+    {
         return current_user_can('iss_admin') || current_user_can('iss_secretary') || current_user_can('iss_board');
     }
-    public static function is_user_teacher_role(){
+    public static function is_user_teacher_role()
+    {
         return current_user_can('iss_teacher');
     }
-    public static function is_user_parent_role(){
+    public static function is_user_parent_role()
+    {
         return current_user_can('iss_parent');
     }
-    public static function is_user_student_role(){
+    public static function is_user_student_role()
+    {
         return current_user_can('iss_student');
     }
     public static function class_student_list_all_access($cid = null)
@@ -69,19 +76,20 @@ class ISS_PermissionService
         if (current_user_can('iss_admin') || current_user_can('iss_board') || current_user_can('iss_secretary')) {
             return true;
         }
-        // if (current_user_can('iss_teacher')) {
-        //     if (null == $cid) {
-        //         return true;
-        //     }
-        //     $obj = self::LoadByClassID($cid);
-        //     if (null != $obj) {
-        //         return (($obj->Access === 'read') || ($obj->Access === 'write'));
-        //     }
-        // }
         return false;
+    }
+    public static function class_email_access($cid)
+    {
+        if (null == $cid) {
+            return false;
+        }
+        return self::class_assignment_write_access($cid);
     }
     public static function class_assignment_write_access($cid)
     {
+        if (null == $cid) {
+            return false;
+        }
         if (current_user_can('iss_admin') || current_user_can('iss_secretary')) return true;
         if (current_user_can('iss_teacher')) {
 
@@ -96,19 +104,18 @@ class ISS_PermissionService
 
     public static function LoadByClassID($cid)
     {
-        try {
-            self::debug("LoadByClassID {$cid}");
-            global $wpdb;
-            $table = ISS_UserClassMap::GetTableName();
-            $userid = get_current_user_id();
-            $query = "SELECT *  FROM {$table} where ClassID = {$cid} and UserID = {$userid}";
-            global $wpdb;
-            $row = $wpdb->get_row($query, ARRAY_A);
-            if (null != $row) {
-                return ISS_UserClassMap::Create($row);
-            }
-        } catch (Throwable $ex) {
-            self::error($ex->getMessage());
+        if (null == $cid) {
+            return false;
+        }
+        self::debug("LoadByClassID {$cid}");
+        global $wpdb;
+        $table = ISS_UserClassMap::GetTableName();
+        $userid = get_current_user_id();
+        $query = "SELECT *  FROM {$table} where ClassID = {$cid} and UserID = {$userid}";
+        global $wpdb;
+        $row = $wpdb->get_row($query, ARRAY_A);
+        if (null != $row) {
+            return ISS_UserClassMap::Create($row);
         }
         return null;
     }

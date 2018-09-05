@@ -52,8 +52,11 @@ if (!$errTitle) {
         echo "<table class='table'><tr>";
         echo "<td><a href='admin.php?page=issvaadd&post={$postid}&cid={$classid}' class='btn btn-primary'>Continue Editing</a></td>";
         echo "<td><a href='admin.php?page=issvalist&cid={$classid}' class='btn btn-primary'>Finish Editing</a></td>";
-        echo "<td><a href='admin.php?page=issvaview&post={$postid}cid={$classid}' class='btn btn-primary'>View Assignment</a></td></tr></table>";
-       
+        echo "<td><a href='admin.php?page=issvaemail&post={$postid}&cid={$classid}' class='btn btn-success'>Email Assignment</a></td></tr></table>";
+        echo "<hr/>";
+             
+        // $postid is needed to include the view body
+        include(plugin_dir_path(__FILE__) . "/assignment_view_body.php");
         exit;
     }
 
@@ -89,7 +92,7 @@ function upload_user_file($file = array(), $postid)
         $attachment_data = wp_generate_attachment_metadata($attachment_id, $filename);
         wp_update_attachment_metadata($attachment_id, $attachment_data);
 
-        iss_write_log("uploaded file successfully");      
+        iss_write_log("uploaded file successfully");
         return null;
     }
 }
@@ -100,7 +103,7 @@ function iss_create_post($postid, $category, $content, $title)
         'post_content' => $content,
         'comment_status' => 'closed',
         'ping_status' => 'closed',
-        'post_category' => $category,
+        'post_category' => array($category),
         'post_title' => $title,
         'post_status' => 'publish',
         'post_name' => $category,

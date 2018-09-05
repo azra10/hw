@@ -1,11 +1,23 @@
 <div class="container">
-<?php
-$backurl = admin_url('admin.php?page=issvclasslist');
-iss_show_heading_with_backurl("Email Class", $backurl);
-
-$cid = $class = null;;
+<?php 
+$cid = $backurl = $class = $post = $accounts = null;
 $current_user = wp_get_current_user();
 $accounts = array();
+
+if (isset($_GET['cid'])) {
+    $cid = iss_sanitize_input($_GET['cid']);
+    $backurl = admin_url('admin.php?page=issvalist') . "&cid={$cid}";
+}
+iss_show_heading_with_backurl("Email Assignment", $backurl);
+
+if (isset($_GET['post'])) {
+    $postid = iss_sanitize_input($_GET['post']);
+    if (!empty($postid)) {
+        $post = ISS_AssignmentService::LoadByID($postid);
+        $attachments = ISS_AssignmentService::LoadAttachmentsByID($postid);
+       // $post_url = get_permalink($post_id); missing attachments links
+    }
+}
 
 if (isset($_GET['cid'])) {
     $cid = iss_sanitize_input($_GET['cid']);
@@ -16,9 +28,9 @@ if (isset($_GET['cid'])) {
         }
     }
 }
-iss_write_log("Email Class CID:" . $cid);
-if ((null == $class) || (null == $accounts)) {
-    echo 'Error sending emails';
+
+if ((null == $class) || (null == $accounts) || (null == $post)) {
+    echo 'Error sending assignment email.';
     exit();
 }
 $from = $current_user->user_email;
@@ -94,11 +106,28 @@ if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
             echo '<div class="alert alert-success">Email sent!</div>';
         } else {
             echo '<div class="alert alert-danger">Sorry there was an error sending your message. Please try again later</div>';
-        }      
+        }
         exit;
     }
-}
+} else {
+    $subject = "Assignment Grade{$post->ISSGrade}-{$post->Subject}, Due Date: {$post->DueDate}";
+    $message = "<h3> {$post->Title} </h3>";
+    $message = $message . "<div><strong>Class:</strong> Grade{$post->ISSGrade}-{$post->Subject}</div>";
+    $message = $message . "<div><strong>Possible Point:</strong> {$post->PossiblePoints}</div>";
+    $message = $message . "<div><strong>Due Date:</strong> {$post->DueDate}</div><hr/>";
 
+    $content_post = get_post($postid);
+    $content = $content_post->post_content;
+    $content = apply_filters('the_content', $content);
+    $content = str_replace(']]>', ']]&gt;', $content);
+    $message = $message . $content;
+
+    if (null != $attachments) {
+        foreach ($attachments as $row) {
+            $message = $message . "<div><a href='{$row['guid']}'>{$row['post_title']}</a></div>";
+        }
+    }
+}
 ?>
 
 <form class="form-horizontal" method="post" action="" enctype="multipart/form-data">
@@ -158,7 +187,7 @@ if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
 	<div class="form-group">
 		<div class="col-sm-10">
             <label for="message" class="control-label"><?php echo "<span class='text-danger'>$errMessage</span>"; ?></label>		     
-            <?php wp_editor($message, 'message', array('media_buttons' => false, 'textarea_rows' => 5)); ?>
+            <?php wp_editor($message, 'message', array('media_buttons' => false, 'textarea_rows' => 15)); ?>
  		</div>
     </div>
 	<div class="form-group">
@@ -193,3 +222,4 @@ if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
         });
     });
 </script>
+</div>

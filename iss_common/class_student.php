@@ -320,7 +320,7 @@ class ISS_StudentService
      * GetStudents function
      * @return  array of ISS_Student Objects
      */
-    public static function GetStudentEmails($initial)
+    public static function GetStudentEmails($initial, $cid)
     {
         self::debug("GetStudentAccounts");
         $list = array();
@@ -328,7 +328,7 @@ class ISS_StudentService
         global $wpdb;
         $regyear = iss_registration_period();
 
-        if (ISS_PermissionService::can_email_class()) {
+        if (ISS_PermissionService::class_email_access($cid)) {
             $table = ISS_Student::GetTableName();
             $query = "SELECT  StudentViewID, StudentFirstName, StudentLastName, StudentEmail, FatherEmail, MotherEmail, SchoolEmail  FROM {$table} "
                 . "WHERE  RegistrationYear = '{$regyear}'  and StudentStatus = 'active'  and ISSGrade = '{$initial}' ";

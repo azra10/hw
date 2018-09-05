@@ -77,7 +77,7 @@ iss_show_heading_with_backurl("Assignment", $backurl);
     </div>     
     <div class="form-group">
      	<div class="col-sm-10">
-            <label for="message" class="control-label"><?php echo "<span class='text-danger'>$errMessage</span>"; ?></label>		     
+            <label for="message" class="control-label"><?php echo "<span class='text-danger'>$errContent</span>"; ?></label>		     
             <?php wp_editor($content, 'message', array('media_buttons' => false, 'textarea_rows' => 5)); ?>
  		</div>
     </div> 
@@ -89,7 +89,8 @@ iss_show_heading_with_backurl("Assignment", $backurl);
                 echo "<table class='table table-striped' border=1>";
                 foreach ($attachments as $row) {
                     echo "<tr><td>";
-                    echo "<a href='admin.php?page=issvdeleteattachment&post={$row['ID']}&cid={$classid}&backid={$postid}' class='btn btn-danger btn-sm'>Delete</a>   <a href='{$row['guid']}'>{$row['post_title']}</a> ";
+                    echo "<a href='admin.php?page=issvdeleteattachment&post={$row['ID']}&cid={$classid}&backid={$postid}' class='text-danger btn btn-danger btn-sm'>
+                    <i class='fas fa-trash-alt'></i> Delete</a>   <a href='{$row['guid']}'>{$row['post_title']}</a> ";
                     echo "</td></tr>";
                 }
                 echo "</table>";
@@ -114,7 +115,7 @@ iss_show_heading_with_backurl("Assignment", $backurl);
             onclick="return confirm('Are you sure you want to delete this assignment?')">
                 <span style="padding-left: 10px; white-space: nowrap;"> <i class="fas fa-trash-alt"></i> Delete Assignment</span>
             </a>               
-            <?php 
+            <?php     
         } ?>
         </div>
 	</div>

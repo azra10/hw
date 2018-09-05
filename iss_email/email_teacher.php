@@ -10,7 +10,7 @@ if (isset($_GET['cid'])) {
     $userid = get_current_user_id();
     $cid = iss_sanitize_input($_GET['cid']);
     iss_write_log('Email Teacher ClassID: ' . $cid . ' userid:' . $userid);
-    $class = ISS_ClassService::LoadTeacherAccountByClassID($cid);
+    $class = ISS_ClassService::LoadPrimaryTeacherAccountByClassID($cid);
 
     if ((null == $class) || !isset($class->UserEmail)) {
         echo "<h3> Class/Teacher not found.</h3>";

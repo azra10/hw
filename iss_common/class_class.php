@@ -179,6 +179,7 @@ class ISS_ClassService
     }
     public static function is_teacher_access($cid)
     {
+        self::debug("ISS_ClassService::is_teacher_access {$cid}");
         if (ISS_PermissionService::is_user_teacher_role()) {
             $userid = get_current_user_id();
             $accesstable = ISS_Class::GetTeacherClassAccessViewName($cid);
@@ -193,6 +194,7 @@ class ISS_ClassService
     }
     public static function is_student_access($cid)
     {
+        self::debug("ISS_ClassService::is_student_access {$cid}");
         if (ISS_PermissionService::is_user_parent_role() ||
             ISS_PermissionService::is_user_student_role() ||
             ISS_PermissionService::is_user_teacher_role()) {
@@ -287,7 +289,7 @@ class ISS_ClassService
     }
     public static function LoadByID($id)
     {
-        if (self::is_teacher_access($id) || self::is_student_access($id) || ISS_PermissionService::class_list_all_access()) {
+        if (ISS_PermissionService::class_list_all_access() || self::is_teacher_access($id) || self::is_student_access($id)) {
 
             self::debug("ISS_ClassService::LoadByID {$id}");
             global $wpdb;
@@ -481,9 +483,9 @@ class ISS_ClassService
         return null;
     }
 
-    public static function LoadTeacherAccountByClassID($cid)
+    public static function LoadPrimaryTeacherAccountByClassID($cid)
     {
-        self::debug("LoadTeacherAccountByClassID");
+        self::debug("LoadPrimaryTeacherAccountByClassID:" . $cid);
 
         global $wpdb;
         $table = ISS_Class::GetAccountViewName();

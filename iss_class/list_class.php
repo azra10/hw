@@ -64,6 +64,12 @@
 	    $('#iss_class_table').DataTable({ 
             "lengthChange": false,
             "pageLength": 25, 
-            "order": [[ 0, "asc" ]]});
+            "order": [[ 0, "asc" ]],
+            "columns": [ 
+                    null,
+                    null,
+                    { "orderable": false }
+                ]
+            });
     });
 </script>
