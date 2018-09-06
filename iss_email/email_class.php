@@ -69,24 +69,30 @@ if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
         echo '<table class="table-striped table-responsive table-condensed" border=1>';
         echo '<tr><th>Student</th><th>Student Email</th><th>School Email</th><th>Second Email</th></tr>';
 
+        $uniqueemails = array();
         foreach ($accounts as $account) {
             echo "<tr><td>{$account->StudentFirstName} {$account->StudentLastName}";
             echo "</td><td>";
             if ((strpos($to, '1') !== false) && !empty($account->StudentEmail)) {
-                $headers[] = 'BCC:' . $account->StudentEmail;
+                $uniqueemails[$account->StudentEmail] = $account->StudentEmail;
                 echo $account->StudentEmail;
             }
             echo '</td><td>';
             if ((strpos($to, '2') !== false) && !empty($account->SchoolEmail)) {
-                $headers[] = 'BCC:' . $account->SchoolEmail;
+                $uniqueemails[$account->SchoolEmail] = $account->SchoolEmail;
                 echo $account->SchoolEmail;
             }
             echo '</td><td>';
             if ((strpos($to, '3') !== false) && !empty($account->HomeEmail)) {
-                $headers[] = 'BCC:' . $account->HomeEmail;
+                $uniqueemails[$account->HomeEmail] = $account->HomeEmail;
                 echo $account->HomeEmail;
             }
             echo '</td></tr>';
+        }
+        $uniqueemailsize = sizeof($uniqueemails);
+        echo "<div> Unique Emails: {$uniqueemailsize}</div>";
+        foreach ($uniqueemails as $uniqueemail) {
+            $headers[] = 'BCC:' . $uniqueemail;
         }
         iss_write_log('To: ' . $toemail);
         iss_write_log($headers);
