@@ -524,7 +524,7 @@ class ISS_StudentService
 
     public static function CreateUserAccount($student, $email_address, $role, $password, $message, &$error)
     {
-        if (null == username_exists($email_address)) {
+        if ((false == username_exists($email_address)) && (false == email_exists($email_address))) {
 
         // Generate the password and create the user
             if (empty($password))

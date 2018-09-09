@@ -5,6 +5,7 @@ $backurl = admin_url('/');
 iss_show_heading_with_backurl("Contact Admin", $backurl);
 
 $errName = $errEmail = $errMessage = null;
+$message  = null;
 
 if (isset($_POST['_wpnonce-iss-email-account-form-page'])) {
     iss_write_log(($_POST));
@@ -30,7 +31,7 @@ if (isset($_POST['_wpnonce-iss-email-account-form-page'])) {
     } else {
         $message = $_POST['message'];
     }
-    $copy = $_POST['copy'];
+    $copy = isset($_POST['copy'])? $_POST['copy'] : 'No';
     $to = 'IslamicSchoolOfSiliconValley@learnislam.org'; // TODO make configurable
     $subject = "Contact Form Admin From {$name}";
     $body = "Message: {$message}";
