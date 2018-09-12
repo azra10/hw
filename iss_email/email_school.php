@@ -88,7 +88,7 @@ if (isset($_POST['_wpnonce-iss-email-school-form-page'])) {
         }
         iss_write_log('To: ' . $toemail);
         iss_write_log($headers);
-        if (wp_mail($toemail, $subject, $message, $headers)) {
+        if (wp_mail($toemail, $subject, nl2br($message), $headers)) {
             echo '<div class="alert alert-success">Email sent!</div>';
         } else {
             echo '<div class="alert alert-danger">Sorry there was an error sending your message. Please try again later</div>';
