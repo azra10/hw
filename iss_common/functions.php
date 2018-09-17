@@ -33,6 +33,10 @@ if (!function_exists('load_custom_iss_style')) {
 
         wp_register_script('jquery1', '//code.jquery.com/jquery-3.3.1.js', array('jquery'), true);
         wp_enqueue_script('jquery1'); // enqueue datepicker from WP
+
+        wp_register_script('bootstrap1', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', array('jquery'), true);
+        wp_enqueue_script('bootstrap1');
+
         wp_register_script('datatables', '//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js', array('jquery'), true);
         wp_enqueue_script('datatables');
        

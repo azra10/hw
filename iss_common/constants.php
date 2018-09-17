@@ -89,7 +89,9 @@ if (!function_exists('iss_field_displaynames')) {
 			"Status" => "Status",
 
 			"ClassID" => "ClassID",
-			"Subject" => "Subject"
+			"Subject" => "Subject",
+			"Category" => "Category",
+			"Suffix" => "Suffix"
 
 		);
 		return $iss_field_displaynames_;
@@ -176,7 +178,9 @@ if (!function_exists('iss_fields_lengths')) {
 			"Status" => 10,
 
 			"ClassID" => 11,
-			"Subject" => 2
+			"Subject" => 100,
+			"Category" => 10,
+			"Suffix" => 50
 		);
 		return $iss_field_lengths_;
 	}
@@ -262,7 +266,9 @@ if (!function_exists('iss_fields_types')) {
 			"Status" => "string",
 
 			"ClassID" => "string",
-			"Subject" => "string"
+			"Subject" => "string",
+			"Category" => "string",
+			"Suffix" => "string"
 
 		);
 		return $iss_field_types_;

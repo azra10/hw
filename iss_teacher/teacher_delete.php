@@ -24,12 +24,12 @@ if (null != $class) {
     $result = ISS_UserClassMapService::RemoveMapping($cid, $uid);
 
     if (1 == $result) {
-        $userobj = new WP_User($uid);
-        if (null != $userobj) {
-            $userobj->set_role('subscriber');
-            iss_write_log("teacher role added to user " . $uid);
-            iss_write_log($userobj->roles);
-        }
+        // $userobj = new WP_User($uid);
+        // if (null != $userobj) {
+        //     $userobj->set_role('subscriber');
+        //     iss_write_log("teacher role removed from user " . $uid);
+        //     iss_write_log($userobj->roles);
+        // }
 
         echo "<h4>Mapping Removed.</h4>";
         exit;

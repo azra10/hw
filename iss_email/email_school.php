@@ -104,13 +104,17 @@ if (isset($_POST['_wpnonce-iss-email-school-form-page'])) {
    
 
 	<div class="form-group">
-		<div class="col-sm-10">
+		<div class="col-sm-5">
         <label for="name" class="control-label">From: <?php echo $from; ?> </label>
+       </div>
+   
+		<div class="col-sm-5">
+        <label for="name" class="control-label">To: <?php echo $from; ?> </label>
        </div>
     </div>
     <div class="form-group">
 		<div class="col-sm-10">
-        <label for="to" class="control-label">To: <?php echo "School"; ?></label>
+        <label for="to" class="control-label">BCC: <?php echo "School"; ?></label>
       	
        <table class="table-striped table-responsive table-condensed" border=1>      
             <?php 
