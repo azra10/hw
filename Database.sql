@@ -143,17 +143,19 @@ CREATE  `lh3i_issv_teacher_class_access` AS select `C`.`ClassID` AS `ClassID`,`C
 
 INSERT INTO `lh3i_iss_scale` (`ClassID`, `ScaleName`, `ScalePercentage`) 
 VALUES 
-( '7', 'A', '90'), 
-( '7', 'B', '70'),
-( '7', 'C', '60'),
-( '7', 'D', '50'),
-( '7', 'F', '0'),
+( 1, 'A', '90'), 
+( 1, 'B', '80'),
+( 1, 'C', '60'),
+( 1, 'D', '50'),
+( 1, 'F', '0')
 ;
 
 INSERT INTO `lh3i_iss_assignment_type` (`ClassID`, `TypeName`, `TypePercentage`) 
 VALUES 
-( '7', 'Homework', '30'), 
-( '7', 'Tests', '30'), 
-( '7', 'Attendance', '10'), 
-( '7', 'Behavior', '10'), 
-( '7', 'Participation', '20');
+( 1, 'Homework', '40'), 
+( 1, 'Quizzes', '40'), 
+( 1, 'Participation', '5'),
+( 1, 'Attendance', 10)
+,
+( 1, 'Behavior', 5);
+
