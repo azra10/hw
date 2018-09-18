@@ -23,6 +23,6 @@ if (isset($_GET['post'])) {
 }
 $backurl = admin_url('admin.php?page=issvaadd') . "&cid={$classid}&post={$backid}";
 iss_show_heading_with_backurl("Delete Attachment ", $backurl);
-echo "<h3> Error deleting the attachment, please <a  href=\"admin.php?page=email-admin\">Email Admin</a>.</h3>";
+echo "<h3> Error deleting the attachment, please <a  href=\"admin.php?page=issvemailadmin\">Email Admin</a>.</h3>";
 
 ?>

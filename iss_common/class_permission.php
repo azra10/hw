@@ -31,7 +31,7 @@ class ISS_PermissionService
     {
         iss_write_log("Debug ISS_PermissionService::" . print_r($message, true));
     }
-    public static function student_list_all_access()
+   public static function student_list_all_access()
     {
         return self::class_list_all_access();
     }
@@ -42,6 +42,30 @@ class ISS_PermissionService
     public static function class_list_all_access()
     {
         return current_user_can('iss_admin') || current_user_can('iss_board') || current_user_can('iss_secretary');
+    }
+    public static function assignmentent_list_all_access()
+    {
+        return self::class_list_all_access();
+    }
+    public static function class_manage_access()
+    {
+        return current_user_can('iss_admin');
+    }
+    public static function class_list_teacher_access() {
+        return self::is_user_teacher_role();
+    }
+    public static function class_list_student_access() {
+        return self::is_user_parent_role() || self::is_user_student_role() || self::is_user_teacher_role();
+    }
+    public static function student_socre_access($sid){
+        if (self::class_list_student_access()) {
+            $obj = self::LoadByStudentID($sid);
+            self::debug($obj);
+            if (null != $obj) {
+                return (($obj->Access === 'read'));
+            }
+        }
+        return false;
     }
     public static function can_email_teacher()
     {
@@ -58,7 +82,7 @@ class ISS_PermissionService
     public static function can_email_school()
     {
         return current_user_can('iss_admin') || current_user_can('iss_secretary') || current_user_can('iss_board');
-    }
+    } 
     public static function is_user_teacher_role()
     {
         return current_user_can('iss_teacher');
@@ -116,6 +140,24 @@ class ISS_PermissionService
         $row = $wpdb->get_row($query, ARRAY_A);
         if (null != $row) {
             return ISS_UserClassMap::Create($row);
+        }
+        return null;
+    }
+
+    public static function LoadByStudentID($sid)
+    {
+        if (null == $sid) {
+            return false;
+        }
+        self::debug("LoadByStudentID {$sid}");
+        global $wpdb;
+        $table = ISS_UserStudentMap::GetTableName();
+        $userid = get_current_user_id();
+        $query = "SELECT *  FROM {$table} where StudentID = {$sid} and UserID = {$userid}";
+        global $wpdb;
+        $row = $wpdb->get_row($query, ARRAY_A);
+        if (null != $row) {
+            return ISS_UserStudentMap::Create($row);
         }
         return null;
     }

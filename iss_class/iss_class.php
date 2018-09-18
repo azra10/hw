@@ -13,26 +13,32 @@ function iss_class_list_page()
     include(plugin_dir_path(__FILE__) . "/list_class.php");
 }
 
-/*
 function new_class_page() {
-	include (plugin_dir_path( __FILE__ ) . "/new_class.php");
+	include (plugin_dir_path( __FILE__ ) . "/class_add.php");
 }
-function edit_class_page() {
-	include (plugin_dir_path( __FILE__ ) . "/edit_class.php");
+function scale_class_page() {
+	include (plugin_dir_path( __FILE__ ) . "/class_gradingscale.php");
+}
+function category_class_page() {
+	include (plugin_dir_path( __FILE__ ) . "/class_categories.php");
+}function teacher_class_page() {
+	include (plugin_dir_path( __FILE__ ) . "/class_teachers.php");
 }
 function delete_class_page() {
-	include (plugin_dir_path( __FILE__ ) . "/delete_class.php");
+	include (plugin_dir_path( __FILE__ ) . "/class_delete.php");
 }
- */
+
 function iss_class_register_menu_page()
 {
     //add_menu_page( string $page_title, string $menu_title, string $capability, string $menu_slug, callable $function = '', string $icon_url = '', int $position = null )
     $my_pages[] = add_menu_page('Classes', 'Classes', 'read', 'issvclasslist', 'iss_class_list_page', 'dashicons-id-alt', 3);
     //$my_pages[] = add_submenu_page(null, 'Class Students', 'Class Students', 'iss_admin', 'class_student', 'class_student_page');
     //$my_pages[] = add_submenu_page(null, 'Class Assignments', 'Class Assignments', 'iss_admin', 'class_assignment', 'class_assignment_page');
-    //$my_pages [] = add_submenu_page ( null, 'Add Class', 'Add Teacher', 'iss_admin', 'new_class', 'new_class_page' );
-	//$my_pages [] = add_submenu_page ( null, 'Edit Class', 'Edit Teacher', 'iss_admin', 'edit_class', 'edit_class_page' );
-	//$my_pages [] = add_submenu_page ( null, 'Delete Class', 'Delete Teacher', 'iss_admin', 'delete_class', 'delete_class_page' );
+    $my_pages [] = add_submenu_page ( null, 'Add Class', 'Add Class', 'iss_teacher', 'issvaddclass', 'new_class_page' );
+	$my_pages [] = add_submenu_page ( null, 'Class Scale', 'Class Scale', 'iss_teacher', 'issvaddclassscale', 'scale_class_page' );
+	$my_pages [] = add_submenu_page ( null, 'Class Category', 'Class Category', 'iss_teacher', 'issvaddclasscategory', 'category_class_page' );
+	$my_pages [] = add_submenu_page ( null, 'Class Teacher', 'Class Teacher', 'iss_teacher', 'issvaddclassteacher', 'teacher_class_page' );
+	$my_pages [] = add_submenu_page ( null, 'Delete Class', 'Delete Class', 'iss_teacher', 'issvdeleteclass', 'delete_class_page' );
 
     foreach ($my_pages as $my_page) {
         add_action('load-' . $my_page, 'iss_load_admin_custom_css');

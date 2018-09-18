@@ -1,6 +1,6 @@
 <?php
 iss_write_log($_POST);
-check_admin_referer('iss-email-teacher-form-page', '_wpnonce-iss-email-teacher-form-page');
+check_admin_referer('iss_assignment_edit-form-page', '_wpnonce-iss_assignment_edit-form-page');
 
 if (isset($_POST['postid'])) {// && !empty($_POST['postid'])) {
     $postid = $_POST['postid'];
@@ -25,14 +25,22 @@ if (isset($_POST['possiblepoints'])) {//&& !empty($_POST['possiblepoints'])) {
 } else {
     $errPossiblepoints = ' required';
 }
-
+if (isset($_POST['assignmenttype'])) {
+    $assignmenttype = $_POST['assignmenttype'];
+}
+if (isset($_POST['category'])) {
+    $category = $_POST['category'];
+}
+if (isset($_POST['classid'])) {
+    $classid = $_POST['classid'];
+}
 if (!$errTitle) {
 
     // CREATE/UPDATE THE POST
     $postid = iss_create_post($postid, $category, $content, $title);
 
         // CREATE THE ATTACHEMNT
-    $error = null;
+    $error = null; 
     if (null != $postid) {
         iss_write_log($_FILES);
         if (!empty($_FILES)) {
@@ -42,24 +50,17 @@ if (!$errTitle) {
             }
         }         
         // ADD/UPDATE ASSINGMENT TABLE
-        iss_update_assignment($postid, $classid, $category, $possiblepoints, $duedate);
+        $result = iss_update_assignment($postid, $classid, $category, $possiblepoints, $duedate, $assignmenttype);
     }
 
     if (!$errTitle && !$errPossiblepoints && !$errDuedate) {
 
-        iss_show_heading("Assigment Saved");
-        echo "<div class='text-error'> {$error} </div>";
-        echo "<table class='table'><tr>";
-        echo "<td><a href='admin.php?page=issvaadd&post={$postid}&cid={$classid}' class='btn btn-primary'>Continue Editing</a></td>";
-        echo "<td><a href='admin.php?page=issvalist&cid={$classid}' class='btn btn-primary'>Finish Editing</a></td>";
-        echo "<td><a href='admin.php?page=issvaemail&post={$postid}&cid={$classid}' class='btn btn-success'>Email Assignment</a></td></tr></table>";
-        echo "<hr/>";
-             
-        // $postid is needed to include the view body
-        include(plugin_dir_path(__FILE__) . "/assignment_view_body.php");
-        exit;
-    }
-
+        if ((null == $error) && (0 != $result)) {
+            $message = "<div class='alert alert-success' role='alert'> Assigment Saved. </div>";
+        } else {
+            $message = "<div class='alert alert-danger' role='alert'>Error Saving Assigment. {$error} </div>";
+        }
+     }
 }
 
 function upload_user_file($file = array(), $postid)
@@ -117,14 +118,16 @@ function iss_create_post($postid, $category, $content, $title)
     return $postid;
 
 }
-function iss_update_assignment($postid, $classid, $category, $possiblepoints, $duedate)
+function iss_update_assignment($postid, $classid, $category, $possiblepoints, $duedate, $assignmenttype)
 {
+    $result = 0;
     $assingment = ISS_AssignmentService::LoadByID($postid);
     if (null != $assingment) {
-        ISS_AssignmentService::Update($postid, $possiblepoints, $duedate);
+        $result = ISS_AssignmentService::Update($postid, $possiblepoints, $duedate, $assignmenttype);
     } else {
-        ISS_AssignmentService::Add($postid, $classid, $category, $possiblepoints, $duedate);
+        $result = ISS_AssignmentService::Add($postid, $classid, $category, $possiblepoints, $duedate, $assignmenttype);
         wp_set_post_terms($postid, $category);
     }
+    return $result;
 }
 ?>

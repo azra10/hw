@@ -7,9 +7,12 @@
 */
 
 require_once(plugin_dir_path(__FILE__) . "../iss_common/class_assignment.php");
+require_once(plugin_dir_path(__FILE__) . "../iss_common/class_assignmenttype.php");
 require_once(plugin_dir_path(__FILE__) . "../iss_common/class_class.php");
 require_once(plugin_dir_path(__FILE__) . "../iss_common/class_gradingperiod.php");
 require_once(plugin_dir_path(__FILE__) . "../iss_common/class_permission.php");
+require_once(plugin_dir_path(__FILE__) . "../iss_common/class_scale.php");
+require_once(plugin_dir_path(__FILE__) . "../iss_common/class_score.php");
 require_once(plugin_dir_path(__FILE__) . "../iss_common/class_student.php");
 require_once(plugin_dir_path(__FILE__) . "../iss_common/class_userclassmap.php");
 require_once(plugin_dir_path(__FILE__) . "../iss_common/class_userstudentmap.php");
@@ -45,8 +48,17 @@ function my_custom_fonts() {
     .iss_css_email {
       color: #e2e438;
     }
+    .iss_css_setting {
+      color:grey;
+    }
     .fa-atom {
       color: lightgreen;
+    }
+    .iss_css_delete {
+      color:#c9302c;
+    }
+    td , th{
+      padding:5px;
     }
   </style>';
 }

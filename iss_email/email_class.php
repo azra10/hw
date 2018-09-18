@@ -112,11 +112,12 @@ if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
    
 
 	<div class="form-group">
-		<div class="col-sm-5">
+		<div class="col-sm-10">
         <label for="name" class="control-label">From: <?php echo $from; ?> </label>
        </div>
-   
-		<div class="col-sm-5">
+       </div>
+    <div class="form-group">
+		<div class="col-sm-10">
         <label for="name" class="control-label">To: <?php echo $from; ?> </label>
        </div>
     </div>

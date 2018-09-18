@@ -12,6 +12,9 @@ class ISS_Assignment
     public $created;
     public $updated;
     public $Guid;
+    public $AssignmentTypeID;
+    public $AssignmentTypeName;
+    public $AssignmentTypePercentage;
 
     public static function GetViewName()
     {
@@ -72,7 +75,19 @@ class ISS_Assignment
             if (isset($row['post_content'])) {
                 $this->Content = $row['post_content'];
             }
-
+            if (isset($row['AssignmentTypeID'])) {
+                $this->AssignmentTypeID = $row['AssignmentTypeID'];
+            }
+            if (isset($row['TypeName'])) {
+                $this->AssignmentTypeName = $row['TypeName'];
+            } else {
+                $this->AssignmentTypeName = '(Not Graded)';
+            }
+            if (isset($row['TypePercentage'])) {
+                $this->AssignmentTypePercentage = $row['TypePercentage'];
+            } else {
+                $this->AssignmentTypePercentage = 0;
+            }
             if (isset($row['created'])) {
                 $this->created = $row['created'];
             }
@@ -152,6 +167,7 @@ class ISS_AssignmentService
     {
         self::debug("GetAssignments");
         $list = array();
+        $categories = ISS_AssignmentTypeService::GetClassAssignmentTypes($cid);
 
         global $wpdb;
         $table = ISS_Assignment::GetViewName();
@@ -160,11 +176,13 @@ class ISS_AssignmentService
 
         $result_set = $wpdb->get_results($query, ARRAY_A);
         foreach ($result_set as $obj) {
-            try {
-                $list[] = ISS_Assignment::Create($obj);
-            } catch (Throwable $ex) {
-                self::error($ex->getMessage());
+            foreach ($categories as $cat) {
+                if ($cat->AssignmentTypeID == $obj['AssignmentTypeID']) {
+                    $obj['TypeName'] = $cat->TypeName;
+                    $obj['TypePercentage'] = $cat->TypePercentage;
+                }
             }
+            $list[] = ISS_Assignment::Create($obj);
         }
 
         return $list;
@@ -176,7 +194,7 @@ class ISS_AssignmentService
             global $wpdb;
             $table = ISS_Assignment::GetTableName();
             $result = $wpdb->delete($table, array('ID' => $postid), array("%d"));
-            if (1 == $result) {
+            if (0 <= $result) {
                 $result1 = wp_delete_post($postid, true);
                 if (false !== $result1) {
                     return 1;
@@ -198,57 +216,61 @@ class ISS_AssignmentService
         }
         return 1;
     }
-    public static function Add($postid, $classid, $category, $possiblepoints, $duedate)
+    public static function Add($postid, $classid, $category, $possiblepoints, $duedate, $assignmenttype)
     {
-        try {
-            if (null == $postid) return;
-            self::debug("Add {$postid}");
-            $dsarray = array();
-            $dsarray['ID'] = $postid;
-            $dsarray['ClassID'] = $classid;
-            $dsarray['Category'] = $category;
-            $dsarray['PossiblePoints'] = $possiblepoints;
-            $dsarray['DueDate'] = $duedate;
-            $dsarray['created'] = current_time('mysql'); // date('d-m-Y H:i:s');
+        if (null == $postid) return;
+        self::debug("Add {$postid}");
+        $dsarray = array();
+        $dsarray['ID'] = $postid;
+        $dsarray['ClassID'] = $classid;
+        $dsarray['Category'] = $category;
+        $dsarray['PossiblePoints'] = $possiblepoints;
+        $dsarray['DueDate'] = $duedate;
+        $dsarray['created'] = current_time('mysql'); // date('d-m-Y H:i:s');
 
-            $typearray = array('%d', '%d', '%s', '%s', '%s', '%s');
+        $typearray = array('%d', '%d', '%s', '%s', '%s', '%s');
+        if (0 < $assignmenttype) {
+            $dsarray['AssignmentTypeID'] = $assignmenttype;
+            $typearray[] = '%d';
+        }
 
-            self::debug($dsarray);
+        self::debug($dsarray);
 
-            $table = ISS_Assignment::GetTableName();
-            global $wpdb;
-            $result = $wpdb->insert($table, $dsarray, $typearray);
-            if ($result == 1) {
-                return 1;
-            }
-
-        } catch (Throwable $ex) {
-            self::error($ex->getMessage());
+        $table = ISS_Assignment::GetTableName();
+        global $wpdb;
+        $result = $wpdb->insert($table, $dsarray, $typearray);
+        if (0 <= $result) {
+            return 1;
         }
         return 0;
     }
-    public static function Update($postid, $possiblepoints, $duedate)
+    public static function Update($postid, $possiblepoints, $duedate, $assignmenttype)
     {
-        try {
-            if (null == $postid) return;
-            self::debug("Update {$postid}");
-            global $wpdb;
-            $table = ISS_Assignment::GetTableName();
-            $dsarray = array();
-            $dsarray["PossiblePoints"] = $possiblepoints;
-            $dsarray["DueDate"] = $duedate;
-            $typearray = array('%s', '%s');
-            $result = $wpdb->update($table, $dsarray, array(
-                'ID' => $postid
-            ), $typearray, array(
-                '%d'
-            ));
-            if (1 === $result) {
-                return 1;
-            }
+        if (null == $postid) return;
+        self::debug("Update postid: {$postid}");
+        global $wpdb;
+        $table = ISS_Assignment::GetTableName();
+        $dsarray = array();
+        $dsarray["PossiblePoints"] = $possiblepoints;
+        $dsarray["DueDate"] = $duedate;
+           // $dsarray['AssignmentTypeID'] = $assignmenttype;
+        $typearray = array('%s', '%s');
 
-        } catch (Throwable $ex) {
-            self::error($ex->getMessage());
+        if (0 < $assignmenttype) {
+            $dsarray['AssignmentTypeID'] = $assignmenttype;
+            $typearray[] = '%d';
+        } else {
+            $dsarray['AssignmentTypeID'] = null;
+            $typearray[] = null;
+        }
+        self::debug($dsarray);
+        $result = $wpdb->update($table, $dsarray, array(
+            'ID' => $postid
+        ), $typearray, array(
+            '%d'
+        ));
+        if (0 <= $result) {
+            return 1;
         }
         return 0;
     }

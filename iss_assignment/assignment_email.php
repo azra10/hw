@@ -1,41 +1,31 @@
-<div class="container">
 <?php 
-$cid = $backurl = $class = $post = $accounts = null;
+$tab = 'email';
+include(plugin_dir_path(__FILE__) . "/assignment_header.php");
+echo "<h4>Email Assignment</h4>";
+
+$class = $post = $accounts = null;
 $current_user = wp_get_current_user();
 $accounts = array();
 
-if (isset($_GET['cid'])) {
-    $cid = iss_sanitize_input($_GET['cid']);
-    $backurl = admin_url('admin.php?page=issvalist') . "&cid={$cid}";
-}
-iss_show_heading_with_backurl("Email Assignment", $backurl);
-
-if (isset($_GET['post'])) {
-    $postid = iss_sanitize_input($_GET['post']);
-    if (!empty($postid)) {
-        $post = ISS_AssignmentService::LoadByID($postid);
-        $attachments = ISS_AssignmentService::LoadAttachmentsByID($postid);
-       // $post_url = get_permalink($post_id); missing attachments links
+if (!empty($classid)) {
+    $class = ISS_ClassService::LoadByID($classid);
+    if (null != $class) {
+        $accounts = ISS_StudentService::GetStudentEmails($class->ISSGrade, $classid);
     }
 }
 
-if (isset($_GET['cid'])) {
-    $cid = iss_sanitize_input($_GET['cid']);
-    if (!empty($cid)) {
-        $class = ISS_ClassService::LoadByID($cid);
-        if (null != $class) {
-            $accounts = ISS_StudentService::GetStudentEmails($class->ISSGrade, $cid);
-        }
+if (!empty($postid)) {
+    $post = ISS_AssignmentService::LoadByID($postid);
+    $attachments = ISS_AssignmentService::LoadAttachmentsByID($postid);
     }
-}
 
 if ((null == $class) || (null == $accounts) || (null == $post)) {
     echo 'Error sending assignment email.';
     exit();
 }
+
 $from = $current_user->user_email;
-$to = $subject = $message = null;
-$errTo = $errSubject = $errMessage = null;
+$to = $subject = $message = $errTo = $errSubject = $errMessage = null;
 
 if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
     iss_write_log(($_POST));
@@ -76,7 +66,6 @@ if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
         $headers[] = 'From: ' . $fromemail;
         $toemail = $fromemail;
 
-        echo '<div class="alert alert-success">Sending Email:</div>';
         echo "<div>From: {$fromemail}</div><div>To: {$toemail}</div><div>Bcc:</div>";
         echo '<table class="table-striped table-responsive table-condensed" border=1>';
         echo '<tr><th>Student</th><th>Student Email</th><th>School Email</th><th>Second Email</th></tr>';
@@ -137,74 +126,77 @@ if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
 ?>
 
 <form class="form-horizontal" method="post" action="" enctype="multipart/form-data">
-<?php wp_nonce_field('iss-email-class-form-page', '_wpnonce-iss-email-class-form-page') ?>
+    <?php wp_nonce_field('iss-email-class-form-page', '_wpnonce-iss-email-class-form-page') ?>
    
-
-	<div class="form-group">
-		<div class="col-sm-10">
-        <label for="name" class="control-label">From: <?php echo $from; ?> </label>
-       </div>
+   
+    <div class="form-group">
+        <div class="col-sm-5">
+            <label for="name" class="control-label">From: <?php echo $from; ?> </label>
+        </div>
+    
+        <div class="col-sm-5">
+            <label for="name" class="control-label">To: <?php echo $from; ?> </label>
+        </div>
     </div>
     <div class="form-group">
-		<div class="col-sm-10">
-        <label for="to" class="control-label">To: <?php echo "Grade{$class->ISSGrade}"; ?></label>
-      	
-       <table class="table-striped table-responsive table-condensed" border=1>      
-            <?php 
-            echo "<tr><th><span class='text-danger'>{$errTo} </span></th>";
-            echo "<th><input type='checkbox' name='studentemail' value='Yes' checked> Student Emails</th>";
-            echo "<th><input type='checkbox' name='fatheremail' value='Yes' checked> Preferred School Emails</th>";
-            echo "<th><input type='checkbox' name='motheremail' value='Yes' checked> Parents' Second Emails</th></tr>";
+        <div class="col-sm-10">
+            <label for="to" class="control-label">BCC: <?php echo "Grade{$class->ISSGrade}"; ?></label>
+            
+            <table class="table-striped table-responsive table-condensed" border=1>      
+                <?php 
+                echo "<tr><th><span class='text-danger'>{$errTo} </span></th>";
+                echo "<th><input type='checkbox' name='studentemail' value='Yes' checked> Student Emails</th>";
+                echo "<th><input type='checkbox' name='fatheremail' value='Yes' checked> Preferred School Emails</th>";
+                echo "<th><input type='checkbox' name='motheremail' value='Yes' checked> Parents' Second Emails</th></tr>";
 
-            foreach ($accounts as $account) {
-                $studentemails = $fathermemails = $motheremails = null;
-                echo "<tr class='more less'>";
-                echo "<td>{$account->StudentFirstName} {$account->StudentLastName}";
-                echo "</td><td>";
-                if (!empty($account->StudentEmail)) {
-                    echo $account->StudentEmail;
+                foreach ($accounts as $account) {
+                    $studentemails = $fathermemails = $motheremails = null;
+                    echo "<tr class='more less'>";
+                    echo "<td>{$account->StudentFirstName} {$account->StudentLastName}";
+                    echo "</td><td>";
+                    if (!empty($account->StudentEmail)) {
+                        echo $account->StudentEmail;
+                    }
+                    echo "</td><td>";
+                    if (!empty($account->SchoolEmail)) {
+                        echo $account->SchoolEmail;
+                    }
+                    echo "</td><td>";
+                    if (!empty($account->HomeEmail)) {
+                        echo $account->HomeEmail;
+                    }
+                    echo "</td></tr>";
                 }
-                echo "</td><td>";
-                if (!empty($account->SchoolEmail)) {
-                    echo $account->SchoolEmail;
-                }
-                echo "</td><td>";
-                if (!empty($account->HomeEmail)) {
-                    echo $account->HomeEmail;
-                }
-                echo "</td></tr>";
-            }
-            ?>
-        </table>
-       </div>
+                ?>
+            </table>
+        </div>
     </div>
     <div class="form-group">
-		<div class="col-sm-10">
+        <div class="col-sm-10">
             <a class="morelink btn btn-info btn-sm">Show Emails...</a>
         </div>
     </div>
     <div class="form-group">
-		<div class="col-sm-10">
-		<label for="subejct" class="control-label">Subject: <?php echo "<span class='text-danger'>$errSubject</span>"; ?></label> 
-			<input type="text" required class="form-control" id="subject" name="subject" placeholder="Subject" value="<?php echo $subject ?>">
-			
-		</div>
+        <div class="col-sm-10">
+        <label for="subejct" class="control-label">Subject: <?php echo "<span class='text-danger'>$errSubject</span>"; ?></label> 
+            <input type="text" required class="form-control" id="subject" name="subject" placeholder="Subject" value="<?php echo $subject ?>">
+            
+        </div>
     </div>
-	<div class="form-group">
-		<div class="col-sm-10">
+    <div class="form-group">
+        <div class="col-sm-10">
             <label for="message" class="control-label"><?php echo "<span class='text-danger'>$errMessage</span>"; ?></label>		     
             <?php wp_editor($message, 'message', array('media_buttons' => false, 'textarea_rows' => 15)); ?>
- 		</div>
+        </div>
     </div>
-	<div class="form-group">
-		<div class="col-sm-10 col-">
-			<input id="submit" name="submit" type="submit" value="Send" class="btn btn-primary">
-		</div>
-	</div>
-
+    <div class="form-group panel-footer">
+        <div class="col-sm-10 col-">
+            <input id="submit" name="submit" type="submit" value="Send Email" class="btn btn-primary">
+        </div>
+    </div>
+    
 </form> 
-</div>
-
+<?php include(plugin_dir_path(__FILE__) . "/assignment_footer.php");  ?>
 <style>
 .less {
     display: none;
@@ -228,4 +220,3 @@ if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
         });
     });
 </script>
-</div>
