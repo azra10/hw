@@ -112,7 +112,8 @@ if ((null == $assignment) && (null == $class)) {
                 echo "<table class='table table-striped' border=1>";
                 foreach ($attachments as $row) {
                     echo "<tr><td>";
-                    echo "<a href='admin.php?page=issvdeleteattachment&post={$row['ID']}&cid={$classid}&backid={$postid}' class='text-danger btn btn-danger btn-sm'>
+                    echo "<a href='admin.php?page=issvdeleteattachment&post={$row['ID']}&cid={$classid}&backid={$postid}' class='text-danger btn btn-danger btn-sm'
+                    onclick=\"return confirm('Are you sure you want to delete this item?');\">
                     <i class='fas fa-trash-alt'></i> Delete</a>   <a href='{$row['guid']}'>{$row['post_title']}</a> ";
                     echo "</td></tr>";
                 }
