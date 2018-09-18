@@ -18,12 +18,26 @@ if (isset($_POST['_wpnonce-iss-edit-class-form-page'])) { // POST
         } else {
             echo '<div class="alert alert-danger"><strong>Error Adding Category.</strong></div>';
         }
-    } else if (isset($_POST['submit']) && ($_POST['submit'] == 'remove') && isset($_POST['typeid']) && isset($_POST['classid'])) {
-        $result = ISS_AssignmentTypeService::RemoveCategory($_POST['classid'], $_POST['typeid']);
-        if (1 == $result) {
-            echo '<div class="alert alert-success"><strong>Category Removed.</strong></div>';
+    } else if (isset($_POST['submit']) && ($_POST['submit'] == 'save') && isset($_POST['classid'])) {
+        if (isset($_POST['FormArray'])) {
+            $result = 0;
+            foreach ($_POST['FormArray'] as $row) {
+                if (isset($row['Remove']) && ($row['Remove'] == 'delete')) {
+                    $result += ISS_AssignmentTypeService::RemoveCategory($_POST['classid'], $row['AssignmentTypeID']);
+                } else {
+                    $result += ISS_AssignmentTypeService::UpdateCategory(
+                        $_POST['classid'],
+                        $row['AssignmentTypeID'],
+                        $row['TypeName'],
+                        $row['TypePercentage']
+                    );
+                }
+            }
+        }
+        if (0 < $result) {
+            echo '<div class="alert alert-success"><strong>Category Updated.</strong></div>';
         } else {
-            echo '<div class="alert alert-danger"><strong>Error Removing Category.</strong></div>';
+            echo '<div class="alert alert-danger"><strong>Error Updating Category.</strong></div>';
         }
     } else {
         echo '<div class="alert alert-danger"><strong>Input Error.</strong></div>';
@@ -31,11 +45,12 @@ if (isset($_POST['_wpnonce-iss-edit-class-form-page'])) { // POST
 }
 if (null != $classid) {
     $categories = ISS_AssignmentTypeService::GetClassAssignmentTypes($classid);
-?>
+    ?>
     <h4>Assignment Categories</h4>  
     <p>Enter categories for your assignments, for example: Tests, Quizzes, and Homework. </p>
     <p>Each category will be worth X percentage of students' overall grades. </p>
-    <p class="text-danger"><i>Remove Note: When a category is removed associated assignments will get reassinged to 'Not Graded' Category. </i> </p>
+    <p class="text-danger"><i>Remove Note: When a category is removed, associated assignments will get reassinged to 'Not Graded'. </i> </p>
+    <p class="text-warning"><i>Rename Note: When a category is renamed, associated assignments will get reassinged the new name. </i> </p>
 
     <div class="form-group">
         <table  border=1 >
@@ -43,29 +58,30 @@ if (null != $classid) {
                 <tr>
                     <th style="width:125px; background-color:#aecfda !important; color:#000;padding:5px;">Category </th>
                     <th style="width:125px; background-color:#f1f0d5 !important; color:#000;padding:5px;">Weighted Percentage</th>
-                    <th></th>
+                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($categories as $category) { ?>
-                <tr>
+            <form class="form" method="post" action="" enctype="multipart/form-data">
+                <?php wp_nonce_field('iss-edit-class-form-page', '_wpnonce-iss-edit-class-form-page'); ?>
+                <input name="classid" type="hidden" value="<?php echo $classid; ?>" />        
+                <?php $i=1; foreach ($categories as $category) { ?>
+                   <input name="FormArray[<?php echo $category->AssignmentTypeID; ?>][AssignmentTypeID]" type="hidden" value="<?php echo $category->AssignmentTypeID; ?>" />  
+                  <tr>
                     <td style="background-color:#aecfda; color:#FFFFFF;padding:5px;"> 
-                        <input name="TypeName" type="text" class="disabled" disabled value="<?php echo $category->TypeName; ?>"  size="50" />
+                    <?php echo $i++; ?>. <input name="FormArray[<?php echo $category->AssignmentTypeID; ?>][TypeName]" type="text"  required value="<?php echo $category->TypeName; ?>"  size="45" />
                     </td>
                     <td style="background-color:#f1f0d5;padding:5px;" >
-                    <input name="TypePercentage" type="text" class="disabled" disabled value="<?php echo $category->TypePercentage; ?>") size="5"/>%                   
+                        <input name="FormArray[<?php echo $category->AssignmentTypeID; ?>][TypePercentage]" type="text"  required value="<?php echo $category->TypePercentage; ?>") size="5"/>%                   
                     </td>  
-                    <td>
-                        <form class="form" method="post" action="" enctype="multipart/form-data">
-                            <?php wp_nonce_field('iss-edit-class-form-page', '_wpnonce-iss-edit-class-form-page'); ?>
-                            <input name="typeid" type="hidden" value="<?php echo $category->AssignmentTypeID; ?>" />  
-                            <input name="classid" type="hidden" value="<?php echo $classid; ?>" />        
-                            <button id="submit" name="submit" class="btn btn-primary" value="remove">Remove</button> 
-                        </form>
-                        </td>               
-                </tr> 
+                    <td style="background-color:grey;" class="text-center">
+                        <input  name="FormArray[<?php echo $category->AssignmentTypeID; ?>][Remove]" type="checkbox" value="delete" />                        
+                    </td>               
+                  </tr> 
                     <?php 
                 } ?>
+                  <tr><th colspan=3   class="text-center"><button id="submit" name="submit" class="btn btn-primary" value="save">Save Changes</button>  </th></tr>
+                  </form>
                 <tr>
                     <form class="form" method="post" action="" enctype="multipart/form-data">
                         <?php wp_nonce_field('iss-edit-class-form-page', '_wpnonce-iss-edit-class-form-page'); ?>

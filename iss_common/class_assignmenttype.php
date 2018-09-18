@@ -101,7 +101,30 @@ class ISS_AssignmentTypeService
             }
         }
         return 0;
-       
+
+    }
+    public static function UpdateCategory($cid, $tid, $name, $percentage)
+    {
+        self::debug("UpdateCategory tid:" . $tid . ",percentage:" . $percentage . ",name:" . $name);
+        if ((0 == $cid) || (0 == $tid) || (0 > $percentage) || empty($name)) {
+            return 0;
+        }
+        if (ISS_PermissionService::user_manage_access() || ISS_PermissionService::class_assignment_write_access($cid)) {
+            global $wpdb;
+            $table = ISS_AssignmentType::GetTableName();
+            $result = $wpdb->update(
+                $table,
+                array('TypeName' => $name, 'TypePercentage' => $percentage),
+                array('AssignmentTypeID'=>$tid),
+                array("%s", "%d"),
+                array('%d')
+            );
+            if (1 == $result) {
+                return 1;
+            }
+        }
+        return 0;
+
     }
     public static function RemoveCategory($cid, $typeid)
     {
