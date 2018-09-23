@@ -125,7 +125,7 @@ class ISS_ScoreService
 
         if (ISS_PermissionService::class_assignment_write_access($cid)) {
             $table = ISS_Score::GetViewName();
-            $query = "SELECT StudentViewID, StudentFirstName, StudentLastName, AssignmentID, Score FROM {$table} WHERE  AssignmentID = {$postid}";
+            $query = "SELECT StudentViewID, StudentFirstName, StudentLastName, AssignmentID, Score FROM {$table} WHERE  AssignmentID = {$postid} ORDER BY StudentFirstName ";
             $result_set = $wpdb->get_results($query, ARRAY_A);
             foreach ($result_set as $obj) {
                 $list[] = ISS_Score::Create($obj);
