@@ -1,0 +1,34 @@
+Wildcard SSL $215.98 Paid08/23/2018 Term 08/23/2018 - 08/23/2020 Order188863112
+Wildcard SSL $215.98 Paid08/23/2018 Term 08/23/2018 - 08/23/2020 Order188862677
+
+.org renew - 1 year$16.99 learnislam.org Paid03/11/2018 MethodVisa Term03/11/2018 - 03/11/2019 Order167103982
+.org renew - 1 year$16.99 learnislam.org Paid03/11/2018 MethodVisa Term03/11/2018 - 03/11/2019 Order167103976
+
+
+SELECT S.`StudentViewID`, Y.TypeName,  (sum( O.Score)/sum(N.PossiblePoints) ) * 100 
+FROM `local_iss_student` S 
+inner join local_iss_class C ON C.ISSGrade = S.ISSGrade 
+inner join local_iss_score O ON O.StudentViewID = S.`StudentViewID`
+inner join local_iss_assignment N ON N.ID = O.AssignmentID
+inner join local_iss_assignment_type Y ON Y.AssignmentTypeID = N.AssignmentTypeID
+WHERE 
+s.StudentStatus = 'active'  
+and C.RegistrationYear = S.`RegistrationYear` 
+
+group by S.`StudentViewID`, Y.TypeName
+
+order by StudentViewID
+
+
+SELECT 
+T.AssignmentTypeID,T.ClassID,T.TypeName,T.TypePercentage,
+S.StudentViewID, S.StudentFirstName, S.StudentLastName
+FROM 
+local_iss_assignment_type  T, 
+local_iss_class C, 
+local_iss_student S
+
+left join local_iss_assignment A ON T.AssignmentTypeID.ClassID = A.ClassID
+WHERE C.ClassID = 11
+AND    C.ClassID = T.ClassID 
+AND C.ISSGrade = S.ISSGrade   

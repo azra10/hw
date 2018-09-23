@@ -10,7 +10,7 @@ if (isset($_POST['_wpnonce-iss-delete-class-form-page'])) {
     }
     $postid = iss_sanitize_input($_POST['PostID']);
     $classid = iss_sanitize_input($_POST['ClassID']);
-    DeleteScores($postid, $classid);
+    ISS_ScoreService::DeleteScores($postid, $classid);
     $result = ISS_AssignmentService::DeleteByPostID($postid);
     
    

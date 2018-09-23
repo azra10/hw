@@ -74,7 +74,7 @@ $classlist = ISS_Class::GetClassList();
 
         <!-- ISSGrade-->
         <div class="form-group">
-        <label class="control-label" for="ISSGrade">ISS Grade</label>  
+        <label class="control-label" for="ISSGrade">ISSV Grade</label>  
             <div class="input-group col-md-6">
             <select id="ISSGrade" name="FormArray[ISSGrade]" class="form-control">
                 <?php

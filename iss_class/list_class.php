@@ -129,7 +129,7 @@
                         <i class='fas fa-id-card iss_css_class'></i>  <?php echo $row->Name; ?></a></td>
                     <td> <?php echo $row->Teacher; ?> </td>
                     <td><?php echo $row->StudentName; ?> </td>
-                    <td><?php echo $row->StudentTotalScore; ?> </td>
+                    <td><?php echo $row->StudentTotalScore . '%'; ?> </td>
                     <td>
                         <a href="admin.php?page=issemailteacher&cid=<?php echo $row->ClassID; ?>">
                                 <span style="padding-left: 10px; white-space: nowrap;"> <i class="fas fa-envelope iss_css_email"></i> Email Teacher </span>

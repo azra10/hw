@@ -20,7 +20,7 @@ class ISS_Class
     public $LastLogin;
     public $StudentViewID;
     public $StudentName;
-    public $StudentTotalScore;
+    public $StudentTotalScore = 100;
 
     public static function Errors($errors)
     {
