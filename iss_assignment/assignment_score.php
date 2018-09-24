@@ -47,7 +47,7 @@ if (isset($_POST['_wpnonce-iss-score_student-form-page'])) {
             }
         }
         if (1 == ISS_ScoreService::SaveScores($scores, $postid, $classid)) {
-            echo "<div class='alert alert-success' role='alert'> Scores Saved. </div>";
+            echo "<div class='alert alert-success' role='alert'> Scores Saved. </div>";           
         } else {
             echo "<div class='alert alert-danger' role='alert'>Error Saving Scores. </div>";
         }
@@ -97,7 +97,7 @@ echo "</div><hr/>";
                         <input name="score<?php echo $student->StudentViewID; ?>" type="text" class="scoreinput" value="<?php echo $score; ?>"  size="10" />
                         </td>
                         <td style="background-color:#cee0e6;padding:5px;" >
-                        <input name="comment<?php echo $student->StudentViewID; ?>" type="text" value="<?php $student->Comment; ?>") size="100"/>                   
+                        <input name="comment<?php echo $student->StudentViewID; ?>" type="text" value="<?php echo $student->Comment; ?>") size="100"/>                   
                     </td>
                         
                     </tr> 
