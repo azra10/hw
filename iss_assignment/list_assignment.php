@@ -153,7 +153,7 @@ else if (ISS_PermissionService::assignmentent_list_all_access()) {
 <script>
      $(document).ready(function(){
         $('#iss_assignment_table').DataTable(
-            { "pageLength": 50, "order": [[2, 'asc']],
+            { "pageLength": 50, "order": [[2, 'desc']],
                 "columns": [ 
                     null,
                     null,
