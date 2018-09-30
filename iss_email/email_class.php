@@ -22,7 +22,8 @@ if ((null == $class) || (null == $accounts)) {
     exit();
 }
 $from = $current_user->user_email;
-$to = $subject = $message = null;
+$to =  $message = null;
+$subject = "[ISSVGrade{$class->ISSGrade}] ";
 $errTo = $errSubject = $errMessage = null;
 
 if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {

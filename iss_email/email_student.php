@@ -21,7 +21,8 @@ if (isset($_GET['svid'])) {
 }
 iss_write_log($student);
 $from = $current_user->user_email;
-$to = $subject = $message = null;
+$to = $message = null;
+$subject = "[ISSVGrade{$student->ISSGrade}] ";
 $errTo = $errSubject = $errMessage = null;
 
 if (isset($_POST['_wpnonce-iss-email-teacher-form-page'])) {

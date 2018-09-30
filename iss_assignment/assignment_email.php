@@ -105,7 +105,7 @@ if (isset($_POST['_wpnonce-iss-email-class-form-page'])) {
         exit;
     }
 } else {
-    $subject = "Assignment Grade{$post->ISSGrade}-{$post->Subject}, Due Date: {$post->DueDate}";
+    $subject = "[ISSVGrade{$class->ISSGrade}] {$post->Title}";
     $message = "<h3> {$post->Title} </h3>";
     $message = $message . "<div><strong>Class:</strong> Grade{$post->ISSGrade}-{$post->Subject}</div>";
     $message = $message . "<div><strong>Possible Point:</strong> {$post->PossiblePoints}</div>";
