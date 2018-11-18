@@ -184,6 +184,46 @@ class ISS_ScoreService
         }
         return 0;
     }
+    public static function SaveStudentScores($scores, $svid, $cid){
+        self::debug("SaveStudentScores");
+        self::debug($scores);
+        global $wpdb;
+        if (ISS_PermissionService::class_assignment_write_access($cid)) {
+            $table = ISS_Score::GetTableName();
+            $list = array();
+            $query = "SELECT AssignmentID  FROM {$table} WHERE  StudentViewID = {$svid}";
+            $result_set = $wpdb->get_results($query, ARRAY_A);
+            foreach ($result_set as $obj) {
+                $sid = $obj['AssignmentID'];
+                $list[$sid] = $sid;
+            }
+            $failed = false;
+            foreach ($scores as $score) {
+                if (isset($list[$score->AssignmentID])) {
+                    // Update
+                    $result = $wpdb->update(
+                        $table,
+                        array('Score' => $score->Score, 'Comment' => $score->Comment),
+                        array('StudentViewID' => $svid, 'AssignmentID' => $score->AssignmentID),
+                        array('%d', '%s'),
+                        array('%d', '%d')
+                    );
+                } else {
+                    // Insert
+                    $result = $wpdb->insert(
+                        $table,
+                        array('StudentViewID' => $svid, 'AssignmentID' => $score->AssignmentID, 'Score' => $score->Score, 'Comment' => $score->Comment),
+                        array('%d', '%d', '%d', '%s')
+                    );
+                }
+                if (false === $result) {
+                    $failed = true;
+                }
+            }
+            return $failed ? 0 : 1;
+        }
+        return 0;
+    }
     public static function SaveScores($scores, $postid, $cid)
     {
         self::debug("SaveScores");

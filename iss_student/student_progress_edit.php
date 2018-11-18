@@ -38,12 +38,12 @@ if (isset($_POST['_wpnonce-iss-score_student-form-page'])) {
     check_admin_referer('iss-score_student-form-page', '_wpnonce-iss-score_student-form-page');
 
     foreach ($scores as $assignment) {
-        if (isset($_POST["score" . $assignment->StudentViewID])) {
-            $comment = $_POST["comment" . $assignment->StudentViewID];
+        if (isset($_POST["score" . $assignment->AssignmentID])) {
+            $comment = $_POST["comment" . $assignment->AssignmentID];
             if (!empty($comment)) {
                 $assignment->Comment = $comment;
             }
-            $score = $_POST["score" . $assignment->StudentViewID];
+            $score = $_POST["score" . $assignment->AssignmentID];
             if (is_numeric($score)) {
                 $assignment->Score = $score;
             } else if ($score == "E") { // Excused
@@ -55,7 +55,7 @@ if (isset($_POST['_wpnonce-iss-score_student-form-page'])) {
             }
         }
     }
-    if (1 == ISS_ScoreService::SaveScoresByStudentID($scores, $svid, $cid)) {
+    if (1 == ISS_ScoreService::SaveStudentScores($scores, $svid, $cid)) {
         echo "<div class='alert alert-success' role='alert'> Scores Saved. </div>";           
     } else {
         echo "<div class='alert alert-danger' role='alert'>Error Saving Scores. </div>";
@@ -99,10 +99,10 @@ if (isset($_POST['_wpnonce-iss-score_student-form-page'])) {
                         <td><?php echo "{$assignment->AssignmentTypeName} - {$assignment->AssignmentTypePercentage}%"; ?></td>
                         <td><?php echo $assignment->PossiblePoints; ?></td>
                         <td style="background-color:#aecfda; color:#FFFFFF;padding:5px;">
-                        <input name="score<?php echo $assignment->StudentViewID; ?>" type="text" class="scoreinput" value="<?php echo $score; ?>"  size="10" />
+                        <input name="score<?php echo $assignment->AssignmentID; ?>" type="text" class="scoreinput" value="<?php echo $score; ?>"  size="10" />
                         </td>
                         <td style="background-color:#cee0e6;padding:5px;" >
-                        <input name="comment<?php echo $assignment->StudentViewID; ?>" type="text" value="<?php echo $assignment->Comment; ?>") size="100"/>                   
+                        <input name="comment<?php echo $assignment->AssignmentID; ?>" type="text" value="<?php echo $assignment->Comment; ?>") size="100"/>                   
                     </td>
                         
                     </tr> 
