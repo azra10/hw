@@ -43,6 +43,9 @@
                     <a href="admin.php?page=issvaddclass&cid=<?php echo $row->ClassID; ?>"> 
                             <span style='padding-left: 20px; white-space: nowrap;''><i class='fas fa-cog iss_css_setting'></i> Settings</span>
                     </a>
+                    <a href="admin.php?page=issvclassprogress&cid=<?php echo $row->ClassID; ?>"> 
+                        <span style="padding-left: 10px; white-space: nowrap;"> <i class="fas fa-battery-half iss_css_progress"></i> Progress </span>
+                    </a>
                         <?php
                     } //else {  TODO Add a view for the board }
                     ?>
@@ -91,6 +94,9 @@
                     </a> 
                     <a href="admin.php?page=issvaddclass&cid=<?php echo $row->ClassID; ?>"> 
                         <span style="padding-left: 10px; white-space: nowrap;"> <i class="fas fa-cog iss_css_setting"></i> Settings </span>
+                    </a>
+                    <a href="admin.php?page=issvclassprogress&cid=<?php echo $row->ClassID; ?>"> 
+                        <span style="padding-left: 10px; white-space: nowrap;"> <i class="fas fa-battery-half iss_css_progress"></i> Progress </span>
                     </a>
                  </td>
                 </tr>

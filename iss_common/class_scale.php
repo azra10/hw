@@ -77,7 +77,7 @@ class ISS_ScaleService
         $table = ISS_Scale::GetTableName();
 
         global $wpdb;
-        $query = $wpdb->prepare("SELECT * FROM {$table}   WHERE ClassID = %d ORDER BY ScaleID", $cid);
+        $query = $wpdb->prepare("SELECT * FROM {$table}   WHERE ClassID = %d ORDER BY ScalePercentage desc", $cid);
         $result_set = $wpdb->get_results($query, ARRAY_A);
         self::debug($result_set);
         foreach ($result_set as $obj) {

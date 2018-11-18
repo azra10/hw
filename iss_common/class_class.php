@@ -315,8 +315,21 @@ class ISS_ClassService
                 $list[] = ISS_Class::Create($obj);
             }
         }
+        self::PopulateTotalScore($list);
         self::PopulatePrimaryTeacher($list);
         return $list;
+    }
+    public static function PopulateTotalScore($list) {
+        
+        self::debug("PopulateTotalScore");
+       global $wpdb;
+         $stable = ISS_Score::GetViewNameScoresByAssignmentType();
+        foreach ($list as $obj) {
+            $svid = $obj->StudentViewID; $cid = $obj->ClassID;
+            $squery = "SELECT sum(typegrade) FROM $stable where StudentViewID = $svid and ClassID = $cid";
+            $obj->StudentTotalScore = ceil($wpdb->get_var($squery));
+        }
+
     }
     public static function PopulatePrimaryTeacher($list)
     {

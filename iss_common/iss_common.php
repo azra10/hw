@@ -51,6 +51,9 @@ function my_custom_fonts() {
     .iss_css_setting {
       color:grey;
     }
+    .iss_css_progress {
+      color: #c56d22;
+    }
     .fa-atom {
       color: lightgreen;
     }
@@ -59,6 +62,10 @@ function my_custom_fonts() {
     }
     td , th{
       padding:5px;
+    }
+    .iss_css_right {
+      padding-left:60px;
+      color:#c3b3b3;
     }
   </style>';
 }

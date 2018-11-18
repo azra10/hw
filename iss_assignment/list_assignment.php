@@ -70,6 +70,7 @@ if (!empty($svid)) {
 
 else if (ISS_PermissionService::class_assignment_write_access($cid)) {
     echo "<a class='btn btn-success' href='admin.php?page=issvaadd&cid={$cid}'> <i class='fas fa-atom'></i> Add New</a>";
+    //echo "<a class='btn btn-warning col-sm-1 col-sm-offset-1' href='admin.php?page=issvclassprogress&cid={$cid}'> <i class='fas fa-battery-half iss_css_progress'></i> Progress</a>";
     $result_set = ISS_AssignmentService::GetAssignments($cid);
     ?>
         <table class="table table-striped table-responsive table-condensed" id="iss_assignment_table">

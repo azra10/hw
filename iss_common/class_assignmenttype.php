@@ -81,7 +81,8 @@ class ISS_AssignmentTypeService
         $result_set = $wpdb->get_results($query, ARRAY_A);
         self::debug($result_set);
         foreach ($result_set as $obj) {
-            $list[] = ISS_AssignmentType::Create($obj);
+            $type = ISS_AssignmentType::Create($obj);
+            $list[$type->AssignmentTypeID] = $type;
         }
         return $list;
     }

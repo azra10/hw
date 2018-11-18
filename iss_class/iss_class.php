@@ -27,13 +27,20 @@ function category_class_page() {
 function delete_class_page() {
 	include (plugin_dir_path( __FILE__ ) . "/class_delete.php");
 }
-
+function class_progress_page()
+{
+    include(plugin_dir_path(__FILE__) . "/class_progress.php");
+}
+function editclass_progress_page()
+{
+    include(plugin_dir_path(__FILE__) . "/class_progress_edit.php");
+}
 function iss_class_register_menu_page()
 {
     //add_menu_page( string $page_title, string $menu_title, string $capability, string $menu_slug, callable $function = '', string $icon_url = '', int $position = null )
     $my_pages[] = add_menu_page('Classes', 'Classes', 'read', 'issvclasslist', 'iss_class_list_page', 'dashicons-id-alt', 3);
-    //$my_pages[] = add_submenu_page(null, 'Class Students', 'Class Students', 'iss_admin', 'class_student', 'class_student_page');
-    //$my_pages[] = add_submenu_page(null, 'Class Assignments', 'Class Assignments', 'iss_admin', 'class_assignment', 'class_assignment_page');
+    $my_pages[] = add_submenu_page(null, 'Class Progress', 'Class Progress', 'iss_teacher', 'issveditclassprogress', 'editclass_progress_page');
+    $my_pages[] = add_submenu_page(null, 'Class Progress', 'Class Progress', 'iss_teacher', 'issvclassprogress', 'class_progress_page');
     $my_pages [] = add_submenu_page ( null, 'Add Class', 'Add Class', 'iss_teacher', 'issvaddclass', 'new_class_page' );
 	$my_pages [] = add_submenu_page ( null, 'Class Scale', 'Class Scale', 'iss_teacher', 'issvaddclassscale', 'scale_class_page' );
 	$my_pages [] = add_submenu_page ( null, 'Class Category', 'Class Category', 'iss_teacher', 'issvaddclasscategory', 'category_class_page' );
