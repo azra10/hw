@@ -15,16 +15,18 @@ function issv_sqlinsert_install()
 {
     global $wpdb;
     $charset_collate = $wpdb->get_charset_collate();
-
-    $iss_grading_period = $wpdb->prefix . 'iss_grading_period';
-    $iss_class = $wpdb->prefix . 'iss_class';
-    $iss_student = $wpdb->prefix . 'iss_student';
-    $iss_assignment_type = $wpdb->prefix . 'iss_assignment_type';
-    $iss_userclassmap = $wpdb->prefix . 'iss_userclassmap';
-    $iss_assignment = $wpdb->prefix . 'iss_assignment';
-    $iss_score = $wpdb->prefix . 'iss_score';
-    $iss_scale = $wpdb->prefix . 'iss_scale';
-    $iss_userstudentmap = $wpdb->prefix . 'iss_userstudentmap';
+    $prefix = $wpdb->prefix;
+    
+    // tables
+    $iss_grading_period = $prefix . 'iss_grading_period';
+    $iss_class = $prefix . 'iss_class';
+    $iss_student = $prefix . 'iss_student';
+    $iss_assignment_type = $prefix . 'iss_assignment_type';
+    $iss_userclassmap = $prefix . 'iss_userclassmap';
+    $iss_assignment = $prefix . 'iss_assignment';
+    $iss_score = $prefix . 'iss_score';
+    $iss_scale = $prefix . 'iss_scale';
+    $iss_userstudentmap = $prefix . 'iss_userstudentmap';
 
     $wpdb->insert($iss_grading_period, array('GradingPeriodID' => '1', 'RegistrationYear' => '2016-2017', 'GradingPeriod' => '1', 'StartDate' => '2016-08-15', 'EndDate' => '2016-12-31', 'created' => '2018-08-12 22:19:28', 'updated' => '2018-08-12 22:21:56'));
     $wpdb->insert($iss_grading_period, array('GradingPeriodID' => '2', 'RegistrationYear' => '2016-2017', 'GradingPeriod' => '2', 'StartDate' => '2017-01-01', 'EndDate' => '2017-05-31', 'created' => '2018-08-12 22:19:28', 'updated' => '2018-08-12 22:19:28'));
