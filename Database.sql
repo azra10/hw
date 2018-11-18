@@ -159,3 +159,28 @@ VALUES
 ,
 ( 1, 'Behavior', 5);
 
+
+
+/*	
+Example of how to calculate a student's grade with category weighting:
+Class categories:
+
+Homework: 10%
+Classwork: 25%
+Quizzes: 25%
+Tests & Projects: 40%
+ 
+Step 1: Get the percentage of the scores in EACH category total score/ total possible points * 100. (Let's say the category percentages are Homework=90%, Classwork=85%, Quizzes=85%, Tests & Projects=80%.)
+
+Step 2: Convert each weight percent to a decimal (such as 10%=.10, 25%=.25, etP.) weight/100
+
+Step 3: Multiply the individual category percentages by the category weight decimal.
+
+Homework= 90 * .10 = 9
+Classwork = 85 * .25 = 21.25
+Quizzes = 85 * .25 = 21.25
+Tests & Projects = 80 * .40 = 32
+Step 4: Add those values together for the grade in the class.
+
+9 + 21.25 + 21.25 + 32 = 83.5
+*/
