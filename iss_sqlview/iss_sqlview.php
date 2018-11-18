@@ -1,8 +1,8 @@
 <?php
 /*
- * Plugin Name: 02. ISS SQL Create Views
+ * Plugin Name: 02. ISS SQL Create/Drop Views and Accounts
  * 
- * Description:   Creates table structure in database.
+ * Description:   Creates table structure in database.  (testparent1 (2 students), testparent2 (1 student), teststudent1, testteacher1 (kg class), testteacher2 (teacher and parent) with Password1)
  * Version: 1.0
  * Author: Azra Syed
  * 
@@ -68,8 +68,81 @@ function issv_sqlview_install()
     $sql = "CREATE VIEW $issv_teacher_name AS select `M`.`ClassID` AS `ClassID`,`M`.`UserID` AS `UserID`,`U`.`display_name` AS `Teacher`,`M`.`Access` AS `Access` 
     from ($iss_userclassmap `M` join $iss_users `U`) where (`U`.`ID` = `M`.`UserID`);";
     $wpdb->query($sql);
- }
 
+//  issstudentrole
+    $role = 'issparentrole';
+    $user_id = wp_create_user('testparent1', 'Password1', 'parent1@hotmail.com');
+    wp_update_user(array('ID' => $user_id, 'role' => $role, 'display_name' => 'parent1', 'nickname' => 'parent1', 'first_name' => 'parent1', 'last_name' => 'parent1'));      
+    $wpdb->insert($iss_userstudentmap, array('UserID' => $user_id, 'StudentID' => 1280), array("%d", "%d"));
+    $wpdb->insert($iss_userstudentmap, array('UserID' => $user_id, 'StudentID' => 1351), array("%d", "%d"));   
+
+    $user_id = wp_create_user('testparent2', 'Password1', 'parent2@hotmail.com');
+    wp_update_user(array('ID' => $user_id, 'role' => $role, 'display_name' => 'parent2', 'nickname' => 'parent2', 'first_name' => 'parent2', 'last_name' => 'parent2'));      
+    $wpdb->insert($iss_userstudentmap, array('UserID' => $user_id, 'StudentID' => 1314), array("%d", "%d"));   
+    
+    $role = 'issstudentrole';
+    $user_id = wp_create_user('teststudent1', 'Password1', 'student1@hotmail.com');
+    wp_update_user(array('ID' => $user_id, 'role' => $role, 'display_name' => 'student1', 'nickname' => 'student1', 'first_name' => 'student1', 'last_name' => 'student1'));      
+    $wpdb->insert($iss_userstudentmap, array('UserID' => $user_id, 'StudentID' => 1280), array("%d", "%d"));
+  
+    $role = 'issteacherrole';
+    $user_id = wp_create_user('testteacher1', 'Password1', 'teacher1@hotmail.com');
+    wp_update_user(array('ID' => $user_id, 'role' => $role, 'display_name' => 'teacher1', 'nickname' => 'teacher1', 'first_name' => 'teacher1', 'last_name' => 'teacher1'));        
+    $wpdb->insert($iss_userclassmap, array('UserID' => $user_id, 'ClassID' => 1, 'Access' => 'primary'), array("%d", "%d", "%s"));
+
+    $role = 'issteacherrole';
+    $user_id = wp_create_user('testteacher2', 'Password1', 'teacher2@hotmail.com');
+    wp_update_user(array('ID' => $user_id, 'role' => $role, 'display_name' => 'teacher2', 'nickname' => 'teacher2', 'first_name' => 'teacher2', 'last_name' => 'teacher2'));        
+    $wpdb->insert($iss_userclassmap, array('UserID' => $user_id, 'ClassID' => 3, 'Access' => 'primary'), array("%d", "%d", "%s"));
+    $wpdb->insert($iss_userstudentmap, array('UserID' => $user_id, 'StudentID' => 1314), array("%d", "%d"));   
+  
+}
+function issv_sqlview_uninstall() {
+    global $wpdb;
+    $prefix = $wpdb->prefix;
+    
+   // views
+   $issv_classes = $prefix . 'issv_classes';
+   $issv_class_assignments = $prefix . 'issv_class_assignments';
+   $issv_class_students = $prefix . 'issv_class_students';
+   $issv_student_accounts = $prefix . 'issv_student_accounts';
+   $issv_student_class_access = $prefix . 'issv_student_class_access';
+   $issv_student_lastlogin = $prefix . 'issv_student_lastlogin';
+   $issv_student_scores = $prefix . 'issv_student_scores';
+   $issv_student_score_byassignmenttype = $prefix . 'issv_student_score_byassignmenttype';
+   $issv_teacher_class_access = $prefix . 'issv_teacher_class_access';
+   $issv_teacher_name = $prefix . 'issv_teacher_name';
+   
+    $wpdb->query("DROP VIEW $issv_classes");
+    $wpdb->query("DROP VIEW $issv_class_students");
+    $wpdb->query("DROP VIEW $issv_class_assignments");
+    $wpdb->query("DROP VIEW $issv_student_accounts");
+    $wpdb->query("DROP VIEW $issv_student_class_access");
+    $wpdb->query("DROP VIEW $issv_student_lastlogin");
+    $wpdb->query("DROP VIEW $issv_student_score_byassignmenttype");
+    $wpdb->query("DROP VIEW $issv_student_scores");
+    $wpdb->query("DROP VIEW $issv_teacher_class_access");
+    $wpdb->query("DROP VIEW $issv_teacher_name");
+
+    $the_user = get_user_by('login', 'testparent1');  $uid = $the_user->ID; wp_delete_user($uid);
+   // $wpdb->delete($iss_userstudentmap, array('UserID' => $uid, 'StudentID' => 1280), array("%d", "%d"));
+   //$wpdb->delete($iss_userstudentmap, array('UserID' => $uid, 'StudentID' => 1351), array("%d", "%d"));
+ 
+    $the_user = get_user_by('login', 'testparent2');  $uid = $the_user->ID; wp_delete_user($uid);
+    //$wpdb->delete($iss_userstudentmap, array('UserID' => $uid, 'StudentID' => 1314), array("%d", "%d"));
+    
+    $the_user = get_user_by('login', 'teststudent1');  $uid = $the_user->ID; wp_delete_user($uid);
+    //$wpdb->delete($iss_userstudentmap, array('UserID' => $uid, 'StudentID' => 1280), array("%d", "%d"));
+    
+    $the_user = get_user_by('login', 'testteacher1');  $uid = $the_user->ID; wp_delete_user($uid);
+    //$wpdb->delete($iss_userclassmap, array('UserID' => $uid, 'ClassID' => 1), array("%d", "%d"));
+   
+    $the_user = get_user_by('login', 'testteacher2');  $uid = $the_user->ID; wp_delete_user($uid);
+    //$wpdb->delete($iss_userclassmap, array('UserID' => $uid, 'ClassID' => 3), array("%d", "%d"));
+    //$wpdb->delete($iss_userstudentmap, array('UserID' => $uid, 'StudentID' => 1314), array("%d", "%d"));
+   
+}
 register_activation_hook(__FILE__, 'issv_sqlview_install');
+register_deactivation_hook(__FILE__, 'issv_sqlview_uninstall');
 
 ?>
