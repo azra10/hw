@@ -184,6 +184,37 @@ class ISS_ScoreService
         }
         return 0;
     }
+    public static function SaveClassScores($scores, $cid){
+        self::debug("SaveClassScores");
+        self::debug($scores);
+        global $wpdb;
+        $failed = false;
+        if (ISS_PermissionService::class_assignment_write_access($cid)) {
+            $table = ISS_Score::GetTableName(); $vtable = ISS_Score::GetViewName();
+            $list = array();
+            $query = "SELECT AssignmentID, StudentViewID  FROM {$vtable} WHERE ClassID = {$cid} ";
+            $result_set = $wpdb->get_results($query, ARRAY_A);
+            
+            foreach ($result_set as $obj) {
+                $aid = $obj['AssignmentID'];
+                $svid = $obj['StudentViewID'];
+                 if (isset($scores[$svid . '-' . $aid])) 
+                    {
+                        // Update
+                        $result = $wpdb->replace(
+                            $table,
+                            array('Score' => $scores[$svid . '-' . $aid],'StudentViewID' => $svid, 'AssignmentID' => $aid),
+                            array('%d','%d', '%d')
+                        );
+                    
+                        if (false === $result) {
+                            $failed = true;
+                        }
+                    }
+                }
+        }
+        return $failed ? 0 : 1;
+    }
     public static function SaveStudentScores($scores, $svid, $cid){
         self::debug("SaveStudentScores");
         self::debug($scores);
@@ -208,6 +239,9 @@ class ISS_ScoreService
                         array('%d', '%s'),
                         array('%d', '%d')
                     );
+                    if (false === $result) {
+                        $failed = true;
+                    }
                 } else {
                     // Insert
                     $result = $wpdb->insert(
@@ -215,10 +249,10 @@ class ISS_ScoreService
                         array('StudentViewID' => $svid, 'AssignmentID' => $score->AssignmentID, 'Score' => $score->Score, 'Comment' => $score->Comment),
                         array('%d', '%d', '%d', '%s')
                     );
-                }
-                if (false === $result) {
-                    $failed = true;
-                }
+                    if (false === $result) {
+                        $failed = true;
+                    }
+                }              
             }
             return $failed ? 0 : 1;
         }
@@ -251,6 +285,9 @@ class ISS_ScoreService
                         array('%d', '%s'),
                         array('%d', '%d')
                     );
+                    if (false === $result) {
+                        $failed = true;
+                    }
                 } else {
                     // Insert
                     $result = $wpdb->insert(
@@ -258,10 +295,10 @@ class ISS_ScoreService
                         array('StudentViewID' => $student->StudentViewID, 'AssignmentID' => $student->AssignmentID, 'Score' => $student->Score, 'Comment' => $student->Comment),
                         array('%d', '%d', '%d', '%s')
                     );
-                }
-                if (false === $result) {
-                    $failed = true;
-                }
+                    if (false === $result) {
+                        $failed = true;
+                    }
+                }               
             }
             return $failed ? 0 : 1;
         }
@@ -315,7 +352,7 @@ class ISS_ScoreService
                 $list['Assignments'][$aid] = array('AssignmentID'=>$obj['AssignmentID'], 'Title'=> $obj['Title'], 'DueDate'=>$obj['DueDate'], 'PossiblePoints'=>$obj['PossiblePoints']);
                 $list['Assignments'][$aid]['TypeName'] = isset( $typelist[$atypeid])? $typelist[$atypeid]->TypeName: '(Not Graded)';
                 $list['Students'][$sid] = array('StudentViewID'=>$obj['StudentViewID'], 'StudentFirstName'=> $obj['StudentFirstName'], 'StudentLastName'=>$obj['StudentLastName']);
-                $list['Scores'][$sid . $aid] = $obj['Score'];
+                $list['Scores'][$sid . '-' . $aid] = $obj['Score'];
             }
             $result_set = $wpdb->get_results($query2, ARRAY_A);   
                  

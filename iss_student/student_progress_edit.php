@@ -29,7 +29,7 @@ if (!empty($svid)) {
 }
 
 if ((null == $scores) || (null == $student)) {
-    echo 'Error entering scores for student.';
+    echo 'Scores not available for student.';
     exit();
 }
 
@@ -66,6 +66,11 @@ if (isset($_POST['_wpnonce-iss-score_student-form-page'])) {
 <form id="scoreform" class="form-horizontal" method="post" action="" enctype="multipart/form-data">
     <?php wp_nonce_field('iss-score_student-form-page', '_wpnonce-iss-score_student-form-page') ?>
 
+    <div class="form-group panel-footer">
+        <div class="col-sm-6">
+            <button type="submit" name="submit" value="save" class="btn btn-warning form-control" >Save Assignment Scores</button>		 
+        </div>
+    </div>
     <div class="form-group">
         <div class="col-sm-10">
             <strong>Enter each student's assignment score, E for excused, or M for missing. You can add a comment for each student score. Use tab key to jump boxes.</strong>
@@ -113,8 +118,8 @@ if (isset($_POST['_wpnonce-iss-score_student-form-page'])) {
         </div>
     </div>       
     <div class="form-group panel-footer">
-        <div class="col-sm-3">
-            <button type="submit" name="submit" value="save" class="btn btn-primary form-control" >Save Assignment Scores</button>		 
+        <div class="col-sm-6">
+            <button type="submit" name="submit" value="save" class="btn btn-warning form-control" >Save Assignment Scores</button>		 
         </div>
     </div>
 

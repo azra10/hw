@@ -20,48 +20,62 @@ iss_show_heading_with_backurl("Grade {$class->ISSGrade}  {$class->Subject} Progr
 
 /// HEADER - END
 
-if (ISS_PermissionService::class_assignment_write_access($cid)) {
+if (ISS_PermissionService::class_assignment_write_access($cid)) 
+{
     $result_set = ISS_ScoreService::GetClassAssignmentScores($cid);
-?>
-<!-- <div>
+    if (!isset($result_set['Assignments']) || !isset($result_set['Students'])) 
+    {
+        echo 'Scores not available for class.';
+        exit();
+    }
+    ?>
+<div>
 <a href="admin.php?page=issveditclassprogress&cid=<?php echo $cid; ?>" class="btn btn-lg btn-warning">Edit Progress</a>
-</div> -->
+</div>
 <div>
     <table class="table table-striped table-responsive table-bordered" id="iss_score_table">
         <thead>
-            <tr><th class="col-sm-2">Assignment</th><th class="col-sm-1"><i class="fas fa-long-arrow-alt-right fa-2x iss_css_right"></th></i>              
-                <?php  
-                if (isset($result_set['Assignments'])) foreach ($result_set['Assignments'] as $row) {      
-                    echo "<th><a href='admin.php?page=issvascore&post={$row['AssignmentID']}&cid={$cid}' ><i class='fas fa-atom'></i> {$row['Title']}</span></a></th>";
-                }
-                echo "</tr><tr><th>Type</th><th><i class='fas fa-long-arrow-alt-right fa-2x iss_css_right'></i></th>";
-                if (isset($result_set['Assignments'])) foreach ($result_set['Assignments'] as $row) { echo "<th>{$row['TypeName']}</th>";}
-                echo "</tr><tr><th>Due Date</th><th><i class='fas fa-long-arrow-alt-right fa-2x iss_css_right'></i></th>";
-                if (isset($result_set['Assignments'])) foreach ($result_set['Assignments'] as $row) { echo "<th>{$row['DueDate']}</th>";}
-                echo "</tr><tr><th>Possible Points</th><th><i class='fas fa-long-arrow-alt-right fa-2x iss_css_right'></i></th>";
-                if (isset($result_set['Assignments'])) foreach ($result_set['Assignments'] as $row) { echo "<th class='text-center'>{$row['PossiblePoints']}</th>";}
-                ?>
-            </tr>
+        <tr><th class="col-sm-2"><i class="fas fa-long-arrow-alt-right fa-2x iss_css_right"></i>Assignment</th>              
+                        <?php  
+                        foreach ($result_set['Assignments'] as $row) {  echo "<th>{$row['Title']}</th>";}
+                        echo "</tr><tr><th><i class='fas fa-long-arrow-alt-right fa-2x iss_css_right'></i>Type</th><th/>";
+                        foreach ($result_set['Assignments'] as $row) { echo "<th>{$row['TypeName']}</th>";}
+                        echo "</tr><tr><th><i class='fas fa-long-arrow-alt-right fa-2x iss_css_right'></i>Due Date</th><th/>";
+                        foreach ($result_set['Assignments'] as $row) { echo "<th>{$row['DueDate']}</th>";}
+                        echo "</tr><tr><th><i class='fas fa-long-arrow-alt-right fa-2x iss_css_right'></i>Possible Points</th><th/>";
+                        foreach ($result_set['Assignments'] as $row) { echo "<th class='text-center'>{$row['PossiblePoints']}</th>";}
+                        ?>
+                    </tr>
             <tr>
                 <th>Student</th>
                 <th>Grade</th>
-                <?php if (isset($result_set['Assignments'])) foreach ($result_set['Assignments'] as $row) { echo "<th></th>"; } ?>
+                <?php foreach ($result_set['Assignments'] as $row) {
+                    echo "<th></th>";
+                } ?>
             </tr>
         </thead>
         <tbody>
             <?php 
-            if (isset($result_set['Students']))  foreach ($result_set['Students'] as $row) {
-                $svid = $row['StudentViewID'];?>
+            foreach ($result_set['Students'] as $row) {
+                $svid = $row['StudentViewID']; ?>
             <tr> 
                 <th><a href='admin.php?page=issveditstudentprogress&svid=<?php echo "{$svid}&cid={$cid}"; ?>'> <i class="fas fa-user iss_css_user "></i><?php echo " {$row['StudentFirstName']} {$row['StudentLastName']}"; ?> </a></th>
-                <th><?php echo "{$row['Total']}% - {$row['Scale']}"; ?></th>
-                <?php if (isset($result_set['Assignments'])) foreach ($result_set['Assignments'] as $aid =>$value) {   echo "<td>{$result_set['Scores'][$svid . $aid]}</td>";  } ?>
+                <th><?php if (isset($row['Total'])) echo "{$row['Total']}%" ; if (isset($row['Scale'])) echo "  {$row['Scale']}"; ?></th>
+                <?php foreach ($result_set['Assignments'] as $aid => $value) {
+                     $score = $result_set['Scores'][$svid . '-' . $aid];
+                        if ($score == '-1') {
+                            $score = 'E';
+                        } else if ($score == '-2') {
+                            $score = 'M';
+                        }
+                    echo "<td class='text-center'>{$score}</td>";
+                } ?>
             </tr>
-            <?php } ?>
-            </tbody>
-            </table>
-            <?php } ?>
+                <?php } ?>
+        </tbody>
+    </table>           
 </div>
+        <?php } ?>
 </div>
 <script>
     $(document).ready(function(){

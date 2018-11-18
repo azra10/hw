@@ -64,7 +64,7 @@ function my_custom_fonts() {
       padding:5px;
     }
     .iss_css_right {
-      padding-left:60px;
+      padding-right:30px;
       color:#c3b3b3;
     }
   </style>';
