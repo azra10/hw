@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `lh3i_iss_scale` (
 CREATE TABLE IF NOT EXISTS `lh3i_iss_score` (
   `StudentViewID` int(11) NOT NULL,
   `AssignmentID` bigint(20) unsigned NOT NULL,
-  `Score` int(5) NOT NULL DEFAULT '0',
+  `Score` float(5,2) NOT NULL DEFAULT '0',
   `Comment` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`StudentViewID`,`AssignmentID`),
   KEY `iss_score_AssignmentID_FK` (`AssignmentID`)

@@ -56,7 +56,8 @@ class ISS_Score
             if (isset($row['Score'])) {
                 $this->Score = $row['Score'];
                 if ($this->Score == -1) { $this->Score = 'E';}
-                else if ($this->Score == -2) { $this->Score = 'M';}                             
+                else if ($this->Score == -2) { $this->Score = 'M';}  
+                else {$this->Score = floatval($row['Score']);}                           
             }
             if (isset($row['Comment'])) {
                 $this->Comment = $row['Comment'];
@@ -204,7 +205,7 @@ class ISS_ScoreService
                         $result = $wpdb->replace(
                             $table,
                             array('Score' => $scores[$svid . '-' . $aid],'StudentViewID' => $svid, 'AssignmentID' => $aid),
-                            array('%d','%d', '%d')
+                            array('%f','%d', '%d')
                         );
                     
                         if (false === $result) {
@@ -236,7 +237,7 @@ class ISS_ScoreService
                         $table,
                         array('Score' => $score->Score, 'Comment' => $score->Comment),
                         array('StudentViewID' => $svid, 'AssignmentID' => $score->AssignmentID),
-                        array('%d', '%s'),
+                        array('%f', '%s'),
                         array('%d', '%d')
                     );
                     if (false === $result) {
@@ -247,7 +248,7 @@ class ISS_ScoreService
                     $result = $wpdb->insert(
                         $table,
                         array('StudentViewID' => $svid, 'AssignmentID' => $score->AssignmentID, 'Score' => $score->Score, 'Comment' => $score->Comment),
-                        array('%d', '%d', '%d', '%s')
+                        array('%d', '%d', '%f', '%s')
                     );
                     if (false === $result) {
                         $failed = true;
@@ -282,7 +283,7 @@ class ISS_ScoreService
                         $table,
                         array('Score' => $student->Score, 'Comment' => $student->Comment),
                         array('StudentViewID' => $student->StudentViewID, 'AssignmentID' => $student->AssignmentID),
-                        array('%d', '%s'),
+                        array('%f', '%s'),
                         array('%d', '%d')
                     );
                     if (false === $result) {
@@ -293,7 +294,7 @@ class ISS_ScoreService
                     $result = $wpdb->insert(
                         $table,
                         array('StudentViewID' => $student->StudentViewID, 'AssignmentID' => $student->AssignmentID, 'Score' => $student->Score, 'Comment' => $student->Comment),
-                        array('%d', '%d', '%d', '%s')
+                        array('%d', '%d', '%f', '%s')
                     );
                     if (false === $result) {
                         $failed = true;
@@ -352,7 +353,7 @@ class ISS_ScoreService
                 $list['Assignments'][$aid] = array('AssignmentID'=>$obj['AssignmentID'], 'Title'=> $obj['Title'], 'DueDate'=>$obj['DueDate'], 'PossiblePoints'=>$obj['PossiblePoints']);
                 $list['Assignments'][$aid]['TypeName'] = isset( $typelist[$atypeid])? $typelist[$atypeid]->TypeName: '(Not Graded)';
                 $list['Students'][$sid] = array('StudentViewID'=>$obj['StudentViewID'], 'StudentFirstName'=> $obj['StudentFirstName'], 'StudentLastName'=>$obj['StudentLastName']);
-                $list['Scores'][$sid . '-' . $aid] = $obj['Score'];
+                $list['Scores'][$sid . '-' . $aid] = floatval($obj['Score']);
             }
             $result_set = $wpdb->get_results($query2, ARRAY_A);   
                  

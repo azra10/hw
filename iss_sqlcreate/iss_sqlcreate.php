@@ -159,7 +159,7 @@ function issv_sqlcreate_score($charset_collate, $table_name, $depends, $depends1
 
         `StudentViewID` int(11) NOT NULL,
         `AssignmentID` bigint(20) unsigned NOT NULL,
-        `Score` int(5) NOT NULL DEFAULT '0',
+        `Score` float(5,2) NOT NULL DEFAULT '0',
         `Comment` varchar(200) DEFAULT NULL,
         PRIMARY KEY (`StudentViewID`,`AssignmentID`),
         KEY `iss_score_StdentViewID_FK` (`StudentViewID`),

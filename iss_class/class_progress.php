@@ -35,20 +35,20 @@ if (ISS_PermissionService::class_assignment_write_access($cid))
 <div>
     <table class="table table-striped table-responsive table-bordered" id="iss_score_table">
         <thead>
-        <tr><th class="col-sm-2"><i class="fas fa-long-arrow-alt-right fa-2x iss_css_right"></i>Assignment</th>              
+        <tr><th class="col-sm-2"><i class="fas fa-long-arrow-alt-right fa-2x iss_css_right"></i>Assignment</th> <th></th>             
                         <?php  
-                        foreach ($result_set['Assignments'] as $row) {  echo "<th>{$row['Title']}</th>";}
+                        foreach ($result_set['Assignments'] as $row) {  echo "<th class='text-center'>{$row['Title']}</th>";}
                         echo "</tr><tr><th><i class='fas fa-long-arrow-alt-right fa-2x iss_css_right'></i>Type</th><th/>";
-                        foreach ($result_set['Assignments'] as $row) { echo "<th>{$row['TypeName']}</th>";}
+                        foreach ($result_set['Assignments'] as $row) { echo "<th class='text-center'>{$row['TypeName']}</th>";}
                         echo "</tr><tr><th><i class='fas fa-long-arrow-alt-right fa-2x iss_css_right'></i>Due Date</th><th/>";
-                        foreach ($result_set['Assignments'] as $row) { echo "<th>{$row['DueDate']}</th>";}
+                        foreach ($result_set['Assignments'] as $row) { echo "<th class='text-center'>{$row['DueDate']}</th>";}
                         echo "</tr><tr><th><i class='fas fa-long-arrow-alt-right fa-2x iss_css_right'></i>Possible Points</th><th/>";
                         foreach ($result_set['Assignments'] as $row) { echo "<th class='text-center'>{$row['PossiblePoints']}</th>";}
                         ?>
                     </tr>
             <tr>
                 <th>Student</th>
-                <th>Grade</th>
+                <th class='text-center'>Grade</th>
                 <?php foreach ($result_set['Assignments'] as $row) {
                     echo "<th></th>";
                 } ?>
@@ -60,7 +60,7 @@ if (ISS_PermissionService::class_assignment_write_access($cid))
                 $svid = $row['StudentViewID']; ?>
             <tr> 
                 <th><a href='admin.php?page=issveditstudentprogress&svid=<?php echo "{$svid}&cid={$cid}"; ?>'> <i class="fas fa-user iss_css_user "></i><?php echo " {$row['StudentFirstName']} {$row['StudentLastName']}"; ?> </a></th>
-                <th><?php if (isset($row['Total'])) echo "{$row['Total']}%" ; if (isset($row['Scale'])) echo "  {$row['Scale']}"; ?></th>
+                <th class='text-center'><?php if (isset($row['Total'])) echo "{$row['Total']}%" ; if (isset($row['Scale'])) echo "  {$row['Scale']}"; ?></th>
                 <?php foreach ($result_set['Assignments'] as $aid => $value) {
                      $score = $result_set['Scores'][$svid . '-' . $aid];
                         if ($score == '-1') {

@@ -83,11 +83,11 @@ if (ISS_PermissionService::class_assignment_write_access($cid)) {
                 <thead>
                     <tr><th class="col-sm-2"><i class="fas fa-long-arrow-alt-right fa-2x iss_css_right"></i>Assignment</th>              
                         <?php  
-                        foreach ($result_set['Assignments'] as $row) {  echo "<th>{$row['Title']}</th>";}
+                        foreach ($result_set['Assignments'] as $row) {  echo "<th class='text-center'>{$row['Title']}</th>";}
                         echo "</tr><tr><th><i class='fas fa-long-arrow-alt-right fa-2x iss_css_right'></i>Type</th>";
-                        foreach ($result_set['Assignments'] as $row) { echo "<th>{$row['TypeName']}</th>";}
+                        foreach ($result_set['Assignments'] as $row) { echo "<th class='text-center'>{$row['TypeName']}</th>";}
                         echo "</tr><tr><th><i class='fas fa-long-arrow-alt-right fa-2x iss_css_right'></i>Due Date</th>";
-                        foreach ($result_set['Assignments'] as $row) { echo "<th>{$row['DueDate']}</th>";}
+                        foreach ($result_set['Assignments'] as $row) { echo "<th class='text-center'>{$row['DueDate']}</th>";}
                         echo "</tr><tr><th><i class='fas fa-long-arrow-alt-right fa-2x iss_css_right'></i>Possible Points</th>";
                         foreach ($result_set['Assignments'] as $row) { echo "<th class='text-center'>{$row['PossiblePoints']}</th>";}
                         ?>
