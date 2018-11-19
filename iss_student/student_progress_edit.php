@@ -83,6 +83,7 @@ if (isset($_POST['_wpnonce-iss-score_student-form-page'])) {
                     <tr>
                         <th style="width:200px;padding:5px;scoretabl">Assignment</th>
                         <th>Category</th>
+                        <th>Due Date</th>
                         <th>Possible Points</th>
                         <th style="width:125px; background-color:#aecfda !important; color:#000;padding:5px;scoretabl">Score </th>
                         <th style="width:100px; background-color:#cee0e6 !important; color:#000;padding:5px;scoretabl">Comment (size:100)</th>
@@ -102,6 +103,7 @@ if (isset($_POST['_wpnonce-iss-score_student-form-page'])) {
                         <span style="width:200px;padding:5px;"><?php echo $assignment->Title; ?></span> 
                         </td>
                         <td><?php echo "{$assignment->AssignmentTypeName} - {$assignment->AssignmentTypePercentage}%"; ?></td>
+                        <td><?php echo $assignment->DueDate; ?></td>
                         <td><?php echo $assignment->PossiblePoints; ?></td>
                         <td style="background-color:#aecfda; color:#FFFFFF;padding:5px;">
                         <input name="score<?php echo $assignment->AssignmentID; ?>" type="text" class="scoreinput" value="<?php echo $score; ?>"  size="10" />

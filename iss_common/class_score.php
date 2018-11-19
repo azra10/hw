@@ -153,8 +153,8 @@ class ISS_ScoreService
             $typelist = ISS_AssignmentTypeService::GetClassAssignmentTypes($cid);
             
             $table = ISS_Score::GetViewName();
-            $query = "SELECT StudentViewID, StudentFirstName, StudentLastName, AssignmentID, AssignmentTypeID, PossiblePoints, Title, Score, Comment 
-            FROM {$table} WHERE  StudentViewID = {$svid} AND ClassID = {$cid} AND AssignmentTypeID IS NOT NULL ORDER BY AssignmentTypeID ";
+            $query = "SELECT StudentViewID, StudentFirstName, StudentLastName, AssignmentID, AssignmentTypeID, DueDate, PossiblePoints, Title, Score, Comment 
+            FROM {$table} WHERE  StudentViewID = {$svid} AND ClassID = {$cid} AND AssignmentTypeID IS NOT NULL ORDER BY AssignmentTypeID, DueDate ";
             $result_set = $wpdb->get_results($query, ARRAY_A);
             self::debug($result_set);
             foreach ($result_set as $obj) {
