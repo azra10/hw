@@ -275,7 +275,7 @@ class ISS_ClassService
             $query = "SELECT {$columns} FROM {$ttable}  WHERE UserID = {$userid} AND RegistrationYear = '{$regyear}' order by ISSGrade, Subject";
             $result_set = $wpdb->get_results($query, ARRAY_A);
             self::debug("Teacher Access Classes " . $userid);
-            self::debug($result_set);
+            //self::debug($result_set);
 
             foreach ($result_set as $obj) {
                 $list[$obj['ClassID']] = ISS_Class::Create($obj);
@@ -341,7 +341,7 @@ class ISS_ClassService
 
         $result_set = $wpdb->get_results($pquery, ARRAY_A);
         self::debug("Teacher Names");
-        self::debug($result_set);
+        //self::debug($result_set);
 
         foreach ($result_set as $obj) {
             if (isset($obj['Teacher']) && isset($obj['ClassID'])) {

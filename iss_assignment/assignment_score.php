@@ -5,54 +5,36 @@ echo "<h4>Enter Assignment Scores</h4>";
 $post = $scores = null;
 if (!empty($postid)) {
     $post = ISS_AssignmentService::LoadByID($postid);
-    if (null != $post) {
-        $scores = ISS_ScoreService::LoadScoreByAssignmentID($postid, $post->ClassID);
+    if (null == $post) {
+        echo 'Error entering scores for assignment.';
+        exit();
     }
 }
-
-if ((null == $scores) || (null == $post)) {
-    echo 'Error entering scores for assignment.';
-    exit();
-}
-
 if (isset($_POST['_wpnonce-iss-score_student-form-page'])) {
     
     check_admin_referer('iss-score_student-form-page', '_wpnonce-iss-score_student-form-page');
     if(isset($_POST['submit']) && ($_POST['submit']== 'delete')){
         if (1 == ISS_ScoreService::DeleteScores($postid, $classid)) {
             echo "<div class='alert alert-success' role='alert'> Scores Deleted. </div>";
-            $scores = ISS_ScoreService::LoadScoreByAssignmentID($postid, $post->ClassID);
         } else {
             echo "<div class='alert alert-danger' role='alert'>Error Deleting Scores. </div>";
         }
     }
     else
-        {
-            foreach ($scores as $student) {
-            if (isset($_POST["score" . $student->StudentViewID])) {
-                $comment = $_POST["comment" . $student->StudentViewID];
-                if (!empty($comment)) {
-                    $student->Comment = $comment;
-                }
-                $score = $_POST["score" . $student->StudentViewID];
-                if (is_numeric($score)) {
-                    $student->Score = $score;
-                } else if ($score == "E") { // Excused
-                    $student->Score = -1;
-                } else if ($score == "M") { // Missing
-                    $student->Score = -2;
-                } else {
-                    $student->Score = 0;
-                }
+    {           
+            if (1 == ISS_ScoreService::SaveAssignmentScores($_POST, $postid, $classid)) 
+            {
+                echo "<div class='alert alert-success' role='alert'> Scores Saved. </div>";  
+            } else {
+                echo "<div class='alert alert-danger' role='alert'>Error Saving Scores. </div>";
             }
-        }
-        if (1 == ISS_ScoreService::SaveScores($scores, $postid, $classid)) {
-            echo "<div class='alert alert-success' role='alert'> Scores Saved. </div>";           
-        } else {
-            echo "<div class='alert alert-danger' role='alert'>Error Saving Scores. </div>";
-        }
     }
 }
+$scores = ISS_ScoreService::LoadScoreByAssignmentID($postid, $classid);
+if (null == $scores) {
+    echo 'Error entering scores for assignment.';
+    exit();
+} 
 
 
 echo "<div class='row'>";
@@ -82,22 +64,18 @@ echo "</div><hr/>";
                 </thead>
                 <tbody>
                     <?php foreach ($scores as $student) {
-                        if ($student->Score == '-1') {
-                            $score = 'E';
-                        } else if ($student->Score == '-2') {
-                            $score = 'M';
-                        } else {
-                            $score = $student->Score;
-                        } ?>
+                        $score = $student->Score;
+                        if ($score == '-1') { $score = 'E'; } else if ($score == '-2') {  $score = 'M'; } 
+                        ?>
                     <tr>
                         <td>
                         <span style="width:200px;padding:5px;"><?php echo $student->StudentFirstName . ' ' . $student->StudentLastName; ?></span> 
                         </td>
                         <td style="background-color:#aecfda; color:#FFFFFF;padding:5px;">
-                        <input name="score<?php echo $student->StudentViewID; ?>" type="text" class="scoreinput" value="<?php echo $score; ?>"  size="10" />
+                        <input name="score<?php echo $student->StudentViewID . '-' . $postid; ?>" type="text" class="scoreinput" value="<?php echo $score; ?>"  size="10" />
                         </td>
                         <td style="background-color:#cee0e6;padding:5px;" >
-                        <input name="comment<?php echo $student->StudentViewID; ?>" type="text" value="<?php echo $student->Comment; ?>") size="100"/>                   
+                        <input name="comment<?php echo $student->StudentViewID . '-' . $postid; ?>" type="text" value="<?php echo $student->Comment; ?>") size="100"/>                   
                     </td>
                         
                     </tr> 

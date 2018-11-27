@@ -54,10 +54,7 @@ class ISS_Score
                 $this->AssignmentID = $row['AssignmentID'];
             }
             if (isset($row['Score'])) {
-                $this->Score = $row['Score'];
-                if ($this->Score == -1) { $this->Score = 'E';}
-                else if ($this->Score == -2) { $this->Score = 'M';}  
-                else {$this->Score = floatval($row['Score']);}                           
+                 {$this->Score = floatval($row['Score']);}                           
             }
             if (isset($row['Comment'])) {
                 $this->Comment = $row['Comment'];
@@ -133,11 +130,10 @@ class ISS_ScoreService
             $table = ISS_Score::GetViewName();
             $query = "SELECT StudentViewID, StudentFirstName, StudentLastName, AssignmentID, Score, Comment FROM {$table} WHERE  AssignmentID = {$postid} ORDER BY StudentFirstName ";
             $result_set = $wpdb->get_results($query, ARRAY_A);
+            //self::debug($result_set);
             foreach ($result_set as $obj) {
                 $list[] = ISS_Score::Create($obj);
             }
-            iss_write_log($list);
- 
             return $list;
         }
         return null;
@@ -156,15 +152,14 @@ class ISS_ScoreService
             $query = "SELECT StudentViewID, StudentFirstName, StudentLastName, AssignmentID, AssignmentTypeID, DueDate, PossiblePoints, Title, Score, Comment 
             FROM {$table} WHERE  StudentViewID = {$svid} AND ClassID = {$cid} AND AssignmentTypeID IS NOT NULL ORDER BY AssignmentTypeID, DueDate ";
             $result_set = $wpdb->get_results($query, ARRAY_A);
-            self::debug($result_set);
+            //self::debug($result_set);
             foreach ($result_set as $obj) {
                 $tid = $obj['AssignmentTypeID'];
                 $obj['TypeName'] =$typelist[$tid]->TypeName;
                 $obj['TypePercentage'] =$typelist[$tid]->TypePercentage;
                 $list[] = ISS_Score::Create($obj);
             }
-            iss_write_log($list);
- 
+
             return $list;
         }
         return null;
@@ -187,123 +182,98 @@ class ISS_ScoreService
     }
     public static function SaveClassScores($scores, $cid){
         self::debug("SaveClassScores");
-        self::debug($scores);
+        //self::debug($scores);
         global $wpdb;
         $failed = false;
         if (ISS_PermissionService::class_assignment_write_access($cid)) {
-            $table = ISS_Score::GetTableName(); $vtable = ISS_Score::GetViewName();
-            $list = array();
-            $query = "SELECT AssignmentID, StudentViewID  FROM {$vtable} WHERE ClassID = {$cid} ";
+            $vtable = ISS_Score::GetViewName();
+            $query = "SELECT AssignmentID, StudentViewID, Score, Comment  FROM {$vtable} WHERE ClassID = {$cid} ";
             $result_set = $wpdb->get_results($query, ARRAY_A);
-            
-            foreach ($result_set as $obj) {
-                $aid = $obj['AssignmentID'];
-                $svid = $obj['StudentViewID'];
-                 if (isset($scores[$svid . '-' . $aid])) 
-                    {
-                        // Update
-                        $result = $wpdb->replace(
-                            $table,
-                            array('Score' => $scores[$svid . '-' . $aid],'StudentViewID' => $svid, 'AssignmentID' => $aid),
-                            array('%f','%d', '%d')
-                        );
-                    
-                        if (false === $result) {
-                            $failed = true;
-                        }
-                    }
-                }
+            $failed = self::SaveScores($result_set, $scores);           
         }
         return $failed ? 0 : 1;
     }
     public static function SaveStudentScores($scores, $svid, $cid){
         self::debug("SaveStudentScores");
-        self::debug($scores);
+        //self::debug($scores);
         global $wpdb;
+        $failed = false;
         if (ISS_PermissionService::class_assignment_write_access($cid)) {
-            $table = ISS_Score::GetTableName();
-            $list = array();
-            $query = "SELECT AssignmentID  FROM {$table} WHERE  StudentViewID = {$svid}";
+            $vtable = ISS_Score::GetViewName();
+            $query = "SELECT AssignmentID, StudentViewID, Score, Comment  FROM {$vtable} WHERE ClassID = {$cid} AND  StudentViewID = {$svid}";
             $result_set = $wpdb->get_results($query, ARRAY_A);
-            foreach ($result_set as $obj) {
-                $sid = $obj['AssignmentID'];
-                $list[$sid] = $sid;
-            }
-            $failed = false;
-            foreach ($scores as $score) {
-                if (isset($list[$score->AssignmentID])) {
-                    // Update
-                    $result = $wpdb->update(
-                        $table,
-                        array('Score' => $score->Score, 'Comment' => $score->Comment),
-                        array('StudentViewID' => $svid, 'AssignmentID' => $score->AssignmentID),
-                        array('%f', '%s'),
-                        array('%d', '%d')
-                    );
-                    if (false === $result) {
-                        $failed = true;
-                    }
-                } else {
-                    // Insert
-                    $result = $wpdb->insert(
-                        $table,
-                        array('StudentViewID' => $svid, 'AssignmentID' => $score->AssignmentID, 'Score' => $score->Score, 'Comment' => $score->Comment),
-                        array('%d', '%d', '%f', '%s')
-                    );
-                    if (false === $result) {
-                        $failed = true;
-                    }
-                }              
-            }
-            return $failed ? 0 : 1;
+            $failed = self::SaveScores($result_set, $scores);   
         }
-        return 0;
+        return $failed ? 0 : 1;
     }
-    public static function SaveScores($scores, $postid, $cid)
+    public static function SaveAssignmentScores($scores, $postid, $cid)
     {
-        self::debug("SaveScores");
-        self::debug($scores);
-
+        self::debug("SaveAssignmentScores");
+        //self::debug($scores);
         global $wpdb;
+        $failed = false;
         if (ISS_PermissionService::class_assignment_write_access($cid)) {
-            $table = ISS_Score::GetTableName();
-
-            $list = array();
-            $query = "SELECT StudentViewID  FROM {$table} WHERE  AssignmentID = {$postid}";
+            $vtable = ISS_Score::GetViewName();
+            $query = "SELECT AssignmentID, StudentViewID, Score, Comment  FROM {$vtable} WHERE ClassID = {$cid} AND  AssignmentID = {$postid}";
             $result_set = $wpdb->get_results($query, ARRAY_A);
-            foreach ($result_set as $obj) {
-                $sid = $obj['StudentViewID'];
-                $list[$sid] = $sid;
-            }
-            $failed = false;
-            foreach ($scores as $student) {
-                if (isset($list[$student->StudentViewID])) {
-                    // Update
-                    $result = $wpdb->update(
-                        $table,
-                        array('Score' => $student->Score, 'Comment' => $student->Comment),
-                        array('StudentViewID' => $student->StudentViewID, 'AssignmentID' => $student->AssignmentID),
-                        array('%f', '%s'),
-                        array('%d', '%d')
-                    );
-                    if (false === $result) {
-                        $failed = true;
-                    }
-                } else {
-                    // Insert
-                    $result = $wpdb->insert(
-                        $table,
-                        array('StudentViewID' => $student->StudentViewID, 'AssignmentID' => $student->AssignmentID, 'Score' => $student->Score, 'Comment' => $student->Comment),
-                        array('%d', '%d', '%f', '%s')
-                    );
-                    if (false === $result) {
-                        $failed = true;
-                    }
-                }               
-            }
-            return $failed ? 0 : 1;
+            $failed = self::SaveScores($result_set, $scores);   
         }
-        return 0;
+        return $failed ? 0 : 1;
+    }
+
+    public static function SaveScores($result_set, $scores)
+    {
+        global $wpdb;
+        $table = ISS_Score::GetTableName();
+        $failed = 0; 
+        foreach ($result_set as $obj) 
+        {
+            $aid = $obj['AssignmentID'];
+            $svid = $obj['StudentViewID'];           
+            $dataArray= array(); 
+            $typeArray = array();
+            if (isset($scores["score" . $svid . '-' . $aid])) 
+            {
+                $score = $scores["score" . $svid . '-' . $aid];
+                if ($score == "E") {   $score = -1; } else if ($score == "M") { $score = -2; } 
+                $score = floatval($score);
+                if ($score !=  $obj['Score'])
+                {  
+                    $dataArray['Score'] = $score;  
+                    $typeArray[] = '%f';
+                }           
+            }
+            
+            if (isset($scores["comment" . $svid . '-' . $aid])) 
+            {
+                $comment = $scores["comment" . $svid . '-' . $aid];
+                if ($comment !=  $obj['Comment'])
+                {
+                    $dataArray['Comment'] = $comment;
+                    $typeArray[] = '%s';
+                }
+            }
+             if (!empty($dataArray))
+            {          
+                if (!isset($dataArray['Score'])) 
+                { 
+                    $dataArray['Score'] = $obj['Score']; 
+                    $typeArray[] = '%s'; 
+                }
+                if (!isset($dataArray['Comment'])) 
+                { 
+                    $dataArray['Comment'] = $obj['Comment']; 
+                    $typeArray[] = '%f';
+                }
+                $dataArray['StudentViewID'] = $svid; $typeArray[] = '%d'; 
+                $dataArray['AssignmentID'] = $aid; $typeArray[] = '%d';
+                $result = $wpdb->replace($table, $dataArray, $typeArray);
+                if (false === $result) 
+                { $failed++; }
+            }            
+            
+        }
+        return $failed>0;
     }
     public static function GetStudentAssignmentScores($cid, $sid, $svid)
     {
@@ -337,7 +307,7 @@ class ISS_ScoreService
         self::debug("GetClassAssignmentScores");
         $list = array();
         $table1 = ISS_Score::GetViewName();
-        $query1 = "SELECT StudentViewID, AssignmentID, AssignmentTypeID, PossiblePoints, DueDate, Score, Title, StudentFirstName, StudentLastName FROM {$table1} WHERE ClassID = {$cid} AND AssignmentTypeID IS NOT NULL ORDER BY AssignmentTypeID, DueDate, StudentFirstName";
+        $query1 = "SELECT StudentViewID, AssignmentID, AssignmentTypeID, PossiblePoints, DueDate, Score, Comment, Title, StudentFirstName, StudentLastName FROM {$table1} WHERE ClassID = {$cid} AND AssignmentTypeID IS NOT NULL ORDER BY AssignmentTypeID, DueDate, StudentFirstName";
         $table2= ISS_Score::GetViewNameScoresByAssignmentType();
         $query2 = "SELECT StudentViewID, SUM( TypeGrade) AS Total FROM {$table2} WHERE ClassID = {$cid} AND StudentViewID IS NOT NULL GROUP BY StudentViewID";
 
@@ -353,7 +323,8 @@ class ISS_ScoreService
                 $list['Assignments'][$aid] = array('AssignmentID'=>$obj['AssignmentID'], 'Title'=> $obj['Title'], 'DueDate'=>$obj['DueDate'], 'PossiblePoints'=>$obj['PossiblePoints']);
                 $list['Assignments'][$aid]['TypeName'] = isset( $typelist[$atypeid])? $typelist[$atypeid]->TypeName: '(Not Graded)';
                 $list['Students'][$sid] = array('StudentViewID'=>$obj['StudentViewID'], 'StudentFirstName'=> $obj['StudentFirstName'], 'StudentLastName'=>$obj['StudentLastName']);
-                $list['Scores'][$sid . '-' . $aid] = floatval($obj['Score']);
+                $list['Scores'][$sid . '-' . $aid]['score'] = floatval($obj['Score']);
+                $list['Scores'][$sid . '-' . $aid]['comment'] = $obj['Comment'];
             }
             $result_set = $wpdb->get_results($query2, ARRAY_A);   
                  

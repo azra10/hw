@@ -3,8 +3,8 @@
    
 /// HEADER - BEGING
 
-$cid = $svid = $class = $student = null;
-$result_set = array();
+$cid = $svid = $class = $student = $result_set = null;
+
 if (isset($_GET['cid'])) {
     $cid = iss_sanitize_input($_GET['cid']);
 }
@@ -20,47 +20,23 @@ iss_show_heading_with_backurl("Grade {$class->ISSGrade}  {$class->Subject} Progr
 
 /// HEADER - END
 
+if (isset($_POST['_wpnonce-iss-score_students-form-page'])) {
 
-if (ISS_PermissionService::class_assignment_write_access($cid)) {
-    $result_set = ISS_ScoreService::GetClassAssignmentScores($cid);
-    if (!isset($result_set['Assignments']) || !isset($result_set['Students'])) 
-    {  
-        echo 'Scores not available for class.'; 
-        exit(); 
+    check_admin_referer('iss-score_students-form-page', '_wpnonce-iss-score_students-form-page');
+    if (1 == ISS_ScoreService::SaveClassScores($_POST, $cid)) 
+    {
+        echo "<div class='alert alert-success' role='alert'> Scores Saved. </div>";  
+    } else {
+        echo "<div class='alert alert-danger' role='alert'>Error Saving Scores. </div>";
     } 
-    if (isset($_POST['_wpnonce-iss-score_students-form-page'])) {
-    
-        check_admin_referer('iss-score_students-form-page', '_wpnonce-iss-score_students-form-page');
-        $scores = array();
-        foreach ($result_set['Students'] as $row) {
-            $svid = $row['StudentViewID'];
-            foreach ($result_set['Assignments'] as $aid =>$value)
-                        
-            if (isset($_POST["score" . $svid . '-' . $aid])) {
-                
-                $score = $_POST["score" . $svid . '-' . $aid];
-                if (is_numeric($score)) {
-                    $score = $score;
-                } else 
-                if ($score == "E") { // Excused
-                    $score = -1;
-                } else if ($score == "M") { // Missing
-                    $score = -2;
-                } 
-                if (isset($score)) {
-                    $scores[$svid . '-' . $aid] = $score;
-                    $result_set['Scores'][$svid . '-' . $aid] = $score;
-                }
-            }
-        }
-        
-        if (1 == ISS_ScoreService::SaveClassScores($scores, $cid)) {
-            echo "<div class='alert alert-success' role='alert'> Scores Saved. </div>";           
-        } else {
-            echo "<div class='alert alert-danger' role='alert'>Error Saving Scores. </div>";
-        }
-        
-    }   
+
+} 
+$result_set = ISS_ScoreService::GetClassAssignmentScores($cid);
+if (!isset($result_set['Assignments']) || !isset($result_set['Students'])) 
+{  
+    echo 'Scores not available for class.'; 
+    exit(); 
+}      
 ?>
 
 <form id="scoreform" class="form-horizontal" method="post" action="" enctype="multipart/form-data">
@@ -81,41 +57,39 @@ if (ISS_PermissionService::class_assignment_write_access($cid)) {
         <div class="col-sm-11">
             <table class="table table-striped table-responsive table-bordered" id="iss_score_table">
                 <thead>
-                    <tr><th class="col-sm-2"><i class="fas fa-long-arrow-alt-right fa-2x iss_css_right"></i>Assignment</th>              
-                        <?php  
-                        foreach ($result_set['Assignments'] as $row) {  echo "<th class='text-center'>{$row['Title']}</th>";}
-                        echo "</tr><tr><th><i class='fas fa-long-arrow-alt-right fa-2x iss_css_right'></i>Type</th>";
-                        foreach ($result_set['Assignments'] as $row) { echo "<th class='text-center'>{$row['TypeName']}</th>";}
-                        echo "</tr><tr><th><i class='fas fa-long-arrow-alt-right fa-2x iss_css_right'></i>Due Date</th>";
-                        foreach ($result_set['Assignments'] as $row) { echo "<th class='text-center'>{$row['DueDate']}</th>";}
-                        echo "</tr><tr><th><i class='fas fa-long-arrow-alt-right fa-2x iss_css_right'></i>Possible Points</th>";
-                        foreach ($result_set['Assignments'] as $row) { echo "<th class='text-center'>{$row['PossiblePoints']}</th>";}
-                        ?>
-                    </tr>
-                    <tr>
-                        <th>Student</th>
-                        
-                        <?php foreach ($result_set['Assignments'] as $row) { echo "<th></th>"; } ?>
-                    </tr>
+                <tr>
+                    <th class="col-sm-2">Assignment<br/>Type<br/>Due Date <br/> Possible Points<br/><i class="fas fa-long-arrow-alt-right fa-2x iss_css_right"></i></th>             
+                            <?php  
+                            foreach ($result_set['Assignments'] as $row) {  
+                                echo "<td class='text-center'>";
+                                echo "<a href='" .  admin_url('admin.php?page=issvascore') . "&post={$row['AssignmentID']}&cid={$cid}'><i class='fas fa-atom'></i> {$row['Title']}</a>";
+                                echo "<br/>{$row['TypeName']}<br/>{$row['DueDate']}<br/>{$row['PossiblePoints']}</td>";
+                            }?>
+                    <th>Assignment<br/>Type<br/>Due Date <br/> Possible Points<br/><i class='fas fa-long-arrow-alt-left fa-2x iss_css_right'></i></th>                     
+                </tr>
+                <tr>
+                    <th>Student</th>
+                    <?php foreach ($result_set['Assignments'] as $row) { echo "<th></th>"; } ?>
+                    <th>Student</th>
+                </tr>   
                 </thead>
                 <tbody>
                     <?php 
                     foreach ($result_set['Students'] as $row) {
                         $svid = $row['StudentViewID'];?>
                     <tr> 
-                        <th><?php echo " {$row['StudentFirstName']} {$row['StudentLastName']}"; ?></th>
-                        
+                        <td><a href='admin.php?page=issveditstudentprogress&svid=<?php echo "{$svid}&cid={$cid}"; ?>'> <i class="fas fa-user iss_css_user "></i><?php echo " {$row['StudentFirstName']} {$row['StudentLastName']}"; ?> </a></td>
+ 
                         <?php foreach ($result_set['Assignments'] as $aid =>$value) 
                         {   
-                            $score = $result_set['Scores'][$svid . '-' . $aid];
-                            if ($score == '-1') {
-                                $score = 'E';
-                            } else if ($score == '-2') {
-                                $score = 'M';
-                            }
+                            $score = $result_set['Scores'][$svid . '-' . $aid]['score'];
+                            if ($score == '-1') { $score = 'E'; } else if ($score == '-2') {  $score = 'M'; } 
+                        
                             echo "<td class='text-center'><input name='score{$svid}-{$aid}' type='text' class='scoreinput' value='{$score}'  size='10' /></td>";
                             
                         } ?>
+                        <td><a href='admin.php?page=issveditstudentprogress&svid=<?php echo "{$svid}&cid={$cid}"; ?>'> <i class="fas fa-user iss_css_user "></i><?php echo " {$row['StudentFirstName']} {$row['StudentLastName']}"; ?> </a></td>
+                       
                     </tr>
                     <?php } ?>
                     </tbody>
@@ -128,8 +102,7 @@ if (ISS_PermissionService::class_assignment_write_access($cid)) {
             <button type="submit" name="submit" value="save" class="btn btn-warning form-control" >Save  Scores</button>		 
         </div>
     </div>
-</form> 
-        <?php } ?>    
+</form>    
 </div>
 <script>
     $(document).ready(function(){
@@ -137,6 +110,10 @@ if (ISS_PermissionService::class_assignment_write_access($cid)) {
             { 
                 "pageLength": 50, 
                 "paging": false, 
+                fixedHeader: {
+                    header: true,
+                    footer: true
+                }
             }); 
         });
 </script>

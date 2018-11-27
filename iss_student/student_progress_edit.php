@@ -4,7 +4,6 @@
 /// HEADER - BEGING
 
 $cid = $svid = $class = $student = null;
-$result_set = array();
 if (isset($_GET['cid'])) {
     $cid = iss_sanitize_input($_GET['cid']);
 }
@@ -17,50 +16,31 @@ if (isset($_GET['svid'])) {
 if (!empty($svid)) {
     $student = ISS_StudentService::LoadByStudentViewID($svid);
 }
+if ((null == $student) || (null == $class)) {
+    echo 'Error entering scores for student.';
+    exit();
+}
 $backurl = admin_url('admin.php?page=issvclasslist');
 iss_show_heading_with_backurl("Student Progress - {$student->StudentFirstName} {$student->StudentLastName}  ", $backurl);
 echo "<h4>Class: Grade{$class->ISSGrade}-{$class->Subject}</h4>";
 echo "<hr/>";
 /// HEADER - END
 
-$scores = null;
-if (!empty($svid)) {   
-        $scores = ISS_ScoreService::LoadScoreByStudentID($svid, $cid);
-}
-
-if ((null == $scores) || (null == $student)) {
-    echo 'Scores not available for student.';
-    exit();
-}
-
 if (isset($_POST['_wpnonce-iss-score_student-form-page'])) {
     
     check_admin_referer('iss-score_student-form-page', '_wpnonce-iss-score_student-form-page');
-
-    foreach ($scores as $assignment) {
-        if (isset($_POST["score" . $assignment->AssignmentID])) {
-            $comment = $_POST["comment" . $assignment->AssignmentID];
-            if (!empty($comment)) {
-                $assignment->Comment = $comment;
-            }
-            $score = $_POST["score" . $assignment->AssignmentID];
-            if (is_numeric($score)) {
-                $assignment->Score = $score;
-            } else if ($score == "E") { // Excused
-                $assignment->Score = -1;
-            } else if ($score == "M") { // Missing
-                $assignment->Score = -2;
-            } else {
-                $assignment->Score = 0;
-            }
-        }
-    }
-    if (1 == ISS_ScoreService::SaveStudentScores($scores, $svid, $cid)) {
-        echo "<div class='alert alert-success' role='alert'> Scores Saved. </div>";           
+    if (1 == ISS_ScoreService::SaveStudentScores($_POST, $svid, $cid)) 
+    {
+        echo "<div class='alert alert-success' role='alert'> Scores Saved. </div>"; 
     } else {
         echo "<div class='alert alert-danger' role='alert'>Error Saving Scores. </div>";
-    }
-    
+    }   
+}
+$scores = ISS_ScoreService::LoadScoreByStudentID($svid, $cid);
+if (null == $scores) 
+{
+    echo 'Scores not available for student.';
+    exit();
 }
 ?>
 <form id="scoreform" class="form-horizontal" method="post" action="" enctype="multipart/form-data">
@@ -91,13 +71,10 @@ if (isset($_POST['_wpnonce-iss-score_student-form-page'])) {
                 </thead>
                 <tbody>
                     <?php foreach ($scores as $assignment) {
-                        if ($assignment->Score == '-1') {
-                            $score = 'E';
-                        } else if ($assignment->Score == '-2') {
-                            $score = 'M';
-                        } else {
-                            $score = $assignment->Score;
-                        } ?>
+                        $aid = $assignment->AssignmentID;
+                        $score = $assignment->Score;
+                        if ($score == '-1') { $score = 'E'; } else if ($score == '-2') {  $score = 'M'; } 
+                         ?>
                     <tr>
                         <td>
                         <span style="width:200px;padding:5px;"><?php echo $assignment->Title; ?></span> 
@@ -106,10 +83,10 @@ if (isset($_POST['_wpnonce-iss-score_student-form-page'])) {
                         <td><?php echo $assignment->DueDate; ?></td>
                         <td><?php echo $assignment->PossiblePoints; ?></td>
                         <td style="background-color:#aecfda; color:#FFFFFF;padding:5px;">
-                        <input name="score<?php echo $assignment->AssignmentID; ?>" type="text" class="scoreinput" value="<?php echo $score; ?>"  size="10" />
+                        <input name="score<?php echo $svid . '-' . $aid; ?>" type="text" class="scoreinput" value="<?php echo $score; ?>"  size="10" />
                         </td>
                         <td style="background-color:#cee0e6;padding:5px;" >
-                        <input name="comment<?php echo $assignment->AssignmentID; ?>" type="text" value="<?php echo $assignment->Comment; ?>") size="100"/>                   
+                        <input name="comment<?php echo $svid . '-' . $aid; ?>" type="text" value="<?php echo $assignment->Comment; ?>") size="100"/>                   
                     </td>
                         
                     </tr> 

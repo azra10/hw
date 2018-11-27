@@ -79,7 +79,7 @@ class ISS_ScaleService
         global $wpdb;
         $query = $wpdb->prepare("SELECT * FROM {$table}   WHERE ClassID = %d ORDER BY ScalePercentage desc", $cid);
         $result_set = $wpdb->get_results($query, ARRAY_A);
-        self::debug($result_set);
+        //self::debug($result_set);
         foreach ($result_set as $obj) {
             $list[] = ISS_Scale::Create($obj);
         }
