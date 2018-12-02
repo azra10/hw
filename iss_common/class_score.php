@@ -257,13 +257,13 @@ class ISS_ScoreService
             {          
                 if (!isset($dataArray['Score'])) 
                 { 
-                    $dataArray['Score'] = $obj['Score']; 
-                    $typeArray[] = '%s'; 
+                    $dataArray['Score'] = (null == $obj['Score']) ? 0: $obj['Score']; 
+                    $typeArray[] = '%f'; 
                 }
                 if (!isset($dataArray['Comment'])) 
                 { 
                     $dataArray['Comment'] = $obj['Comment']; 
-                    $typeArray[] = '%f';
+                    $typeArray[] = '%s';
                 }
                 $dataArray['StudentViewID'] = $svid; $typeArray[] = '%d'; 
                 $dataArray['AssignmentID'] = $aid; $typeArray[] = '%d';
@@ -348,5 +348,45 @@ class ISS_ScoreService
             if ($total >= $obj->ScalePercentage) return $obj->ScaleName;
         }
         return '';
+    }
+    public static function GetClassAssignmentTypeScores($cid)
+    {
+        self::debug("GetClassAssignmentTypeScores");
+        $list = array();
+            
+        global $wpdb;
+        if (ISS_PermissionService::class_assignment_write_access($cid)) {
+            $typelist = ISS_AssignmentTypeService::GetClassAssignmentTypes($cid);
+            
+            $table2= ISS_Score::GetViewNameScoresByAssignmentType();
+            $query1 = "SELECT StudentViewID, AssignmentTypeID, TypeGrade FROM {$table2} WHERE ClassID = {$cid} AND AssignmentTypeID IS NOT NULL ORDER BY StudentViewID";
+            $query2 = "SELECT StudentViewID, SUM( TypeGrade) AS Total FROM {$table2} WHERE ClassID = {$cid} AND StudentViewID IS NOT NULL GROUP BY StudentViewID";
+    
+            $result_set = $wpdb->get_results($query1, ARRAY_A);   
+            foreach ($result_set as $obj) {
+                $sid = $obj['StudentViewID'];
+                $atypeid = $obj['AssignmentTypeID'];             
+                $list['Scores'][$sid][$atypeid] = floatval($obj['TypeGrade']);               
+            }
+                       
+            $scale_list =ISS_ScaleService::GetClassScales($cid);            
+            foreach ($scale_list as $obj) {
+                $list['Scale']['AssignmentTypeId'] = $obj['AssignmentTypeID']; 
+                $list['Scale']['TypeName'] = $obj['TypeName'];
+                $list['Scale']['TypePercentage'] = floatval($obj['TypePercentage']);
+            }
+            $result_set = $wpdb->get_results($query2, ARRAY_A);   
+            foreach ($result_set as $obj) {
+                $sid = $obj['StudentViewID'];
+                if (isset($list['Students'][$sid]))
+                {
+                    $list['Students'][$sid]['Total'] = isset($obj['Total'])? ceil($obj['Total']):0;
+                    $list['Students'][$sid]['Scale'] = self::GetScale($scale_list,$obj['Total']);
+                }
+            }
+        
+        return $list;
+        }
+        return null;
     }
 }

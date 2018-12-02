@@ -478,6 +478,7 @@ public function issv_sqlinsert_install()
     $wpdb->insert($this->iss_student, array('StudentViewID' => '753', 'RegistrationYear' => '2018-2019', 'ParentID' => '64', 'FatherFirstName' => 'Kashif', 'FatherLastName' => 'Hassan', 'FatherEmail' => 'j@gmail.com', 'MotherFirstName' => 'Faiqa', 'MotherLastName' => 'Hassan', 'MotherEmail' => 'j@gmail.com', 'StudentID' => '1358', 'StudentFirstName' => 'Taha', 'StudentLastName' => 'Hassan', 'StudentGender' => 'M', 'StudentStatus' => 'active', 'StudentEmail' => null, 'ISSGrade' => 'KG', 'SchoolEmail' => 'j@gmail.com'));
 
 }
+
 public function issv_sqlview_install()
 {
     global $wpdb;
@@ -591,14 +592,8 @@ public function issv_sqlview_uninstall()
     else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
 
 }
-public function issv_sqlaccount_install()
+public function issv_create_user($username, $role, $useremail)
 {
-
-    global $wpdb;
-    //  issstudentrole
-    $username = 'testparent1';
-    $role = 'issparentrole';
-    $useremail = 'parent1@testmail.com';
     echo "<br/><br/>Create User: {$username}  Role: {$role}";
     $user_id = username_exists($username);
     if ($user_id) echo "<br/> <span style='color:red;font-size:large;'>===User exists </span> ";
@@ -609,6 +604,19 @@ public function issv_sqlaccount_install()
         $user_id = wp_update_user(array('ID' => $user_id, 'role' => $role, 'display_name' => $username, 'nickname' => $username, 'first_name' => $username, 'last_name' => $username));
         if ($user_id) echo "<br/> ===<span style='color:green;font-size:large;'>Success Updated</span> ";
         else print_r($user_id);
+    }
+    return $user_id;
+}
+public function issv_sqlaccount_install()
+{
+
+    global $wpdb;
+    $username = 'testparent1';
+    $role = 'issparentrole';
+    $useremail = 'parent1@testmail.com';
+    $user_id = $this->issv_create_user($username, $role, $useremail);
+    if ($user_id) {
+
         $wpdb->insert($this->iss_userstudentmap, array('UserID' => $user_id, 'StudentID' => 1280), array("%d", "%d"));
         $wpdb->insert($this->iss_userstudentmap, array('UserID' => $user_id, 'StudentID' => 1351), array("%d", "%d"));
     }
@@ -616,133 +624,74 @@ public function issv_sqlaccount_install()
     $username = 'testparent2';
     $role = 'issparentrole';
     $useremail = 'parent2@testmail.com';
-    echo "<br/><br/>Create User: {$username}  Role: {$role}";
-    $user_id = username_exists($username);
-    if ($user_id) echo "<br/> <span style='color:red;font-size:large;'>===User exists </span> ";
-    if (!$user_id and email_exists($useremail) == false) {
-        $user_id = wp_create_user($username, 'Password1', $useremail);
-        if ($user_id) echo "<br/> ===<span style='color:green;font-size:large;'>Success Create</span> ";
-        else print_r($user_id);
-        $user_id = wp_update_user(array('ID' => $user_id, 'role' => $role, 'display_name' => $username, 'nickname' => $username, 'first_name' => $username, 'last_name' => $username));
-        if ($user_id) echo "<br/> ===<span style='color:green;font-size:large;'>Success Updated</span> ";
-        else print_r($user_id);
+    $user_id = $this->issv_create_user($username, $role, $useremail);
+    if ($user_id) {
         $wpdb->insert($this->iss_userstudentmap, array('UserID' => $user_id, 'StudentID' => 1314), array("%d", "%d"));
     }
 
     $username = 'teststudent1';
     $useremail = 'student1@testmail.com';
     $role = 'issstudentrole';
-    echo "<br/><br/>Create User: {$username}  Role: {$role}";
-    $user_id = username_exists($username);
-    if ($user_id) echo "<br/> <span style='color:red;font-size:large;'>===User exists </span> ";
-    if (!$user_id and email_exists($useremail) == false) {
-        $user_id = wp_create_user($username, 'Password1', $useremail);
-        if ($user_id) echo "<br/> ===<span style='color:green;font-size:large;'>Success Create</span> ";
-        else print_r($user_id);
-        $user_id = wp_update_user(array('ID' => $user_id, 'role' => $role, 'display_name' => $username, 'nickname' => $username, 'first_name' => $username, 'last_name' => $username));
-        if ($user_id) echo "<br/> ===<span style='color:green;font-size:large;'>Success Updated</span> ";
-        else print_r($user_id);
+    $user_id = $this->issv_create_user($username, $role, $useremail);
+    if ($user_id) {
         $wpdb->insert($this->iss_userstudentmap, array('UserID' => $user_id, 'StudentID' => 1280), array("%d", "%d"));
     }
 
     $username = 'testteacher1';
     $useremail = 'teacher1@testmail.com';
     $role = 'issteacherrole';
-    echo "<br/><br/>Create User: {$username}  Role: {$role}";
-    $user_id = username_exists($username);
-    if ($user_id) echo "<br/> <span style='color:red;font-size:large;'>===User exists </span>";
-    if (!$user_id and email_exists($useremail) == false) {
-        $user_id = wp_create_user($username, 'Password1', $useremail);
-        if ($user_id) echo "<br/> ===<span style='color:green;font-size:large;'>Success Create</span> ";
-        else print_r($user_id);
-        $user_id = wp_update_user(array('ID' => $user_id, 'role' => $role, 'display_name' => $username, 'nickname' => $username, 'first_name' => $username, 'last_name' => $username));
-        if ($user_id) echo "<br/> ===<span style='color:green;font-size:large;'>Success Updated</span> ";
-        else print_r($user_id);
+    $user_id = $this->issv_create_user($username, $role, $useremail);
+    if ($user_id) {
         $wpdb->insert($this->iss_userclassmap, array('UserID' => $user_id, 'ClassID' => 1, 'Access' => 'primary'), array("%d", "%d", "%s"));
     }
 
     $username = 'testteacher2';
     $useremail = 'teacher2@testmail.com';
     $role = 'issteacherrole';
-    echo "<br/><br/>Create User: {$username}  Role: {$role}";
-    $user_id = username_exists($username);
-    if ($user_id) echo "<br/> <span style='color:red;font-size:large;'>===User exists </span> ";
-    if (!$user_id and email_exists($useremail) == false) {
-        $user_id = wp_create_user($username, 'Password1', $useremail);
-        if ($user_id) echo "<br/> ===<span style='color:green;font-size:large;'>Success Create</span> ";
-        else print_r($user_id);
-        $user_id = wp_update_user(array('ID' => $user_id, 'role' => $role, 'display_name' => $username, 'nickname' => $username, 'first_name' => $username, 'last_name' => $username));
-        if ($user_id) echo "<br/> ===<span style='color:green;font-size:large;'>Success Updated</span> ";
-        else print_r($user_id);
+    $user_id = $this->issv_create_user($username, $role, $useremail);
+    if ($user_id) {
         $wpdb->insert($this->iss_userclassmap, array('UserID' => $user_id, 'ClassID' => 3, 'Access' => 'primary'), array("%d", "%d", "%s"));
         $wpdb->insert($this->iss_userstudentmap, array('UserID' => $user_id, 'StudentID' => 1314), array("%d", "%d"));
+    }
+
+    $username = 'testboard1';
+    $useremail = 'testboard1@testmail.com';
+    $role = 'issboardrole';
+    $user_id = $this->issv_create_user($username, $role, $useremail);
+
+}
+public function issv_delete_user($username)
+{
+    echo "<br/><br/> Delete User: {$username}";
+    $the_user = get_user_by('login', $username);
+    if ($the_user == false) {
+        echo "<br/> ===Failuer<br/>";
+    } else {
+        echo "<br/> ===<span style='color:green;font-size:large;'>Success</span><br/>";
+        print_r($the_user);
+        $uid = $the_user->ID;
+        wp_delete_user($uid);
     }
 }
 public function issv_sqlaccount_uninstall()
 {
     $username = 'testparent1';
-    echo "<br/><br/> Delete User: {$username}";
-    $the_user = get_user_by('login', $username);
-    if ($the_user == false) {
-        echo "<br/> ===Failuer<br/>";
-    } else {
-        echo "<br/> ===<span style='color:green;font-size:large;'>Success</span><br/>";
-        print_r($the_user);
-        $uid = $the_user->ID;
-        wp_delete_user($uid);
-        // $wpdb->delete($this->iss_userstudentmap, array('UserID' => $uid, 'StudentID' => 1280), array("%d", "%d"));
-        //$wpdb->delete($this->iss_userstudentmap, array('UserID' => $uid, 'StudentID' => 1351), array("%d", "%d"));
-    }
-    $username = 'testparent2';
-    echo "<br/><br/> Delete User: {$username}";
-    $the_user = get_user_by('login', $username);
-    if ($the_user == false) {
-        echo "<br/> ===Failuer<br/>";
-    } else {
-        echo "<br/> ===<span style='color:green;font-size:large;'>Success</span><br/>";
-        print_r($the_user);
-        $uid = $the_user->ID;
-        wp_delete_user($uid);
+    $this->issv_delete_user($username);
 
-     //$wpdb->delete($this->iss_userstudentmap, array('UserID' => $uid, 'StudentID' => 1314), array("%d", "%d"));
-    }
+    $username = 'testparent2';
+    $this->issv_delete_user($username);
+
     $username = 'teststudent1';
-    echo "<br/><br/> Delete User: {$username}";
-    $the_user = get_user_by('login', $username);
-    if ($the_user == false) {
-        echo "<br/> ===Failuer<br/>";
-    } else {
-        echo "<br/> ===<span style='color:green;font-size:large;'>Success</span><br/>";
-        print_r($the_user);
-        $uid = $the_user->ID;
-        wp_delete_user($uid);
-     //$wpdb->delete($this->iss_userstudentmap, array('UserID' => $uid, 'StudentID' => 1280), array("%d", "%d"));
-    }
+    $this->issv_delete_user($username);
+
     $username = 'testteacher1';
-    echo "<br/><br/> Delete User: {$username}";
-    $the_user = get_user_by('login', $username);
-    if ($the_user == false) {
-        echo "<br/> ===Failuer<br/>";
-    } else {
-        echo "<br/> ===<span style='color:green;font-size:large;'>Success</span><br/>";
-        print_r($the_user);
-        $uid = $the_user->ID;
-        wp_delete_user($uid);
-     //$wpdb->delete($this->iss_userclassmap, array('UserID' => $uid, 'ClassID' => 1), array("%d", "%d"));
-    }
+    $this->issv_delete_user($username);
+
     $username = 'testteacher2';
-    echo "<br/><br/> Delete User: {$username}";
-    $the_user = get_user_by('login', 'testteacher2');
-    if ($the_user == false) {
-        echo "<br/> ===Failuer<br/>";
-    } else {
-        echo "<br/> ===<span style='color:green;font-size:large;'>Success</span><br/>";
-        print_r($the_user);
-        $uid = $the_user->ID;
-        wp_delete_user($uid);
-     //$wpdb->delete($this->iss_userclassmap, array('UserID' => $uid, 'ClassID' => 3), array("%d", "%d"));
-     //$wpdb->delete($this->iss_userstudentmap, array('UserID' => $uid, 'StudentID' => 1314), array("%d", "%d"));
-    }
+    $this->issv_delete_user($username);
+
+    $username = 'testboard1';
+    $this->issv_delete_user($username);
 }
 } // class
 
