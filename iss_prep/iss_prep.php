@@ -45,7 +45,7 @@ class ISS_PreparationPlugin
         $this->stamp = date('Ymd');
         global $wpdb;
         $this->prefix = $wpdb->prefix;
-        $this->prefix = $this->stamp;
+       // $this->prefix = $this->stamp;
            // tables
         $this->iss_grading_period = $this->prefix . 'iss_grading_period';
         $this->iss_class = $this->prefix . 'iss_class';
