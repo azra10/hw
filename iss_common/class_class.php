@@ -247,7 +247,7 @@ class ISS_ClassService
             global $wpdb;
             $itable = ISS_Class::GetTableName();
             $columns = "ClassID, ISSGrade, Subject, Suffix";
-            $query = "SELECT {$columns}  FROM {$itable} WHERE Status = 'active' AND RegistrationYear = '{$regyear}' order by ISSGrade, Subject";
+            $query = "SELECT {$columns}  FROM {$itable} WHERE Status = 'active' AND RegistrationYear = '{$regyear}' order by Suffix desc, ISSGrade, Subject";
             $result_set = $wpdb->get_results($query, ARRAY_A);
             foreach ($result_set as $obj) {
                 $list[$obj['ClassID']] = ISS_Class::Create($obj);
@@ -438,18 +438,20 @@ class ISS_ClassService
                 return 0;
             }
 
-            $grade = (($row['ISSGrade'] == 'KG') || ($row['ISSGrade'] == 'YG') || ($row['ISSGrade'] == 'YB')) ? $row['ISSGrade'] : 'g' . $row['ISSGrade'];
+            $grade = (($row['ISSGrade'] == 'kg') || ($row['ISSGrade'] == 'yg') || ($row['ISSGrade'] == 'yb')) ? $row['ISSGrade'] : 'g' . $row['ISSGrade'];
             $row['Category'] = ($row['Subject'] == 'Islamic Studies') ? $grade . 'is' : $grade . 'qs';
 
             global $wpdb;
             $table = ISS_Class::GetTableName();
-            if (null != $row['ClassID']) {
+            if (!empty($row['ClassID'])) {
                 $query = "SELECT *  FROM {$table} where ClassID = {$row['ClassID']}";
                 $orig = $wpdb->get_row($query, ARRAY_A);
                 if (null != $orig) {
                     return self::Update($row);
                 }
             }
+            $row['ClassID']= $wpdb->get_var("SELECT MAX(ClassID)+1 AS ID FROM {$table}");
+            //self::debug($row['ClassID']);
             $dsarray = array();
             $typearray = array();
             foreach (ISS_Class::GetTableFields() as $field) {

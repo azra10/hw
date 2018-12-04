@@ -59,8 +59,9 @@ if (!isset($result_set['Assignments']) || !isset($result_set['Students']))
                 <td class='text-center'><?php if (isset($row['Total'])) echo "{$row['Total']}%" ; if (isset($row['Scale'])) echo "  {$row['Scale']}"; ?></td>
                 <?php foreach ($result_set['Assignments'] as $aid => $value) {
                      $score = $result_set['Scores'][$svid . '-' . $aid]['score'];
-                     if ($score == '-1') { $score = 'E'; } else if ($score == '-2') {  $score = 'M'; }                      
-                    echo "<td class='text-center'>{$score}</td>";
+                     if ($score == '-1') { $score = 'E'; } else if ($score == '-2') {  $score = 'M'; }    
+                     $style = (empty($score))? 'background-color:#FFE4B5;padding:2px 30px 2px 30px;' : '';                 
+                     echo "<td class='text-center'><span style='{$style}'>{$score}</span></td>";
                 } ?>
                  <td><a href='admin.php?page=issveditstudentprogress&svid=<?php echo "{$svid}&cid={$cid}"; ?>'> <i class="fas fa-user iss_css_user "></i><?php echo " {$row['StudentFirstName']} {$row['StudentLastName']}"; ?> </a></td>
             </tr>

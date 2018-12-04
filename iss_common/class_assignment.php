@@ -15,6 +15,7 @@ class ISS_Assignment
     public $AssignmentTypeID;
     public $AssignmentTypeName;
     public $AssignmentTypePercentage;
+    public $Graded;
 
     public static function GetViewName()
     {
@@ -77,6 +78,9 @@ class ISS_Assignment
             }
             if (isset($row['AssignmentTypeID'])) {
                 $this->AssignmentTypeID = $row['AssignmentTypeID'];
+            }
+            if (isset($row['Graded'])) {
+                $this->Graded = $row['Graded'];
             }
             if (isset($row['TypeName'])) {
                 $this->AssignmentTypeName = $row['TypeName'];

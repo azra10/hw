@@ -66,13 +66,14 @@ echo "</div><hr/>";
                     <?php foreach ($scores as $student) {
                         $score = $student->Score;
                         if ($score == '-1') { $score = 'E'; } else if ($score == '-2') {  $score = 'M'; } 
+                        $style = (empty($score))? 'background-color:#FFE4B5;padding:2px' : '';                 
                         ?>
                     <tr>
                         <td>
                         <span style="width:200px;padding:5px;"><?php echo $student->StudentFirstName . ' ' . $student->StudentLastName; ?></span> 
                         </td>
-                        <td style="background-color:#aecfda; color:#FFFFFF;padding:5px;">
-                        <input name="score<?php echo $student->StudentViewID . '-' . $postid; ?>" type="text" class="scoreinput" value="<?php echo $score; ?>"  size="10" />
+                        <td style="background-color:#aecfda; color:#FFFFFF;padding:5px;" class="text-center">
+                        <input name="score<?php echo $student->StudentViewID . '-' . $postid; ?>" type="text" class="scoreinput text-center" style="<?php echo $style; ?>" value="<?php echo $score; ?>"  size="10" />
                         </td>
                         <td style="background-color:#cee0e6;padding:5px;" >
                         <input name="comment<?php echo $student->StudentViewID . '-' . $postid; ?>" type="text" value="<?php echo $student->Comment; ?>") size="100"/>                   

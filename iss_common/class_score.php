@@ -3,7 +3,7 @@ class ISS_Score
 {
     public $StudentViewID;
     public $AssignmentID;
-    public $Score = 0;
+    public $Score = '';
     public $StudentFirstName;
     public $StudentLastName;
     public $ISSGrade;
@@ -54,7 +54,7 @@ class ISS_Score
                 $this->AssignmentID = $row['AssignmentID'];
             }
             if (isset($row['Score'])) {
-                 {$this->Score = floatval($row['Score']);}                           
+                 {$this->Score = (null != $row['Score'])? floatval($row['Score']): $row['Score'];}                           
             }
             if (isset($row['Comment'])) {
                 $this->Comment = $row['Comment'];
@@ -270,10 +270,18 @@ class ISS_ScoreService
                 $result = $wpdb->replace($table, $dataArray, $typeArray);
                 if (false === $result) 
                 { $failed++; }
-            }            
-            
-        }
+                ISS_ScoreService::MarkAssignmentGraded($aid);         
+            }                       
+
+        }          
         return $failed>0;
+    }
+    public static function MarkAssignmentGraded($aid)
+    {
+        self::debug("MarkAssignmentGraded: {$aid}");
+        global $wpdb;
+        $table = ISS_Assignment::GetTableName();      
+        $wpdb->update($table, array('Graded'=> 1), array( 'ID' => $aid ), array('%d'), array('%d'));
     }
     public static function GetStudentAssignmentScores($cid, $sid, $svid)
     {
@@ -323,7 +331,7 @@ class ISS_ScoreService
                 $list['Assignments'][$aid] = array('AssignmentID'=>$obj['AssignmentID'], 'Title'=> $obj['Title'], 'DueDate'=>$obj['DueDate'], 'PossiblePoints'=>$obj['PossiblePoints']);
                 $list['Assignments'][$aid]['TypeName'] = isset( $typelist[$atypeid])? $typelist[$atypeid]->TypeName: '(Not Graded)';
                 $list['Students'][$sid] = array('StudentViewID'=>$obj['StudentViewID'], 'StudentFirstName'=> $obj['StudentFirstName'], 'StudentLastName'=>$obj['StudentLastName']);
-                $list['Scores'][$sid . '-' . $aid]['score'] = floatval($obj['Score']);
+                $list['Scores'][$sid . '-' . $aid]['score'] = (null != $obj['Score'])?  floatval($obj['Score']): '';
                 $list['Scores'][$sid . '-' . $aid]['comment'] = $obj['Comment'];
             }
             $result_set = $wpdb->get_results($query2, ARRAY_A);   

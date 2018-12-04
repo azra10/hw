@@ -10,6 +10,8 @@
 
 class ISS_PreparationPlugin
 {
+    private $Success = "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
+    private $Failure ="<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
     private $submit = "none";
     private $stamp;
     private $prefix;
@@ -37,8 +39,9 @@ class ISS_PreparationPlugin
     private $issv_student_score_byassignmenttype;
     private $issv_teacher_class_access;
     private $issv_teacher_name;
-   
-	
+    private $issv_graded_assignments;
+    
+    
 	/* Start up */
     public function __construct()
     {
@@ -71,6 +74,7 @@ class ISS_PreparationPlugin
         $this->issv_student_score_byassignmenttype = $this->prefix . 'issv_student_score_byassignmenttype';
         $this->issv_teacher_class_access = $this->prefix . 'issv_teacher_class_access';
         $this->issv_teacher_name = $this->prefix . 'issv_teacher_name';
+        $this->issv_graded_assignments = $this->prefix . 'issv_graded_assignments';
 
         add_action('admin_menu', array($this, 'add_plugin_page'));
         add_action('init', array($this, 'add_plugin_page_action'));
@@ -186,7 +190,7 @@ public function issv_sqlcreate_grading_period($charset_collate, $table_name)
 
     echo "<br/><br/>CREATE TABLE  {$table_name}  <br/>{$sql}";
     $result = dbDelta($sql);
-    if ($result == false) echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result == false) echo $this->Failure;
     else echo "<br/> ===<span style='color:green;font-size:large;'>Success</span><br/>";
     print_r($result);
 }
@@ -202,6 +206,7 @@ public function issv_sqlcreate_class($charset_collate, $table_name, $depends)
         `Suffix` varchar(50) DEFAULT NULL,
         `Category` varchar(10) NOT NULL DEFAULT 'kgis',
         `Status` varchar(10) NOT NULL DEFAULT 'active',
+        `ReportFinalized` DATETIME NULL DEFAULT NULL,
         `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
         `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         PRIMARY KEY (`ClassID`),
@@ -211,7 +216,7 @@ public function issv_sqlcreate_class($charset_collate, $table_name, $depends)
     ) $charset_collate;";
     echo "<br/><br/>CREATE TABLE  {$table_name}  <br/>{$sql}";
     $result = dbDelta($sql);
-    if ($result == false) echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result == false) echo $this->Failure;
     else echo "<br/> ===<span style='color:green;font-size:large;'>Success</span><br/>";
     print_r($result);
 }
@@ -244,7 +249,7 @@ public function issv_sqlcreate_student($charset_collate, $table_name, $depends)
     ) $charset_collate;";
     echo "<br/><br/>CREATE TABLE  {$table_name}  <br/>{$sql}";
     $result = dbDelta($sql);
-    if ($result == false) echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result == false) echo $this->Failure;
     else echo "<br/> ===<span style='color:green;font-size:large;'>Success</span><br/>";
     print_r($result);
 }
@@ -264,7 +269,7 @@ public function issv_sqlcreate_assignment_type($charset_collate, $table_name, $d
     ) $charset_collate;";
     echo "<br/><br/>CREATE TABLE  {$table_name}  <br/>{$sql}";
     $result = dbDelta($sql);
-    if ($result == false) echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result == false) echo $this->Failure;
     else echo "<br/> ===<span style='color:green;font-size:large;'>Success</span><br/>";
     print_r($result);
 }
@@ -284,7 +289,7 @@ public function issv_sqlcreate_userclassmap($charset_collate, $table_name, $depe
     ) $charset_collate;";
     echo "<br/><br/>CREATE TABLE  {$table_name}  <br/>{$sql}";
     $result = dbDelta($sql);
-    if ($result == false) echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result == false) echo $this->Failure;
     else echo "<br/> ===<span style='color:green;font-size:large;'>Success</span><br/>";
     print_r($result);
 }
@@ -304,7 +309,7 @@ public function issv_sqlcreate_scale($charset_collate, $table_name, $depends)
     ) $charset_collate;";
     echo "<br/><br/>CREATE TABLE  {$table_name}  <br/>{$sql}";
     $result = dbDelta($sql);
-    if ($result == false) echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result == false) echo $this->Failure;
     else echo "<br/> ===<span style='color:green;font-size:large;'>Success</span><br/>";
     print_r($result);
 }
@@ -320,6 +325,7 @@ public function issv_sqlcreate_assignment($charset_collate, $table_name, $depend
         `ClassID` bigint(20) DEFAULT '0',
         `AssignmentTypeID` int(11) DEFAULT NULL,
         `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        `Graded` INT(1) UNSIGNED NOT NULL DEFAULT '0',
         PRIMARY KEY (`ID`),
         KEY `iss_assignment_ClassID_FK{$this->stamp}` (`ClassID`),
         KEY `iss_assignment_AssignmentTypeID_FK{$this->stamp}` (`AssignmentTypeID`)
@@ -329,7 +335,7 @@ public function issv_sqlcreate_assignment($charset_collate, $table_name, $depend
     ) $charset_collate;";
     echo "<br/><br/>CREATE TABLE  {$table_name}  <br/>{$sql}";
     $result = dbDelta($sql);
-    if ($result == false) echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result == false) echo $this->Failure;
     else echo "<br/> ===<span style='color:green;font-size:large;'>Success</span><br/>";
     print_r($result);     
         //,CONSTRAINT `Assignment_ClassID_FK{$this->stamp}` FOREIGN KEY (`ClassID`) REFERENCES $depends (`ClassID`)
@@ -351,7 +357,7 @@ public function issv_sqlcreate_score($charset_collate, $table_name, $depends, $d
     ) $charset_collate;";
     echo "<br/><br/>CREATE TABLE  {$table_name}  <br/>{$sql}";
     $result = dbDelta($sql);
-    if ($result == false) echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result == false) echo $this->Failure;
     else echo "<br/> ===<span style='color:green;font-size:large;'>Success</span><br/>";
     print_r($result);
 }
@@ -369,7 +375,7 @@ public function issv_sqlcreate_userstudentmap($charset_collate, $table_name)
     ) $charset_collate;";
     echo "<br/><br/>CREATE TABLE  {$table_name}  <br/>{$sql}";
     $result = dbDelta($sql);
-    if ($result == false) echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result == false) echo $this->Failure;
     else echo "<br/> ===<span style='color:green;font-size:large;'>Success</span><br/>";
     print_r($result);
 }
@@ -394,40 +400,31 @@ public function issv_sqlcreate_uninstall()
 
     echo "<br/><br/>DROP TABLE  {$this->iss_userstudentmap}";
     $result = $wpdb->query("DROP TABLE  {$this->iss_userstudentmap}");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
     echo "<br/><br/>DROP TABLE  {$this->iss_scale}";
     $result = $wpdb->query("DROP TABLE {$this->iss_scale}");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
     echo "<br/><br/>DROP TABLE  {$this->iss_score}";
     $result = $wpdb->query("DROP TABLE {$this->iss_score}");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
     echo "<br/><br/>DROP TABLE  {$this->iss_assignment}";
     $result = $wpdb->query("DROP TABLE {$this->iss_assignment}");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
     echo "<br/><br/>DROP TABLE  {$this->iss_userclassmap}";
     $result = $wpdb->query("DROP TABLE {$this->iss_userclassmap}");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
     echo "<br/><br/>DROP TABLE  {$this->iss_assignment_type}";
     $result = $wpdb->query("DROP TABLE {$this->iss_assignment_type}");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
     echo "<br/><br/>DROP TABLE  {$this->iss_student}";
     $result = $wpdb->query("DROP TABLE {$this->iss_student}");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
     echo "<br/><br/>DROP TABLE  {$this->iss_class}";
     $result = $wpdb->query("DROP TABLE {$this->iss_class}");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
     echo "<br/><br/>DROP TABLE  {$this->iss_grading_period}";
     $result = $wpdb->query("DROP TABLE {$this->iss_grading_period}");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
 }
 
 public function issv_sqlinsert_install()
@@ -487,64 +484,75 @@ public function issv_sqlview_install()
     $sql = "CREATE VIEW $this->issv_class_assignments AS select `d`.`ClassID` AS `ClassID`,`d`.`DueDate` AS `DueDate`,`d`.`Category` AS `Category`,`d`.`PossiblePoints` AS `PossiblePoints`,`d`.`AssignmentTypeID` AS `AssignmentTypeID`,`c`.`ISSGrade` AS `ISSGrade`,`c`.`RegistrationYear` AS `RegistrationYear`,`c`.`Subject` AS `Subject`,`p`.`ID` AS `ID`,`p`.`post_author` AS `post_author`,`p`.`post_date` AS `post_date`,`p`.`post_content` AS `post_content`,`p`.`post_title` AS `post_title`,`p`.`post_status` AS `post_status`,`p`.`post_name` AS `post_name`,`p`.`guid` AS `guid`,`p`.`post_type` AS `post_type` 
         from (($this->iss_assignment `d` join $this->iss_posts `p`) join $this->iss_class `c`) where ((`d`.`ID` = `p`.`ID`) and (`c`.`ClassID` = `d`.`ClassID`));";
     $result = $wpdb->query($sql);
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
 
     echo "<br/><br/>CREATE VIEW {$this->issv_class_students}";
     $sql = "CREATE VIEW $this->issv_class_students AS select `C`.`ClassID` AS `ClassID`,`S`.`StudentViewID` AS `StudentViewID`,`S`.`StudentID` AS `StudentID`,`S`.`StudentFirstName` AS `StudentFirstName`,`S`.`StudentLastName` AS `StudentLastName`,`S`.`StudentGender` AS `StudentGender` 
         from ($this->iss_class `C` join $this->iss_student `S`) where ((`S`.`ISSGrade` = `C`.`ISSGrade`) and (`S`.`StudentStatus` = 'active') and (`C`.`Status` = 'active') and (`S`.`RegistrationYear` = `C`.`RegistrationYear`));";
     $result = $wpdb->query($sql);
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+
     echo "<br/><br/>CREATE VIEW {$this->issv_classes}";
     $sql = "CREATE  VIEW $this->issv_classes AS select `C`.`ClassID` AS `ClassID`,`C`.`RegistrationYear` AS `RegistrationYear`,`C`.`ISSGrade` AS `ISSGrade`,`C`.`Subject` AS `Subject`,`C`.`Status` AS `Status`,`U`.`ID` AS `UserID`,`U`.`user_email` AS `UserEmail`,`M`.`Access` AS `Access`,`U`.`display_name` AS `Teacher`,`M`.`LastLogin` AS `LastLogin` 
         from (($this->iss_class `C` left join $this->iss_userclassmap `M` on((`M`.`ClassID` = `C`.`ClassID`))) left join $this->iss_users `U` on((`M`.`UserID` = `U`.`ID`)));";
     $result = $wpdb->query($sql);
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>CREATE VIEW {$this->issv_student_accounts}";
     $sql = "CREATE VIEW $this->issv_student_accounts AS select `S`.`StudentID` AS `StudentID`,`S`.`StudentViewID` AS `StudentViewID`,`S`.`RegistrationYear` AS `RegistrationYear`,`S`.`ParentID` AS `ParentID`,`S`.`FatherFirstName` AS `FatherFirstName`,`S`.`FatherLastName` AS `FatherLastName`,`S`.`FatherEmail` AS `FatherEmail`,`S`.`MotherFirstName` AS `MotherFirstName`,`S`.`MotherLastName` AS `MotherLastName`,`S`.`MotherEmail` AS `MotherEmail`,`S`.`StudentFirstName` AS `StudentFirstName`,`S`.`StudentLastName` AS `StudentLastName`,`S`.`StudentGender` AS `StudentGender`,`S`.`StudentEmail` AS `StudentEmail`,`S`.`ISSGrade` AS `ISSGrade`,`M`.`UserID` AS `UserID`,`U`.`user_email` AS `UserEmail`,`M`.`Access` AS `Access`,`U`.`user_nicename` AS `NiceName`,`M`.`LastLogin` AS `LastLogin`,`S`.`StudentStatus` AS `StudentStatus` 
         from (($this->iss_student `S` left join $this->iss_userstudentmap `M` on((`M`.`StudentID` = `S`.`StudentID`))) left join $this->iss_users `U` on((`U`.`ID` = `M`.`UserID`)));";
     $result = $wpdb->query($sql);
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>CREATE VIEW {$this->issv_student_class_access}";
     $sql = "CREATE VIEW $this->issv_student_class_access AS select `S`.`StudentViewID` AS `StudentViewID`,`S`.`StudentFirstName` AS `StudentFirstName`,`S`.`StudentLastName` AS `StudentLastName`,`C`.`ClassID` AS `ClassID`,`S`.`RegistrationYear` AS `RegistrationYear`,`C`.`ISSGrade` AS `ISSGrade`,`C`.`Subject` AS `Subject`,`C`.`Suffix` AS `Suffix`,`M`.`UserID` AS `UserID`,`M`.`Access` AS `Access` 
         from (($this->iss_class `C` join $this->iss_student `S` on(((`S`.`ISSGrade` = `C`.`ISSGrade`) and (`S`.`RegistrationYear` = `C`.`RegistrationYear`)))) join $this->iss_userstudentmap `M` on((`M`.`StudentID` = `S`.`StudentID`))) where ((`C`.`Status` = 'active') and (`S`.`StudentStatus` = 'active'));";
     $result = $wpdb->query($sql);
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>CREATE VIEW {$this->issv_student_lastlogin}";
     $sql = "CREATE VIEW $this->issv_student_lastlogin AS select `P`.`StudentID` AS `StudentID`,max(`P`.`LastLogin`) AS `LastLogin` 
         from $this->iss_userstudentmap `P` where (`P`.`LastLogin` is not null) group by `P`.`StudentID`;";
     $result = $wpdb->query($sql);
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>CREATE VIEW {$this->issv_student_score_byassignmenttype}";
-    $sql = "CREATE VIEW $this->issv_student_score_byassignmenttype AS select `T`.`ClassID` AS `ClassID`,`T`.`AssignmentTypeID`,`T`.`TypeName` AS `TypeName`,`G`.`StudentViewID` AS `StudentViewID`,max(`T`.`TypePercentage`) AS `TypePercentage`,ifnull(((((sum(`G`.`Score`) / sum(`A`.`PossiblePoints`)) * 100) * max(`T`.`TypePercentage`)) / 100),max(`T`.`TypePercentage`)) AS `TypeGrade` 
-        from (($this->iss_assignment_type `T` left join $this->iss_assignment `A` on((`A`.`AssignmentTypeID` = `T`.`AssignmentTypeID`))) left join $this->iss_score `G` on((`G`.`AssignmentID` = `A`.`ID`))) group by `T`.`ClassID`,`T`.`AssignmentTypeID`,`T`.`TypeName`,`G`.`StudentViewID`;";
+    $sql =  "CREATE VIEW `lh3i_issv_student_score_byassignmenttype` AS SELECT `S`.`StudentViewID` AS `StudentViewID`, `T`.`AssignmentTypeID` AS `AssignmentTypeID`, T.TypeName, C.ClassID,
+     IFNULL(SUM(`G`.`Score`) / SUM(`A`.`PossiblePoints`) * 100 * MAX(`T`.`TypePercentage`) / 100,MAX(`T`.`TypePercentage`)) AS `TypeGrade`
+    FROM   `lh3i_iss_class` `C`
+    JOIN `lh3i_iss_assignment_type` T ON  `T`.`ClassID` = `C`.`ClassID`
+    LEFT JOIN `lh3i_iss_student` `S` ON `S`.`ISSGrade` = `C`.`ISSGrade` AND `S`.`RegistrationYear` = `C`.`RegistrationYear`
+    LEFT JOIN `lh3i_issv_graded_assignments` `A` ON T.AssignmentTypeID = A.AssignmentTypeID
+    LEFT JOIN `lh3i_iss_score` `G` ON `G`.`AssignmentID` = `A`.`AssignmentID` AND `G`.`StudentViewID` = `S`.`StudentViewID`
+    WHERE`S`.`StudentStatus` = 'active' 
+    GROUP BY `S`.`StudentViewID`, `T`.`AssignmentTypeID`, T.TypeName, C.ClassID";  
     $result = $wpdb->query($sql);
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>CREATE VIEW {$this->issv_student_scores}";
     $sql = "CREATE VIEW $this->issv_student_scores AS select `S`.`StudentViewID` AS `StudentViewID`,`A`.`ID` AS `AssignmentID`,`A`.`AssignmentTypeID` AS `AssignmentTypeID`,`A`.`DueDate` AS `DueDate`,`A`.`PossiblePoints` AS `PossiblePoints`,`G`.`Score` AS `Score`,`G`.`Comment` AS `Comment`,`C`.`ClassID` AS `ClassID`,`P`.`post_title` AS `Title`,`S`.`StudentFirstName` AS `StudentFirstName`,`S`.`StudentLastName` AS `StudentLastName`,`S`.`ISSGrade` AS `ISSGrade`,`C`.`Subject` AS `Subject` 
         from (((($this->iss_assignment `A` join $this->iss_posts `P` on((`A`.`ID` = `P`.`ID`))) join $this->iss_class `C` on((`C`.`ClassID` = `A`.`ClassID`))) join $this->iss_student `S` on(((`S`.`ISSGrade` = `C`.`ISSGrade`) and (`S`.`RegistrationYear` = `C`.`RegistrationYear`)))) left join $this->iss_score `G` on(((`G`.`AssignmentID` = `A`.`ID`) and (`G`.`StudentViewID` = `S`.`StudentViewID`)))) where (`S`.`StudentStatus` = 'active');";
     $result = $wpdb->query($sql);
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>CREATE VIEW {$this->issv_teacher_class_access}";
     $sql = "CREATE VIEW $this->issv_teacher_class_access AS select `C`.`ClassID` AS `ClassID`,`C`.`RegistrationYear` AS `RegistrationYear`,`C`.`ISSGrade` AS `ISSGrade`,`C`.`Subject` AS `Subject`,`C`.`Suffix` AS `Suffix`,`M`.`UserID` AS `UserID`,`M`.`Access` AS `Access` 
         from ($this->iss_class `C` join $this->iss_userclassmap `M`) where ((`C`.`Status` = 'active') and (`C`.`ClassID` = `M`.`ClassID`));";
     $result = $wpdb->query($sql);
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>CREATE VIEW {$this->issv_teacher_name}";
     $sql = "CREATE VIEW $this->issv_teacher_name AS select `M`.`ClassID` AS `ClassID`,`M`.`UserID` AS `UserID`,`U`.`display_name` AS `Teacher`,`M`.`Access` AS `Access` 
         from ($this->iss_userclassmap `M` join $this->iss_users `U`) where (`U`.`ID` = `M`.`UserID`);";
     $result = $wpdb->query($sql);
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
 
+    echo "<br/><br/>CREATE VIEW {$this->issv_graded_assignments}";
+    $sql = "CREATE VIEW $this->issv_graded_assignments AS SELECT `ID` AS AssignmentID, `AssignmentTypeID`, `PossiblePoints`
+        FROM $this->iss_assignment  WHERE  `AssignmentTypeID` IS NOT NULL AND Graded = 1 ";
+     $result = $wpdb->query($sql);
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
 }
 public function issv_sqlview_uninstall()
 {
@@ -552,45 +560,47 @@ public function issv_sqlview_uninstall()
 
     echo "<br/><br/>DROP VIEW {$this->issv_classes}";
     $result = $wpdb->query("DROP VIEW $this->issv_classes");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>DROP VIEW {$this->issv_class_students}";
     $result = $wpdb->query("DROP VIEW $this->issv_class_students");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>DROP VIEW {$this->issv_class_assignments}";
     $result = $wpdb->query("DROP VIEW $this->issv_class_assignments");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>DROP VIEW {$this->issv_student_accounts}";
     $result = $wpdb->query("DROP VIEW $this->issv_student_accounts");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>DROP VIEW {$this->issv_student_class_access}";
     $result = $wpdb->query("DROP VIEW $this->issv_student_class_access");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>DROP VIEW {$this->issv_student_lastlogin}";
     $result = $wpdb->query("DROP VIEW $this->issv_student_lastlogin");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>DROP VIEW {$this->issv_student_score_byassignmenttype}";
     $result = $wpdb->query("DROP VIEW $this->issv_student_score_byassignmenttype");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>DROP VIEW {$this->issv_student_scores}";
     $result = $wpdb->query("DROP VIEW $this->issv_student_scores");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>DROP VIEW {$this->issv_teacher_class_access}";
     $result = $wpdb->query("DROP VIEW $this->issv_teacher_class_access");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
     echo "<br/><br/>DROP VIEW {$this->issv_teacher_name}";
     $result = $wpdb->query("DROP VIEW $this->issv_teacher_name");
-    if ($result) echo "<br/> ===<span style='color:green;font-size:large;'>Success</span>";
-    else echo "<br/> ===<span style='color:red;font-size:large;'>Failure</span>";
-
+    if ($result) echo $this->Success; else echo $this->Failure;
+    
+    echo "<br/><br/>DROP VIEW {$this->issv_graded_assignments}";
+    $result = $wpdb->query("DROP VIEW $this->issv_graded_assignments");
+    if ($result) echo $this->Success; else echo $this->Failure;
 }
 public function issv_create_user($username, $role, $useremail)
 {

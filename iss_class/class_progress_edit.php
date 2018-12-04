@@ -84,8 +84,8 @@ if (!isset($result_set['Assignments']) || !isset($result_set['Students']))
                         {   
                             $score = $result_set['Scores'][$svid . '-' . $aid]['score'];
                             if ($score == '-1') { $score = 'E'; } else if ($score == '-2') {  $score = 'M'; } 
-                        
-                            echo "<td class='text-center'><input name='score{$svid}-{$aid}' type='text' class='scoreinput' value='{$score}'  size='10' /></td>";
+                            $style = (empty($score))? 'background-color:#FFE4B5;padding:2px' : '';                 
+                            echo "<td><input name='score{$svid}-{$aid}' type='text' class='scoreinput text-center' style='{$style}' value='{$score}'  size='10' /></td>";
                             
                         } ?>
                         <td><a href='admin.php?page=issveditstudentprogress&svid=<?php echo "{$svid}&cid={$cid}"; ?>'> <i class="fas fa-user iss_css_user "></i><?php echo " {$row['StudentFirstName']} {$row['StudentLastName']}"; ?> </a></td>
